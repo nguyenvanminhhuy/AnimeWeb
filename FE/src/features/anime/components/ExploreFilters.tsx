@@ -1,11 +1,10 @@
 import { Selectbox } from '../../../components/ui/Selectbox';
 import { Combobox } from '../../../components/ui/Combobox';
 import { Input } from '../../../components/ui/Input';
-import { Button } from '../../../components/ui/Button';
 import { Icon } from '../../../components/ui/Icon';
-import { useState } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import type { FormEvent } from 'react';
-import { Form } from 'react-router-dom';
+import { Form, useLocation, useNavigationType } from 'react-router-dom';
 import { paths } from '../../../routes/paths';
 import { catalogYears, formatOptions, genreOptions, statusOptions } from '../catalogQuery';
 import type { CatalogQuery } from '../catalogQuery';
@@ -17,7 +16,37 @@ interface ExploreFiltersProps {
 export const exploreFormId = 'explore-search-form';
 
 export function ExploreFilters({ query, suggestions = [] }: ExploreFiltersProps) {
-  const [expanded, setExpanded] = useState(() => matchMedia('(min-width: 768px)').matches);
+  const location = useLocation();
+  const navigationType = useNavigationType();
+  const previousQuery = useRef(query.q);
+  const searchRef = useRef<HTMLInputElement>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const composingRef = useRef(false);
+
+  function cancelSearch() {
+    if (timerRef.current !== null) clearTimeout(timerRef.current);
+    timerRef.current = null;
+  }
+
+  useLayoutEffect(() => {
+    // URL normalization uses replace without changing the search. Keep newer typing intact.
+    if (navigationType === 'REPLACE' && previousQuery.current === query.q) return;
+    previousQuery.current = query.q;
+    cancelSearch();
+    if (searchRef.current) searchRef.current.value = query.q;
+  }, [location.key, navigationType, query.q]);
+
+  useEffect(() => cancelSearch, []);
+
+  function scheduleSearch(input: HTMLInputElement) {
+    cancelSearch();
+    if (composingRef.current) return;
+    timerRef.current = setTimeout(() => {
+      timerRef.current = null;
+      input.form?.requestSubmit();
+    }, 350);
+  }
+
   function submitFilter(event: FormEvent<HTMLSelectElement>) {
     event.currentTarget.form?.requestSubmit();
   }
@@ -26,9 +55,13 @@ export function ExploreFilters({ query, suggestions = [] }: ExploreFiltersProps)
       id={exploreFormId}
       action={paths.explore}
       method="get"
-      className="aw-explore-filters aw-surface tw:p-6 tw:rounded-[12px] tw:max-mobile:p-4"
+      className="aw-explore-filters aw-surface tw:p-6 tw:rounded-xl tw:max-mobile:p-4"
       role="search"
       aria-label="Tìm và lọc anime"
+      onSubmit={(event) => {
+        cancelSearch();
+        if (composingRef.current) event.preventDefault();
+      }}
     >
       <div className="aw-explore-search-row tw:gap-3 tw:flex tw:max-mobile:gap-2">
         <div className="aw-explore-search-field tw:px-4 tw:py-3 tw:gap-3 tw:rounded-[7px] tw:flex tw:items-center tw:flex-1 tw:min-w-0 tw:max-mobile:p-2.5 tw:max-mobile:gap-2">
@@ -42,24 +75,24 @@ export function ExploreFilters({ query, suggestions = [] }: ExploreFiltersProps)
             id="explore-search"
             name="q"
             type="search"
-            key={query.q}
+            ref={searchRef}
             defaultValue={query.q}
+            onChange={(event) => scheduleSearch(event.currentTarget)}
+            onCompositionStart={() => {
+              composingRef.current = true;
+              cancelSearch();
+            }}
+            onCompositionEnd={(event) => {
+              composingRef.current = false;
+              scheduleSearch(event.currentTarget);
+            }}
             maxLength={100}
             placeholder="Tên anime, tên tiếng Anh…"
           />
         </div>
-        <Button
-          variant="primary"
-          type="submit"
-          label="Tìm anime"
-          endIcon={<Icon name="external-link" size="sm" />}
-        />
       </div>
       <Input variant="unstyled" type="hidden" name="page" value="1" />
-      <details open={expanded} onToggle={(event) => setExpanded(event.currentTarget.open)}>
-        <summary>
-          Bộ lọc <span>Thu gọn / Mở rộng</span>
-        </summary>
+      <section className="tw:mt-5.5" aria-label="Bộ lọc">
         <div className="aw-explore-filter-grid tw:gap-4.5 tw:grid tw:grid-cols-4 tw:mt-4.25 tw:max-tablet:grid-cols-2">
           <div className="aw-explore-field tw:grid tw:text-body">
             <label htmlFor="explore-genre">Thể loại</label>
@@ -130,7 +163,7 @@ export function ExploreFilters({ query, suggestions = [] }: ExploreFiltersProps)
             </Selectbox>
           </div>
         </div>
-      </details>
+      </section>
     </Form>
   );
 }

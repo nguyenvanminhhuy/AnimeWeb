@@ -52,27 +52,18 @@ export async function verifyExplore(browser, baseURL) {
       await page.setViewportSize({ width, height: 1000 });
       await goto('/anime');
       assert.equal(await cards().count(), 12);
-      assert.equal(
-        await page.getByRole('button', { name: 'Tìm anime', exact: true }).isVisible(),
-        true,
-        `search button must retain its visible accessible label at ${width}`,
-      );
+      assert.equal(await page.getByRole('button', { name: 'Tìm anime', exact: true }).count(), 0);
       assert.ok(
         await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
         `overflow at ${width}`,
       );
-      assert.equal(
-        await page.locator('.aw-explore-filters details').evaluate((element) => element.open),
-        width >= 768,
-      );
-      if (width === 375) {
-        await page.locator('summary').focus();
-        await page.keyboard.press('Enter');
-        assert.equal(
-          await page.locator('.aw-explore-filters details').evaluate((element) => element.open),
-          true,
-        );
+      for (const label of ['Thể loại', 'Năm phát hành', 'Trạng thái', 'Định dạng']) {
+        assert.equal(await page.getByLabel(label, { exact: true }).isVisible(), true);
       }
+      assert.equal(
+        await page.locator('.aw-explore-filters details, .aw-explore-filters summary').count(),
+        0,
+      );
       assert.equal(
         await cards()
           .first()

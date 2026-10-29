@@ -21,8 +21,9 @@ Ví dụ:
 ## Hành vi
 
 - 24 anime hư cấu dùng cùng fixture, ID và slug với Trang chủ; tái sử dụng 6 artwork minh họa cục bộ. Giữ nguyên tám item ban đầu và các khối Trang chủ.
-- Tìm theo tên tiếng Việt hoặc tên tiếng Anh; không phân biệt hoa/thường và dấu. Từ khóa trim và giới hạn 100 ký tự, chỉ tìm sau khi submit/Enter.
-- Lọc kết hợp thể loại, năm 2023–2026, trạng thái và định dạng TV/điện ảnh. Chọn một bộ lọc tự submit, đưa về trang 1; có thể bỏ riêng điều kiện hoặc xóa tất cả. Bộ lọc thu gọn mặc định khi mở trên mobile, dùng được bằng bàn phím.
+- Tìm theo tên tiếng Việt hoặc tên tiếng Anh; không phân biệt hoa/thường và dấu. Từ khóa trim và giới hạn 100 ký tự; tự tìm sau khi ngừng nhập 350ms, không có nút Tìm anime. Enter tìm ngay; chờ kết thúc composition khi gõ IME. Xóa nội dung tự bỏ điều kiện từ khóa, giữ các bộ lọc/sort và về trang 1. Hủy tìm kiếm đang chờ khi điều hướng hoặc rời trang; Back/Forward đồng bộ ô nhập với URL.
+- Lọc kết hợp thể loại, năm 2023–2026, trạng thái và định dạng TV/điện ảnh. Chọn một bộ lọc tự submit, đưa về trang 1; có thể bỏ riêng điều kiện hoặc xóa tất cả. Bộ lọc luôn hiển thị trên desktop và mobile, không có thao tác thu gọn/mở rộng; control dùng được bằng bàn phím.
+- Phần Đang lọc chỉ hiển thị chip thể loại/năm/trạng thái/định dạng, không tạo chip cho từ khóa tìm kiếm. Từ khóa vẫn lọc kết quả và được giữ trong ô nhập/URL.
 - Thể loại dùng slug theo API contract. Các link banner Trang chủ cũ dùng tên tiếng Việt được chấp nhận và chuẩn hóa sang slug tại Khám phá.
 - Sắp xếp theo năm phát hành mới nhất (giảm dần, ID ổn định khi cùng năm) hoặc tên A–Z theo locale vi. Không dùng rating/lượt xem giả. Chưa có trường thời điểm cập nhật để sắp xếp theo lần cập nhật.
 - Mặc định 12 anime/trang, có thể chọn 24. Đây là lựa chọn UI, API contract còn là đề xuất. Khi đổi số item hoặc sort, về trang 1. Trang vượt giới hạn chuyển về trang cuối; page âm/thập phân/không an toàn về 1; bộ lọc sai và sort/pageSize không hỗ trợ trở về mặc định.

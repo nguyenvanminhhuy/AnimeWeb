@@ -10,7 +10,7 @@ export function ContentState({
 }) {
   return (
     <div
-      className="aw-state aw-surface tw:px-6 tw:py-16 tw:mx-auto tw:my-12 tw:rounded-[16px] tw:text-center tw:max-w-210"
+      className="aw-state aw-surface tw:px-6 tw:py-16 tw:mx-auto tw:my-12 tw:rounded-2xl tw:text-center tw:max-w-210"
       role={retry ? 'alert' : 'status'}
     >
       <span className="aw-eyebrow">ANIME WEB</span>

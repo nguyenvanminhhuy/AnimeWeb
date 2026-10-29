@@ -39,16 +39,17 @@ export async function verifyFormControls(browser, baseURL) {
     assert.equal(await input.getAttribute('name'), 'q');
     assert.equal(await input.evaluate((element) => element.labels.length), 1);
     await input.fill(suggestions[0]);
-    await page.locator('#explore-search-form button[type="submit"]').click();
+    await page.waitForTimeout(150);
+    assert.equal(new URL(page.url()).searchParams.get('q'), null);
     await page.waitForURL((url) => url.searchParams.get('q') === suggestions[0]);
     await ready();
+    assert.equal(await input.evaluate((element) => element === document.activeElement), true);
     assert.equal(await input.inputValue(), suggestions[0]);
     assert.equal(await page.locator('.aw-anime-card h3').first().textContent(), suggestions[0]);
 
     // An arbitrary value remains valid input; suggestions do not constrain search.
     const freeText = 'no-matching-anime-control-test';
     await input.fill(freeText);
-    await page.locator('#explore-search-form button[type="submit"]').click();
     await page.waitForURL((url) => url.searchParams.get('q') === freeText);
     await ready();
     assert.equal(await input.inputValue(), freeText);
@@ -67,6 +68,30 @@ export async function verifyFormControls(browser, baseURL) {
     await ready();
     assert.equal(await sort.inputValue(), 'title');
     assert.equal(await input.inputValue(), suggestions[0]);
+    // Search updates retain the selected sort, and clearing restores the full catalog.
+    await input.fill('');
+    await page.waitForURL((url) => !url.searchParams.has('q'));
+    await ready();
+    assert.equal(new URL(page.url()).searchParams.get('sort'), 'title');
+    assert.equal(await page.locator('.aw-anime-card').count(), 12);
+
+    // Do not search an unfinished IME composition.
+    await input.dispatchEvent('compositionstart');
+    await input.fill('moon');
+    await page.waitForTimeout(450);
+    assert.equal(new URL(page.url()).searchParams.get('q'), null);
+    await input.dispatchEvent('compositionend');
+    await page.waitForURL((url) => url.searchParams.get('q') === 'moon');
+    await ready();
+    assert.equal(await page.locator('.aw-anime-card').count(), 1);
+
+    // Back cancels a pending search instead of allowing it to overwrite navigation.
+    await input.fill('pending-search');
+    await page.goBack();
+    await ready();
+    await page.waitForTimeout(450);
+    assert.equal(new URL(page.url()).searchParams.get('q'), null);
+    assert.equal(await input.inputValue(), '');
     assert.deepEqual(errors, []);
     assert.deepEqual(external, []);
     console.log(

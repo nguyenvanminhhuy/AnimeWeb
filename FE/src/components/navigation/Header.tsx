@@ -60,13 +60,6 @@ export function Header() {
             placeholder="Tìm anime của bạn…"
             maxLength={100}
           />
-          <Input variant="unstyled" type="hidden" name="page" value="1" />
-          <Button
-            variant="unstyled"
-            type="submit"
-            aria-label="Tìm kiếm"
-            startIcon={<Icon name="arrow-right" />}
-          />
         </Form>
         {user ? (
           <Button

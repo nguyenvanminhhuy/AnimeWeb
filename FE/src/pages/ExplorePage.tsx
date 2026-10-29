@@ -20,7 +20,6 @@ import { paths } from '../routes/paths';
 export function ExplorePage() {
   const { query, result, error, retry, mock } = useExploreCatalog();
   const activeFilters = [
-    { key: 'q', label: query.q ? `Từ khóa: ${query.q}` : '' },
     {
       key: 'genre',
       label: genreOptions.find((option) => option.value === query.genre)?.label ?? '',
@@ -108,7 +107,7 @@ export function ExplorePage() {
         <div className="aw-explore-results-heading tw:gap-5 tw:flex tw:items-center tw:justify-between tw:mb-6.5 tw:max-mobile:flex-col tw:max-mobile:items-start">
           <div>
             <h2 id="explore-results-title">
-              {selected.length ? 'Kết quả dành cho bạn' : 'Tất cả anime'}
+              {query.q || selected.length ? 'Kết quả dành cho bạn' : 'Tất cả anime'}
             </h2>
             <p role="status">
               {error

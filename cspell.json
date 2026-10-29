@@ -1,6 +1,6 @@
 {
   "version": "0.2",
   "language": "en,vi",
-  "words": ["VIETSUB", "khóa"],
+  "words": ["VIETSUB", "khóa", "Selectbox"],
   "ignoreRegExpList": ["/%[0-9a-f]{2}/gi"]
 }
