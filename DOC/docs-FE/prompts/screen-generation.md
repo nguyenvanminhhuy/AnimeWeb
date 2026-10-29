@@ -60,26 +60,23 @@ Nếu màn hình đã tồn tại, cập nhật màn hình đó theo yêu cầu 
 ## 4. Vị trí và chất lượng source
 
 ```text
-FE/src/pages/                       Page ghép các khối
-FE/src/app/                         App, providers, cấu hình
-FE/src/routes/                      React Router, route tập trung và URL builders
-FE/src/layouts/                     Layout dùng chung
-FE/src/components/ui/               Button, Input, Dialog, Skeleton
-FE/src/components/common/           SearchField, Pagination, EmptyState, ErrorState
-FE/src/components/navigation/       Header, Footer, điều hướng
-FE/src/features/<feature>/          Component nghiệp vụ, hooks và types
-FE/src/data/contracts/              Interface repository
-FE/src/data/mock/fixtures/          Dữ liệu mẫu dùng chung
-FE/src/data/mock/                   Adapter mock
-FE/src/data/local/                  Adapter localStorage
-FE/src/data/api/                    Dành cho tích hợp API sau
-FE/src/styles/                      Tokens và CSS dùng chung
-FE/src/styles/common/               CSS tái sử dụng giữa component/màn hình
+FE/src/app/routes/                 Màn hình ghép feature
+FE/src/app/{app,provider,router}.tsx App/provider/router tập trung
+FE/src/config/paths.ts             Pattern và URL builders
+FE/src/features/<feature>/         components/hooks/types/utils/config riêng
+FE/src/components/                 UI/common/navigation/layout và view dùng chung
+FE/src/lib/api/                    Contracts, adapters, repositories.ts
+FE/src/lib/storage/                Adapter localStorage có schema
+FE/src/stores/                     State dùng chung như session
+FE/src/testing/mocks/fixtures/     Fixture mock ổn định
+FE/src/types/                      Entity/DTO chia sẻ nhiều feature
+FE/src/utils/                      Hàm thuần dùng chung
+FE/src/styles/                     Entry CSS, tokens, global và common
 ```
 
-- Tái sử dụng component hiện có trước khi tạo mới. AnimeCard thuộc feature anime dù dùng ở nhiều trang. Common không import page/feature cụ thể; UI không import ngược common.
+- Tái sử dụng component hiện có trước khi tạo mới. AnimeCard dùng chung tại components/anime; các khối có nghiệp vụ vẫn ở feature. Không import chéo feature hoặc để shared import app/feature; ghép chúng tại app/routes theo fe-structure.md. Common không import page/feature cụ thể; UI không import ngược common. Dùng alias @/, file kebab-case và import trực tiếp; build phải qua check:architecture.
 - Luồng dữ liệu: page/component → hook/repository → mock hoặc local adapter. Không gọi fetch hoặc localStorage rải rác trong JSX.
-- Bắt buộc đọc và áp dụng [quy tắc route](../rules/routes.md). Dùng một React Router chung, đăng ký page trong FE/src/routes/router.tsx và URL builder tại paths.ts; dùng Link/NavLink/Form và các hook router. URL mở trực tiếp, reload, Back/Forward và query phải hoạt động; không dựng router thủ công bằng pathname.
+- Bắt buộc đọc và áp dụng [quy tắc route](../rules/routes.md). Dùng một React Router chung, đăng ký page trong FE/src/app/router.tsx và URL builder tại paths.ts; dùng Link/NavLink/Form và các hook router. URL mở trực tiếp, reload, Back/Forward và query phải hoạt động; không dựng router thủ công bằng pathname.
 - Khi cần dẫn tới màn hình chưa triển khai, dùng trang thông báo tối thiểu có đường quay lại, không làm toàn bộ màn hình đích và không để link hỏng.
 - Không để callback rỗng, nút chính vô tác dụng hoặc `href="#"` thay cho điều hướng. Thao tác chưa có dịch vụ thật phải có trạng thái demo/giới hạn rõ.
 - Tìm kiếm/bộ lọc/phân trang dùng query URL; đổi bộ lọc về trang 1. Player chuyển tập bằng ID có thứ tự từ dữ liệu, không cộng 1 vào ID.

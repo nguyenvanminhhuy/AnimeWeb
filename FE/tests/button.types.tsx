@@ -1,4 +1,4 @@
-import { Button } from '../src/components/ui/Button';
+import { Button } from '@/components/ui/button';
 
 <Button label="Save" startIcon={<span />} endIcon={<span />} />;
 <Button startIcon={<span />}>

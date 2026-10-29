@@ -33,9 +33,9 @@ Ví dụ:
 
 ## Source
 
-ExplorePage ghép ExploreFilters, AnimeCard, Pagination và ContentState. `useExploreCatalog` gọi `AnimeRepository.list` qua repositories.ts; mock adapter lọc/sort/phân trang. Types và parse/serialize query thuộc feature anime; Pagination không phụ thuộc feature. JSX không gọi fetch/localStorage.
+ExplorePage tại app/routes ghép ExploreFilters, AnimeCard dùng chung, Pagination và ContentState. `useExploreCatalog` gọi `AnimeRepository.list` qua lib/api/repositories.ts; mock adapter lọc/sort/phân trang. CatalogQuery dùng chung nằm ở types/catalog.ts, options ở config/catalog.ts, parse/serialize URL query ở features/anime/utils/catalog-query.ts. Pagination không phụ thuộc feature. JSX không gọi fetch/localStorage.
 
-CSS riêng ở FE/src/pages/ExplorePage.css, đăng ký qua styles/index.css. CSS thẻ anime/skeleton được chuyển từ HomePage.css sang styles/common/catalog.css và Pagination dùng common/pagination.css. Không thêm dependency, API, BE hoặc màn hình khác.
+CSS riêng ở FE/src/app/routes/explore.css, đăng ký qua styles/index.css. CSS thẻ anime/skeleton được chuyển từ HomePage.css sang styles/common/catalog.css và Pagination dùng common/pagination.css. Không thêm dependency, API, BE hoặc màn hình khác.
 
 Layout/spacing/responsive của heading, filter, toolbar và grid dùng Tailwind trực tiếp trong TSX. CSS giữ thiết kế, state và selector theo ngữ cảnh; dùng tw:text-body và các variant breakpoint tại rules/styling.md khi chỉnh sửa tiếp.
 

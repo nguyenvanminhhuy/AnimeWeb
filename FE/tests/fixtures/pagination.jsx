@@ -1,7 +1,7 @@
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, useSearchParams } from 'react-router-dom';
-import { Pagination } from '../../src/components/common/Pagination';
-import '../../src/styles/index.css';
+import { Pagination } from '@/components/common/pagination';
+import '@/styles/index.css';
 
 function Fixture() {
   const [params] = useSearchParams();

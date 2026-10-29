@@ -1,10 +1,12 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
+import { fileURLToPath, URL } from 'node:url';
 
 export default defineConfig({
   // Let Vite optimize after PostCSS normalizes imported Bootstrap CSS.
   plugins: [react(), tailwindcss({ optimize: false })],
+  resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
   // The FE never needs secrets from .env files during local setup.
   envDir: false,
   build: {

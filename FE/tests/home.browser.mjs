@@ -80,7 +80,10 @@ export async function verifyHome(browser, baseURL) {
   await page.locator('.aw-continue-card').first().click();
   assert.ok(page.url().endsWith('/watch/episode-01-03'));
   await page.getByText(/Chưa có video demo/).waitFor();
-  await page.getByRole('link', { name: 'Về Trang chủ' }).click();
+  await page
+    .getByRole('navigation', { name: 'Đường dẫn' })
+    .getByRole('link', { name: 'Trang chủ', exact: true })
+    .click();
   await homeReady();
   await page.getByRole('button', { name: 'Đăng xuất' }).click();
   assert.equal(await page.locator('progress').count(), 0);
@@ -99,7 +102,7 @@ export async function verifyHome(browser, baseURL) {
   await page.goto(`${baseURL}/`);
   await homeReady();
   await page.getByLabel('Tìm anime', { exact: true }).fill('ánh sao');
-  await page.getByRole('button', { name: 'Tìm kiếm', exact: true }).click();
+  await page.getByLabel('Tìm anime', { exact: true }).press('Enter');
   await page.getByRole('heading', { name: 'Khám phá anime' }).waitFor();
   assert.equal(new URL(page.url()).searchParams.get('q'), 'ánh sao');
   await page.reload();

@@ -1,6 +1,6 @@
 # Pagination dùng chung
 
-Source: `FE/src/components/common/Pagination.tsx`; stylesheet `styles/common/pagination.css` được đăng ký qua common/index.css. Component ghép dùng React Router Link và common Icon, không biết nghiệp vụ anime hoặc gọi repository. Đã dùng tại Explore, Library và bình luận Detail.
+Source: `FE/src/components/common/pagination.tsx`; stylesheet `styles/common/pagination.css` được đăng ký qua common/index.css. Component ghép dùng React Router Link và common Icon, không biết nghiệp vụ anime hoặc gọi repository. Đã dùng tại Explore, Library và bình luận Detail.
 
 ## API
 
@@ -23,7 +23,7 @@ Font chữ giữ token chung 14px ở mọi size. Padding theo stylesheet pagina
 ## Ví dụ
 
 ```tsx
-import { Pagination } from '../components/common/Pagination';
+import { Pagination } from '@/components/common/pagination';
 
 <Pagination
   label="Phân trang anime"

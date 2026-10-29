@@ -20,11 +20,11 @@ Trong phiên triển khai đã xác nhận server `http://127.0.0.1:4174/` bằn
 
 ## Source
 
-Page ghép khối tại `FE/src/pages/HomePage.tsx`; component AnimeCard, FeaturedBanner, ContinueWatching và hook nằm trong feature anime. Hook gọi contract qua `data/repositories.ts`, sử dụng mock adapter và fixture dùng chung. SessionProvider dùng adapter local, JSX không truy cập localStorage.
+Page ghép khối tại `FE/src/app/routes/home.tsx`; AnimeCard dùng chung tại components/anime, FeaturedBanner/ContinueWatching và hook nằm trong feature anime. Hook gọi contract qua `lib/api/repositories.ts`, sử dụng mock adapter và fixture dùng chung. SessionProvider tại stores/session.tsx dùng adapter local, JSX không truy cập localStorage.
 
-App dùng React Router, cấu hình tại FE/src/routes/router.tsx và URL builders tại paths.ts; Link/NavLink/Form và useSearchParams quản lý navigation/query. Vite hỗ trợ direct route/reload; hosting về sau cần fallback về index.html. Xem [quy tắc route](rules/routes.md).
+App dùng React Router, cấu hình tại FE/src/app/router.tsx và URL builders tại paths.ts; Link/NavLink/Form và useSearchParams quản lý navigation/query. Vite hỗ trợ direct route/reload; hosting về sau cần fallback về index.html. Xem [quy tắc route](rules/routes.md).
 
-CSS nhập một lần qua styles/index.css; khai báo thứ tự layer trước khi nạp CSS trang. Common chứa layout, nút, trạng thái, header/footer và catalog.css cho thẻ anime/skeleton dùng chung với Khám phá; CSS riêng Trang chủ ở pages/HomePage.css. Giữ Bootstrap, Tailwind prefix tw: và tắt Preflight.
+CSS nhập một lần qua styles/index.css; khai báo thứ tự layer trước khi nạp CSS trang. Common chứa layout, nút, trạng thái, header/footer và catalog.css cho thẻ anime/skeleton dùng chung với Khám phá; CSS riêng Trang chủ ở app/routes/home.css. Giữ Bootstrap, Tailwind prefix tw: và tắt Preflight.
 
 Layout/spacing/responsive đã chuyển sang utility Tailwind trong TSX, gồm Header/Footer, banner, grid và khối tiếp tục xem. CSS còn lại giữ giao diện, gradient, state và pseudo-element; quy tắc generate mới ưu tiên utility theo rules/styling.md.
 

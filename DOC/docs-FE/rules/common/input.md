@@ -1,6 +1,6 @@
 # Input dùng chung
 
-Source: `FE/src/components/ui/Input.tsx`. Dùng cho ô nhập một dòng và input hidden. Component chỉ render một input, nhận props/callback từ nơi gọi; không tự gọi API, đọc storage hoặc xử lý nghiệp vụ. Font theo [rule 14px](../styling.md#font-chữ).
+Source: `FE/src/components/ui/input.tsx`. Dùng cho ô nhập một dòng và input hidden. Component chỉ render một input, nhận props/callback từ nơi gọi; không tự gọi API, đọc storage hoặc xử lý nghiệp vụ. Font theo [rule 14px](../styling.md#font-chữ).
 
 ## API
 
@@ -24,7 +24,7 @@ Không tự sinh label, placeholder hoặc thông báo lỗi; cần label truy c
 ## Ví dụ
 
 ```tsx
-import { Input } from '../components/ui/Input';
+import { Input } from '@/components/ui/input';
 
 <label htmlFor="email">Email</label>
 <Input

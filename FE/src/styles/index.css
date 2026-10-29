@@ -7,11 +7,11 @@
 @import './global.css' layer(base);
 @import '@fortawesome/fontawesome-svg-core/styles.css' layer(components);
 @import './common/index.css' layer(components);
-@import '../pages/HomePage.css';
-@import '../pages/ExplorePage.css';
-@import '../pages/LibraryPage.css';
-@import '../pages/AuthPages.css';
-@import '../pages/AnimeDetailPage.css';
+@import '../app/routes/home.css';
+@import '../app/routes/explore.css';
+@import '../app/routes/library.css';
+@import '../app/routes/auth.css';
+@import '../app/routes/anime-detail.css';
 @import 'tailwindcss/utilities.css' layer(utilities) prefix(tw) source('../');
 @import './common/control-sizes.css' layer(overrides);
 

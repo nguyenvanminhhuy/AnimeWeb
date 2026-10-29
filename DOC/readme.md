@@ -1,46 +1,43 @@
 # Anime Web — Tổng quan tài liệu
 
-Trạng thái: **đã triển khai Trang chủ, Khám phá, Chi tiết anime, Thư viện và Đăng nhập/Đăng ký demo; chưa có BE hoặc nguồn phim**.
+Trạng thái: **FE có Trang chủ, Khám phá, Chi tiết anime, Xem phim, Thư viện và Đăng nhập/Đăng ký demo; BE chưa triển khai, chưa có API hoặc nguồn phim thật.**
 
-Mục tiêu là xây dựng web xem anime hoạt động thực tế. Trước mắt hoàn thiện giao diện với dữ liệu mẫu và video demo; sau đó tích hợp backend và nguồn nội dung được phép sử dụng. Hiện chưa có nguồn phim hoặc API.
+Mục tiêu là web xem anime hoạt động thực tế. FE dùng mock và dữ liệu cục bộ; auth demo không lưu/xác thực mật khẩu. Trang xem đã có giao diện, chuyển tập và nhánh video native; xem [Xem phim](docs-FE/watch-screen.md), chưa có video để kiểm chứng playback. Framework BE và database chưa chọn.
 
-## Thứ tự đọc đề xuất
-
-| Tài liệu | Nội dung |
-| --- | --- |
-| [roadmap.md](roadmap.md) | Phạm vi bản đầu, các bước và điều kiện hoàn thành |
-| [design/wireframes.md](docs-FE/design/wireframes.md) | Luồng sử dụng và khung các màn hình |
-| [rules/readme.md](docs-FE/rules/readme.md) | Mục lục quy định khi generate màn hình |
-| [rules/architecture.md](docs-FE/rules/architecture.md) | Cấu trúc source FE/BE và cách thay nguồn dữ liệu |
-| [rules/fe-structure.md](docs-FE/rules/fe-structure.md) | Khung thư mục FE đã tạo và quy tắc pnpm |
-| [rules/styling.md](docs-FE/rules/styling.md) | Tailwind, Bootstrap 5, CSS common và quy tắc style riêng |
-| [rules/common/readme.md](docs-FE/rules/common/readme.md) | Component dùng chung: Button, Input, Combobox, Selectbox và Icon/Font Awesome |
-| [rules/routes.md](docs-FE/rules/routes.md) | React Router, route tập trung, navigation và query |
-| [entities.md](entities.md) | Các entity và quan hệ |
-| [api-contract.md](api-contract.md) | Phác thảo API để FE và BE phối hợp |
-| [rules/roles-permissions.md](docs-FE/rules/roles-permissions.md) | API common, API cá nhân, ma trận quyền và ownership |
-| [decisions.md](decisions.md) | Điều đã thống nhất và các lựa chọn còn mở |
-| [prompts/readme.md](docs-FE/prompts/readme.md) | Prompt mẫu theo từng giai đoạn |
-| [prompts/screen-prompt-template.md](docs-FE/prompts/screen-prompt-template.md) | Prompt khung sinh code từng màn hình từ UI |
-| [prompts/screen-generation.md](docs-FE/prompts/screen-generation.md) | Prompt thực thi: chỉ cần gửi tên màn hình |
-| [verification.md](docs-FE/verification.md) | Bằng chứng kiểm chứng thực tế |
-
-## Cấu trúc đã thống nhất
+## Cấu trúc
 
 ```text
 Anime-Web/
-├── FE/     # Source frontend
-├── BE/     # Source backend
-└── DOC/    # Tài liệu, Markdown, thiết kế và prompt
+├── FE/                     # Source frontend
+├── BE/                     # Source backend, hiện còn trống
+└── DOC/
+    ├── readme.md           # Mục lục chung
+    ├── roadmap.md          # Lộ trình toàn dự án
+    ├── decisions.md        # Quyết định và câu hỏi còn mở
+    ├── entities.md         # Entity dùng chung (đề xuất)
+    ├── api-contract.md     # Hợp đồng FE/BE dùng chung (nháp)
+    ├── docs-FE/            # Màn hình, thiết kế, rules, prompt, kiểm chứng FE
+    └── docs-BE/            # Kiến trúc, dữ liệu, xác thực, tích hợp, kiểm thử BE
 ```
 
-API vẫn là **đề xuất**. Chạy `pnpm dev` trong Anime-Web/FE: [Trang chủ](docs-FE/home-screen.md) tại `/`, [Khám phá](docs-FE/explore-screen.md) tại `/anime`, [Chi tiết anime](docs-FE/anime-detail-screen.md) tại `/anime/:slug`, [Thư viện](docs-FE/library-screen.md) tại `/library` (cần phiên demo), [Đăng nhập/Đăng ký](docs-FE/auth-screens.md) tại `/login` và `/register`. Xem tập vẫn là thông báo tối thiểu vì chưa có video. Auth chỉ là mô phỏng cục bộ, không lưu/xác thực mật khẩu; xem [rules/styling.md](docs-FE/rules/styling.md) cho quy tắc CSS.
+`AGENTS.md` giữ tại phạm vi áp dụng. Dự án dùng pnpm@11.10.0 và lockfile chung tại SRC; không tạo lockfile riêng FE/BE.
 
-Quy tắc vận hành như `AGENTS.md` vẫn đặt tại vị trí cần áp dụng; tài liệu dự án tập trung trong `DOC`. Toàn bộ dự án tiếp tục tuân theo quy tắc pnpm workspace của `SRC`.
+## Thứ tự đọc
 
-## Những điểm nên góp ý trước
+| Tài liệu | Nội dung |
+| --- | --- |
+| [roadmap.md](roadmap.md) | Phạm vi và các giai đoạn toàn dự án |
+| [decisions.md](decisions.md) | Yêu cầu đã xác nhận và đề xuất chưa duyệt |
+| [docs-FE/readme.md](docs-FE/readme.md) | Điểm bắt đầu cho frontend |
+| [docs-BE/readme.md](docs-BE/readme.md) | Điểm bắt đầu cho backend |
+| [Generate module BE](docs-BE/prompts/module-generation.md) | Quy trình tạo code theo tên module, kiểm tra nền và contract |
+| [entities.md](entities.md) | Entity, quan hệ và ràng buộc dữ liệu |
+| [api-contract.md](api-contract.md) | API common/me, DTO và lỗi |
 
-1. Một anime chứa nhiều mùa/phần hay mỗi mùa là một mục riêng?
-2. Giao diện tối giản kiểu rạp phim hay nhiều thông tin kiểu thư viện anime?
-3. Khi nào triển khai đăng nhập thật? Yêu cầu mới: thư viện và gửi bình luận chỉ dành cho người đăng nhập; FE có thể mô phỏng trước khi có BE.
-4. Bạn muốn học và tự chỉnh sửa từng bước hay ưu tiên hoàn thiện sản phẩm trước?
+API/entity, roadmap và quyết định chung giữ một bản tại DOC để FE và BE cùng tham chiếu. Tài liệu BE là thiết kế cho giai đoạn tiếp theo, chưa phải bằng chứng server chạy được.
+
+## Chạy FE hiện có
+
+Từ SRC chạy `pnpm --filter anime-web-fe run dev`, hoặc chạy `pnpm dev` trong `Anime-Web/FE`. Route: `/`, `/anime`, `/anime/:slug`, `/watch/:episodeId`, `/library`, `/login`, `/register`; thư viện yêu cầu phiên demo.
+
+[Kiểm chứng FE](docs-FE/verification.md) được chuyển nguyên trạng. Các đường dẫn trong bằng chứng cũ phản ánh thời điểm chạy, không sửa lại lịch sử khi đổi vị trí tài liệu.

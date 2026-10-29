@@ -4,12 +4,12 @@ Thư mục `DOC/docs-FE/rules/common/` là nơi lưu tài liệu và quy tắc s
 
 | Component | Source | Tài liệu |
 | --- | --- | --- |
-| Button | `FE/src/components/ui/Button.tsx` | [button.md](button.md) |
-| Input | `FE/src/components/ui/Input.tsx` | [input.md](input.md) |
-| Combobox | `FE/src/components/ui/Combobox.tsx` | [combobox.md](combobox.md) |
-| Selectbox | `FE/src/components/ui/Selectbox.tsx` | [selectbox.md](selectbox.md) |
-| Icon (Font Awesome Free) | `FE/src/components/ui/Icon.tsx` | [icon.md](icon.md) |
-| Pagination | `FE/src/components/common/Pagination.tsx` | [pagination.md](pagination.md) |
+| Button | `FE/src/components/ui/button.tsx` | [button.md](button.md) |
+| Input | `FE/src/components/ui/input.tsx` | [input.md](input.md) |
+| Combobox | `FE/src/components/ui/combobox.tsx` | [combobox.md](combobox.md) |
+| Selectbox | `FE/src/components/ui/selectbox.tsx` | [selectbox.md](selectbox.md) |
+| Icon (Font Awesome Free) | `FE/src/components/ui/icon.tsx` | [icon.md](icon.md) |
+| Pagination | `FE/src/components/common/pagination.tsx` | [pagination.md](pagination.md) |
 
 Button, Input, Combobox và Selectbox hỗ trợ `size="sm" | "md" | "lg"`; xem [quy tắc size](sizes.md) cho kích thước mặc định, variant unstyled và htmlSize native. Không đổi font 14px theo size. Icon có kích thước đồ họa 16/18/24px theo tài liệu riêng.
 

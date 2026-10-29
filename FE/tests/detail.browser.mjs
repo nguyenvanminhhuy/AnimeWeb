@@ -128,7 +128,7 @@ export async function verifyDetail(browser, baseURL) {
     await page.locator('.aw-comment-content > p').filter({ hasText: 'Bình luận đã sửa' }).waitFor();
     await commentsReady();
     const denied = await page.evaluate(async (id) => {
-      const { commentRepository } = await import('/src/data/repositories.ts');
+      const { commentRepository } = await import('/src/lib/api/repositories.ts');
       const actor = {
         id: 'newcomer',
         displayName: 'Tài khoản khác',
