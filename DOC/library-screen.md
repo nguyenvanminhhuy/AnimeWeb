@@ -30,6 +30,7 @@ Guest chỉ thấy lời mời đăng nhập, không thấy số lượng hoặc
 - `FE/src/features/library/`: useLibrary, LibraryCard, query parser/builder và types.
 - Tái sử dụng AnimeCard, Artwork fallback, Pagination, ContentState, MainLayout/Header và SessionProvider. Hook → repository interface → mock adapter; localStorage vẫn chỉ truy cập trong data/local.
 - Route `/library` tại routes/router.tsx đã thay placeholder bằng LibraryPage; không thêm router hoặc route trùng. CSS riêng đăng ký tại styles/index.css, không import lại Bootstrap/Tailwind.
+- Layout/spacing/responsive của LibraryPage/LibraryCard dùng utility Tailwind trong TSX; CSS giữ thiết kế summary/tab, trạng thái và selector theo ngữ cảnh. Theo rules/styling.md khi generate/chỉnh sửa tiếp.
 
 ## Kiểm tra
 

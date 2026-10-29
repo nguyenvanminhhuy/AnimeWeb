@@ -11,6 +11,7 @@ Luôn đọc AGENTS.md tại các cấp áp dụng trước. Yêu cầu hiện t
 | [architecture.md](architecture.md) | Kiến trúc FE/BE, luồng dữ liệu và phụ thuộc |
 | [fe-structure.md](fe-structure.md) | Vị trí page, feature, component common/ui và pnpm |
 | [styling.md](styling.md) | Tailwind, Bootstrap, style common và CSS riêng khi cần |
+| [common/readme.md](common/readme.md) | Tài liệu component dùng chung; [Button](common/button.md) cho nút hành động/CTA |
 | [routes.md](routes.md) | React Router, route tập trung, navigation, query và returnTo |
 | [roles-permissions.md](roles-permissions.md) | API common/me, guest/member, permission và ownership |
 

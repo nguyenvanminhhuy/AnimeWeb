@@ -14,6 +14,7 @@ Mục tiêu là xây dựng web xem anime hoạt động thực tế. Trước m
 | [rules/architecture.md](rules/architecture.md) | Cấu trúc source FE/BE và cách thay nguồn dữ liệu |
 | [rules/fe-structure.md](rules/fe-structure.md) | Khung thư mục FE đã tạo và quy tắc pnpm |
 | [rules/styling.md](rules/styling.md) | Tailwind, Bootstrap 5, CSS common và quy tắc style riêng |
+| [rules/common/readme.md](rules/common/readme.md) | Component dùng chung: Button, Input, Combobox, Selectbox và Icon/Font Awesome |
 | [rules/routes.md](rules/routes.md) | React Router, route tập trung, navigation và query |
 | [entities.md](entities.md) | Các entity và quan hệ |
 | [api-contract.md](api-contract.md) | Phác thảo API để FE và BE phối hợp |

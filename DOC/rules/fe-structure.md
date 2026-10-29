@@ -57,6 +57,14 @@ Entity types đặt trong feature tương ứng, ví dụ `features/anime/anime.
 
 `common/` có thể dùng `ui/`, nhưng `ui/` không import ngược `common/`. Component common không import từ pages hoặc feature cụ thể, không gọi API trực tiếp; nhận dữ liệu và callback qua props. Component thuộc anime vẫn ở feature anime dù được nhiều trang sử dụng.
 
+Button đã triển khai tại `components/ui/Button.tsx` và dùng chung cho các màn hình. Tài liệu API/cách dùng của component tái sử dụng tập trung tại [common/readme.md](common/readme.md), bắt đầu với [Button](common/button.md).
+
+Các control UI dùng chung đã có [Input](common/input.md), [Combobox](common/combobox.md) và [Selectbox](common/selectbox.md) tại components/ui; không chứa repository hoặc logic query. CSS control đặt trong styles/common/form-controls.css.
+
+[Pagination](common/pagination.md) tại components/common/Pagination.tsx là component ghép cho các danh sách phân trang; dùng React Router Link và Icon, nhận page/totalPages/URL builder qua props. Không chứa logic repository hoặc query nghiệp vụ.
+
+Layout/spacing/responsive của các màn hình và Header/Footer hiện dùng utility Tailwind trong TSX; stylesheet page/common giữ phần thiết kế, state, pseudo-element và selector theo ngữ cảnh. Xem [styling.md](styling.md) cho variant breakpoint và tw:text-body; không thêm class CSS chỉ để dựng flex/grid hoặc spacing mới.
+
 Khi thêm component thực tế, có thể đặt mỗi component trong thư mục riêng, ví dụ `common/Pagination/Pagination.tsx` và stylesheet đi kèm. Chưa tạo sẵn các component ví dụ hoặc file export rỗng.
 
 ## Quy tắc pnpm
