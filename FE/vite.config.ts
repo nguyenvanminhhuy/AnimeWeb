@@ -7,6 +7,15 @@ export default defineConfig({
   plugins: [react(), tailwindcss({ optimize: false })],
   // The FE never needs secrets from .env files during local setup.
   envDir: false,
+  build: {
+    rolldownOptions: {
+      output: {
+        codeSplitting: {
+          groups: [{ name: 'fontawesome', test: /[\\/]node_modules[\\/]@fortawesome[\\/]/ }],
+        },
+      },
+    },
+  },
   css: {
     postcss: {
       plugins: [

@@ -5,6 +5,7 @@
 @import 'bootstrap/dist/css/bootstrap.css' layer(bootstrap);
 @import './tokens.css' layer(base);
 @import './global.css' layer(base);
+@import '@fortawesome/fontawesome-svg-core/styles.css' layer(components);
 @import './common/index.css' layer(components);
 @import '../pages/HomePage.css';
 @import '../pages/ExplorePage.css';
@@ -12,3 +13,14 @@
 @import '../pages/AuthPages.css';
 @import '../pages/AnimeDetailPage.css';
 @import 'tailwindcss/utilities.css' layer(utilities) prefix(tw) source('../');
+@import './common/control-sizes.css' layer(overrides);
+
+@theme inline {
+  --text-body: var(--aw-font-size-base);
+}
+
+/* Preserve the existing inclusive breakpoints; narrow variants override wider ones. */
+@custom-variant max-desktop (@media (max-width: 1100px));
+@custom-variant max-tablet (@media (max-width: 1000px));
+@custom-variant max-mobile (@media (max-width: 767px));
+@custom-variant max-phone (@media (max-width: 600px));

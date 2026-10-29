@@ -1,0 +1,23 @@
+/* Applied after page styles so explicit sizes also work inside existing field shells. */
+.aw-control-sm {
+  --aw-control-min-height: 2rem;
+  --aw-control-padding-y: 0.25rem;
+}
+.aw-control-md {
+  --aw-control-min-height: 2.75rem;
+  --aw-control-padding-y: 0.625rem;
+}
+.aw-control-lg {
+  --aw-control-min-height: 3.25rem;
+  --aw-control-padding-y: 0.875rem;
+}
+:is(.aw-button, .aw-button-unstyled, .aw-input, .aw-input-unstyled, .aw-selectbox):is(
+    .aw-control-sm,
+    .aw-control-md,
+    .aw-control-lg
+  ):not([type='hidden']) {
+  min-height: var(--aw-control-min-height);
+  padding-block: var(--aw-control-padding-y);
+  font-size: var(--aw-font-size-base);
+  line-height: 1.5;
+}

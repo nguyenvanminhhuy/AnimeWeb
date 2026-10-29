@@ -36,6 +36,8 @@ ExplorePage ghép ExploreFilters, AnimeCard, Pagination và ContentState. `useEx
 
 CSS riêng ở FE/src/pages/ExplorePage.css, đăng ký qua styles/index.css. CSS thẻ anime/skeleton được chuyển từ HomePage.css sang styles/common/catalog.css và Pagination dùng common/pagination.css. Không thêm dependency, API, BE hoặc màn hình khác.
 
+Layout/spacing/responsive của heading, filter, toolbar và grid dùng Tailwind trực tiếp trong TSX. CSS giữ thiết kế, state và selector theo ngữ cảnh; dùng tw:text-body và các variant breakpoint tại rules/styling.md khi chỉnh sửa tiếp.
+
 ## Kiểm tra tái lập
 
 Tại SRC: `pnpm install --frozen-lockfile`, `pnpm --filter anime-web-fe run build` (gồm typecheck).

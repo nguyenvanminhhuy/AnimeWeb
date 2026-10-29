@@ -31,7 +31,7 @@ export async function verifyHome(browser, baseURL) {
         .locator('.aw-anime-card h3')
         .first()
         .evaluate((element) => getComputedStyle(element).fontSize),
-      '13px',
+      '14px',
     );
     assert.equal(
       await page
@@ -64,23 +64,23 @@ export async function verifyHome(browser, baseURL) {
     await page.getByRole('button', { name: 'Tình cảm', exact: true }).getAttribute('aria-pressed'),
     'true',
   );
-  await page.getByRole('link', { name: '＋ Yêu thích', exact: true }).click();
+  await page.getByRole('link', { name: 'Yêu thích', exact: true }).click();
   await page.getByRole('button', { name: 'Dùng tài khoản có lịch sử mẫu' }).click();
   await page.getByRole('link', { name: /Tiếp tục về trang/ }).click();
   await homeReady();
   await page.getByRole('heading', { name: /Tiếp tục xem/ }).waitFor();
   assert.equal(await page.locator('progress').count(), 2);
-  await page.getByRole('button', { name: '＋ Yêu thích', exact: true }).click();
+  await page.getByRole('button', { name: 'Yêu thích', exact: true }).click();
   await page.reload();
   await homeReady();
   assert.equal(
-    await page.getByRole('button', { name: '✓ Đã yêu thích' }).getAttribute('aria-pressed'),
+    await page.getByRole('button', { name: 'Đã yêu thích' }).getAttribute('aria-pressed'),
     'true',
   );
   await page.locator('.aw-continue-card').first().click();
   assert.ok(page.url().endsWith('/watch/episode-01-03'));
   await page.getByText(/Chưa có video demo/).waitFor();
-  await page.getByRole('link', { name: '← Về Trang chủ' }).click();
+  await page.getByRole('link', { name: 'Về Trang chủ' }).click();
   await homeReady();
   await page.getByRole('button', { name: 'Đăng xuất demo' }).click();
   assert.equal(await page.locator('progress').count(), 0);
@@ -90,9 +90,7 @@ export async function verifyHome(browser, baseURL) {
   await homeReady();
   assert.equal(await page.locator('progress').count(), 0);
   assert.equal(
-    await page
-      .getByRole('button', { name: '＋ Yêu thích', exact: true })
-      .getAttribute('aria-pressed'),
+    await page.getByRole('button', { name: 'Yêu thích', exact: true }).getAttribute('aria-pressed'),
     'false',
   );
   await page.getByRole('button', { name: 'Đăng xuất demo' }).click();

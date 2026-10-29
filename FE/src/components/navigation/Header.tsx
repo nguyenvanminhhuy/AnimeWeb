@@ -1,3 +1,6 @@
+import { Input } from '../ui/Input';
+import { Icon } from '../ui/Icon';
+import { Button } from '../ui/Button';
 import { useSession } from '../../features/auth/SessionProvider';
 import { Form, Link, NavLink, useLocation, useMatch } from 'react-router-dom';
 import { paths, routePatterns, safeReturnTo } from '../../routes/paths';
@@ -12,15 +15,24 @@ export function Header() {
       : pathname + search;
   return (
     <header className="aw-header">
-      <div className="aw-shell aw-header-inner">
-        <Link className="aw-brand" to={paths.home} aria-label="Anime Web — Trang chủ">
-          <span className="aw-brand-mark" aria-hidden="true">
+      <div className="aw-shell aw-header-inner tw:mx-auto tw:gap-8.5 tw:min-h-22 tw:flex tw:items-center tw:max-desktop:py-4.5 tw:max-desktop:gap-6 tw:max-desktop:flex-wrap tw:max-phone:gap-3 tw:max-phone:min-h-18">
+        <Link
+          className="aw-brand tw:inline-flex tw:items-center tw:whitespace-nowrap"
+          to={paths.home}
+          aria-label="Anime Web — Trang chủ"
+        >
+          <span className="aw-brand-mark tw:mr-2" aria-hidden="true">
             ✦
           </span>
           anime<span>web</span>
-          <span className="aw-demo">DEMO</span>
+          <span className="aw-demo tw:px-1.5 tw:py-0.75 tw:rounded-sm tw:whitespace-nowrap">
+            DEMO
+          </span>
         </Link>
-        <nav className="aw-nav" aria-label="Điều hướng chính">
+        <nav
+          className="aw-nav tw:gap-6.5 tw:flex tw:self-stretch tw:items-stretch tw:text-body tw:whitespace-nowrap tw:max-desktop:self-center tw:max-phone:order-2 tw:max-phone:w-full tw:max-phone:justify-between"
+          aria-label="Điều hướng chính"
+        >
           <NavLink to={paths.home} end>
             Trang chủ
           </NavLink>
@@ -31,25 +43,47 @@ export function Header() {
             <Link to={paths.loginTo(paths.library)}>Thư viện</Link>
           )}
         </nav>
-        <Form className="aw-search" action={paths.explore} method="get" role="search">
+        <Form
+          className="aw-search tw:px-3 tw:py-2 tw:gap-2 tw:ml-auto tw:flex tw:items-center tw:min-w-32.5 tw:w-60 tw:rounded-lg tw:max-desktop:order-3 tw:max-desktop:w-full"
+          action={paths.explore}
+          method="get"
+          role="search"
+        >
           <label className="visually-hidden" htmlFor="header-search">
             Tìm anime
           </label>
-          <span aria-hidden="true">⌕</span>
-          <input id="header-search" name="q" placeholder="Tìm anime của bạn…" maxLength={100} />
-          <input type="hidden" name="page" value="1" />
-          <button type="submit" aria-label="Tìm kiếm">
-            ↵
-          </button>
+          <Icon name="search" />
+          <Input
+            variant="unstyled"
+            id="header-search"
+            name="q"
+            placeholder="Tìm anime của bạn…"
+            maxLength={100}
+          />
+          <Input variant="unstyled" type="hidden" name="page" value="1" />
+          <Button
+            variant="unstyled"
+            type="submit"
+            aria-label="Tìm kiếm"
+            startIcon={<Icon name="arrow-right" />}
+          />
         </Form>
         {user ? (
-          <button className="btn aw-btn-quiet aw-account" onClick={logout}>
-            Đăng xuất demo
-          </button>
+          <Button
+            variant="quiet"
+            className="aw-account tw:max-desktop:ml-auto tw:max-phone:p-2.25 tw:max-phone:text-body"
+            onClick={logout}
+            label="Đăng xuất demo"
+          />
         ) : (
-          <Link className="btn aw-btn-quiet aw-account" to={paths.loginTo(returnTo)}>
-            Đăng nhập <span aria-hidden="true">↗</span>
-          </Link>
+          <Button
+            as="link"
+            variant="quiet"
+            className="aw-account tw:max-desktop:ml-auto tw:max-phone:p-2.25 tw:max-phone:text-body"
+            to={paths.loginTo(returnTo)}
+            label="Đăng nhập"
+            endIcon={<Icon name="external-link" size="sm" />}
+          />
         )}
       </div>
     </header>

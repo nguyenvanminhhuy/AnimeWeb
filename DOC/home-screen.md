@@ -26,6 +26,8 @@ App dùng React Router, cấu hình tại FE/src/routes/router.tsx và URL build
 
 CSS nhập một lần qua styles/index.css; khai báo thứ tự layer trước khi nạp CSS trang. Common chứa layout, nút, trạng thái, header/footer và catalog.css cho thẻ anime/skeleton dùng chung với Khám phá; CSS riêng Trang chủ ở pages/HomePage.css. Giữ Bootstrap, Tailwind prefix tw: và tắt Preflight.
 
+Layout/spacing/responsive đã chuyển sang utility Tailwind trong TSX, gồm Header/Footer, banner, grid và khối tiếp tục xem. CSS còn lại giữ giao diện, gradient, state và pseudo-element; quy tắc generate mới ưu tiên utility theo rules/styling.md.
+
 ## Kiểm tra
 
 Tại SRC: `pnpm --filter anime-web-fe run build` (bao gồm typecheck); `pnpm install --frozen-lockfile`.

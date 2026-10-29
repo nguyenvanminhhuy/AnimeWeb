@@ -1,11 +1,6 @@
-.aw-anime-card {
-  min-width: 0;
-}
 .aw-poster {
   position: relative;
   aspect-ratio: 2 / 2.9;
-  overflow: hidden;
-  border-radius: 9px;
   background: #242a41;
 }
 .aw-poster::after {
@@ -25,22 +20,12 @@
   transform: scale(1.04);
 }
 .aw-poster-tag {
-  position: absolute;
-  z-index: 1;
-  left: 10px;
-  bottom: 10px;
-  padding: 4px 7px;
-  border-radius: 4px;
   background: #0b101dc9;
   border: 1px solid #ffffff20;
   color: #edeafa;
-  font-size: 9px;
   backdrop-filter: blur(10px);
 }
 .aw-poster-play {
-  position: absolute;
-  top: 9px;
-  right: 10px;
   color: white;
   opacity: 0;
 }
@@ -49,13 +34,13 @@
   opacity: 1;
 }
 .aw-anime-card h3 {
-  font-size: 13px;
+  font-size: var(--aw-font-size-base);
   line-height: 1.5;
   margin: 12px 0 5px;
   font-weight: 600;
 }
 .aw-anime-card > p {
-  font-size: 10px;
+  font-size: var(--aw-font-size-base);
   color: #a5a7bb;
   display: flex;
   gap: 6px;
@@ -66,7 +51,6 @@
   color: #b19bff;
 }
 .aw-skeleton {
-  border-radius: 12px;
   background: linear-gradient(100deg, #181c2c, #28283b, #181c2c);
   background-size: 200% 100%;
   animation: aw-loading 1.7s ease-in-out infinite;

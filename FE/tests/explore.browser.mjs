@@ -52,6 +52,11 @@ export async function verifyExplore(browser, baseURL) {
       await page.setViewportSize({ width, height: 1000 });
       await goto('/anime');
       assert.equal(await cards().count(), 12);
+      assert.equal(
+        await page.getByRole('button', { name: 'Tìm anime', exact: true }).isVisible(),
+        true,
+        `search button must retain its visible accessible label at ${width}`,
+      );
       assert.ok(
         await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
         `overflow at ${width}`,
@@ -73,7 +78,7 @@ export async function verifyExplore(browser, baseURL) {
           .first()
           .locator('h3')
           .evaluate((element) => getComputedStyle(element).fontSize),
-        '13px',
+        '14px',
       );
       await page.screenshot({
         path: `../Anime-Web/FE/test-results/explore-${width}.png`,
@@ -82,7 +87,7 @@ export async function verifyExplore(browser, baseURL) {
     }
 
     const firstPage = await hrefs();
-    await navigate(page.getByRole('link', { name: 'Sau →', exact: true }));
+    await navigate(page.getByRole('link', { name: 'Sau', exact: true }));
     assert.equal(new URL(page.url()).searchParams.get('page'), '2');
     const secondPage = await hrefs();
     assert.equal(secondPage.length, 12);

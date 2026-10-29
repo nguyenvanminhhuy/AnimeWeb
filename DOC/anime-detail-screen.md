@@ -39,6 +39,7 @@ Guest đọc mọi thông tin công khai; yêu thích/bình luận dẫn Login v
 ## Source và trạng thái
 
 - Page: FE/src/pages/AnimeDetailPage.tsx; CSS: AnimeDetailPage.css, nạp qua styles/index.css.
+- Layout/spacing/responsive trong Detail, SeasonEpisodes và CommentsPanel dùng utility Tailwind trong TSX; CSS giữ thiết kế, trạng thái và selector theo ngữ cảnh. Theo rule styling cho breakpoint và font 14px.
 - Feature anime: useAnimeDetail và AnimeDetail type; feature episode: SeasonEpisodes và Season/Episode types; feature comments: component/hook/types; data layer: contract, mock details/comments fixtures và local comment adapter.
 - Tái sử dụng AnimeCard, Artwork, ContentState, Pagination, SessionProvider/MainLayout/Header và URL builders hiện có. Route cũ đã thay placeholder; DestinationPage chỉ còn Watch/Not found.
 - Dev: `?mock=loading|error|empty` cho chi tiết; `?comments=loading|error|empty|forbidden` cho bình luận. Mock empty của detail giữ thông tin anime nhưng không có tập/đề xuất; forbidden mô phỏng member không có quyền viết. Retry bỏ mock lỗi; production bỏ qua các query mock.

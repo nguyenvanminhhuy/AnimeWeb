@@ -36,6 +36,7 @@ Role/quyền vẫn là member demo mặc định, không lấy quyền/admin t�
 - `data/contracts/AuthRepository.ts` không có password trong interface; `data/local/LocalDemoAuthRepository.ts` chọn/tạo hồ sơ demo và xử lý registry. Chọn adapter tại data/repositories.ts.
 - `routes/paths.ts` có register/registerTo và safeReturnTo dùng chung; registry router đăng ký LoginPage/RegisterPage. Bỏ nhánh login cũ khỏi DestinationPage. Header giữ returnTo khi đang ở hai route auth.
 - CSS dùng chung của hai trang tại pages/AuthPages.css, nạp một lần qua styles/index.css; selector aw-auth được đặt riêng, không import lại Bootstrap/Tailwind.
+- Layout/spacing/responsive dùng utility Tailwind trong AuthScreen/AuthForm; CSS giữ giao diện, state và các selector form theo ngữ cảnh. Font dùng token 14px, các breakpoint cũ giữ qua variant trong rules/styling.md.
 
 ## Kiểm chứng
 

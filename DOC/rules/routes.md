@@ -66,7 +66,7 @@ Không tạo BrowserRouter/RouterProvider mới trong page/feature/layout con. K
 - Vite dev/preview hỗ trợ direct route. Hosting production về sau cần fallback đường dẫn ứng dụng về index.html, giữ ngoại lệ asset/API. Bước này không deploy.
 - Thêm bằng chứng thật vào DOC/verification.md; giữ nguyên lịch sử cũ.
 
-Kiểm tra browser hiện có: FE/tests/home.browser.mjs, explore.browser.mjs, library.browser.mjs, auth.browser.mjs, detail.browser.mjs và navigation.browser.mjs. Với dev server cổng 4174, chạy từ SRC bằng PowerShell (tái sử dụng Chromium/@playwright/test đã cài ở workspace):
+Kiểm tra browser hiện có: FE/tests/home.browser.mjs, explore.browser.mjs, library.browser.mjs, auth.browser.mjs, detail.browser.mjs, navigation.browser.mjs, form-controls.browser.mjs, control-sizes.browser.mjs, icons.browser.mjs, pagination.browser.mjs và button.browser.mjs. Với dev server cổng 4174, chạy từ SRC bằng PowerShell (tái sử dụng Chromium/@playwright/test đã cài ở workspace):
 
 ```powershell
 @'
@@ -77,6 +77,11 @@ import { verifyNavigation } from '../Anime-Web/FE/tests/navigation.browser.mjs';
 import { verifyLibrary } from '../Anime-Web/FE/tests/library.browser.mjs';
 import { verifyAuth } from '../Anime-Web/FE/tests/auth.browser.mjs';
 import { verifyDetail } from '../Anime-Web/FE/tests/detail.browser.mjs';
+import { verifyFormControls } from '../Anime-Web/FE/tests/form-controls.browser.mjs';
+import { verifyControlSizes } from '../Anime-Web/FE/tests/control-sizes.browser.mjs';
+import { verifyIcons } from '../Anime-Web/FE/tests/icons.browser.mjs';
+import { verifyPagination } from '../Anime-Web/FE/tests/pagination.browser.mjs';
+import { verifyButton } from '../Anime-Web/FE/tests/button.browser.mjs';
 const browser = await chromium.launch({ headless: true });
 try {
   await verifyExplore(browser, 'http://127.0.0.1:4174');
@@ -85,6 +90,11 @@ try {
   await verifyLibrary(browser, 'http://127.0.0.1:4174');
   await verifyAuth(browser, 'http://127.0.0.1:4174');
   await verifyDetail(browser, 'http://127.0.0.1:4174');
+  await verifyFormControls(browser, 'http://127.0.0.1:4174');
+  await verifyControlSizes(browser, 'http://127.0.0.1:4174');
+  await verifyIcons(browser, 'http://127.0.0.1:4174');
+  await verifyPagination(browser, 'http://127.0.0.1:4174');
+  await verifyButton(browser, 'http://127.0.0.1:4174');
 } finally { await browser.close(); }
 '@ | pnpm --filter react-snapshot-effect-ref-lab exec node --input-type=module -
 ```

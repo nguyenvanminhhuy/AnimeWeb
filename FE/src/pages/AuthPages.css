@@ -1,29 +1,10 @@
 @layer components {
-  .aw-auth {
-    padding-top: 25px;
-  }
   .aw-auth-back {
-    font-size: 11px;
     color: var(--aw-muted);
   }
   .aw-auth-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    margin-top: 24px;
     border: 1px solid var(--aw-border);
-    border-radius: 16px;
-    overflow: hidden;
     background: #121622;
-  }
-  .aw-auth-art {
-    position: relative;
-    isolation: isolate;
-    min-width: 0;
-    min-height: 700px;
-    padding: 38px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
   }
   .aw-auth-art > img {
     position: absolute;
@@ -35,13 +16,9 @@
     object-position: 72% center;
   }
   .aw-auth-art-shade {
-    position: absolute;
-    inset: 0;
-    z-index: -2;
     background: linear-gradient(0deg, #0c1329f5, #131d3a33 75%, #10162b66);
   }
   .aw-auth-art-brand {
-    font-size: 12px;
     font-weight: 600;
     letter-spacing: 3px;
     color: #e0d8f7;
@@ -53,7 +30,7 @@
     vertical-align: middle;
   }
   .aw-auth-art-copy .aw-eyebrow {
-    font-size: 8px;
+    font-size: var(--aw-font-size-base);
     color: #c1b8dc;
   }
   .aw-auth-art-copy h2 {
@@ -64,26 +41,18 @@
     margin: 17px 0;
   }
   .aw-auth-art-copy p {
-    font-size: 12px;
+    font-size: var(--aw-font-size-base);
     line-height: 1.9;
     color: #b5b7d0;
     margin-bottom: 32px;
   }
   .aw-auth-art-caption {
-    font-size: 8px;
     letter-spacing: 2px;
     color: #9b9fbe;
   }
-  .aw-auth-panel {
-    padding: 42px 46px;
-    min-width: 0;
-  }
   .aw-auth-badge {
-    display: inline-block;
     color: #bcabef;
-    font-size: 8px;
     letter-spacing: 1.5px;
-    margin-bottom: 18px;
   }
   .aw-auth-panel h1 {
     font-size: clamp(25px, 2.6vw, 34px);
@@ -93,19 +62,12 @@
     margin-bottom: 12px;
   }
   .aw-auth-intro {
-    font-size: 12px;
     color: var(--aw-muted);
-    line-height: 1.8;
-    margin-bottom: 24px;
   }
   .aw-auth-demo-note {
     border-left: 2px solid #a697ff70;
     background: #a697ff08;
-    padding: 11px 14px;
-    margin-bottom: 24px;
-    font-size: 10px;
     color: #c6bddb;
-    line-height: 1.7;
   }
   .aw-auth-demo-note strong {
     font-weight: 550;
@@ -114,17 +76,8 @@
     margin: 3px 0 0;
     color: #a4a4bd;
   }
-  .aw-auth-form {
-    display: grid;
-    gap: 17px;
-  }
-  .aw-auth-field {
-    display: grid;
-    gap: 8px;
-    min-width: 0;
-  }
   .aw-auth-field > label {
-    font-size: 11px;
+    font-size: var(--aw-font-size-base);
     font-weight: 550;
     color: #d4d1e3;
   }
@@ -137,18 +90,14 @@
     border-radius: 6px;
     background: #0d121e;
     color: var(--aw-text);
-    font-size: 12px;
+    font-size: var(--aw-font-size-base);
   }
   .aw-auth-field input::placeholder {
     color: #8f96ac;
-    font-size: 11px;
+    font-size: var(--aw-font-size-base);
   }
   .aw-auth-field input[aria-invalid='true'] {
     border-color: #e6a1b1;
-  }
-  .aw-auth-password {
-    display: flex;
-    position: relative;
   }
   .aw-auth-field .aw-auth-password input {
     padding-right: 55px;
@@ -162,34 +111,16 @@
     border-radius: 4px;
     background: #171d2a;
     color: #b7a8e9;
-    font-size: 10px;
+    font-size: var(--aw-font-size-base);
     padding: 0 10px;
   }
   .aw-auth-field-error {
-    font-size: 10px;
     color: #f4b0bf;
-    line-height: 1.6;
-    margin: 0;
   }
   .aw-auth-error {
     color: #f2bac7;
     border: 1px solid #d78c9e55;
     background: #d78c9e0b;
-    padding: 11px 13px;
-    border-radius: 6px;
-    font-size: 11px;
-    line-height: 1.7;
-  }
-  .aw-auth-submit {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    margin-top: 3px;
-  }
-  .aw-auth-submit > span:last-child:not(.spinner-border) {
-    margin-left: auto;
   }
   .aw-auth-submit:disabled {
     background: #aa98df;
@@ -199,19 +130,12 @@
   }
   .aw-auth-pending {
     color: var(--aw-muted);
-    font-size: 10px;
-    margin: 0;
-  }
-  .aw-auth-demo-accounts {
-    display: grid;
-    gap: 9px;
-    margin-top: 23px;
   }
   .aw-auth-demo-accounts > p {
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 8px;
+    font-size: var(--aw-font-size-base);
     letter-spacing: 1.2px;
     color: #979bb3;
     margin: 0 0 7px;
@@ -222,22 +146,18 @@
     background: var(--aw-border);
   }
   .aw-auth-demo-accounts .btn {
-    font-size: 11px;
+    font-size: var(--aw-font-size-base);
     padding: 10px 13px;
   }
   .aw-auth-demo-accounts small {
-    font-size: 9px;
+    font-size: var(--aw-font-size-base);
     line-height: 1.8;
     color: #969db4;
     overflow-wrap: anywhere;
     margin-top: 3px;
   }
   .aw-auth-switch {
-    font-size: 11px;
     color: var(--aw-muted);
-    text-align: center;
-    margin: 24px 0 0;
-    line-height: 1.8;
   }
   .aw-auth-switch a {
     color: #c2b2ff;
@@ -245,18 +165,10 @@
     margin-left: 5px;
   }
   .aw-auth-bottom-note {
-    font-size: 10px;
     color: var(--aw-muted);
-    text-align: center;
-    margin: 20px auto 0;
-    line-height: 1.8;
   }
   .aw-auth-success {
     border: 1px solid #a697ff36;
-    border-radius: 10px;
-    padding: 28px 20px;
-    text-align: center;
-    margin-block: 24px;
     background: #a697ff08;
   }
   .aw-auth-success > span {
@@ -274,7 +186,7 @@
     font-size: 21px;
   }
   .aw-auth-success p {
-    font-size: 12px;
+    font-size: var(--aw-font-size-base);
     line-height: 1.8;
     color: var(--aw-muted);
     overflow-wrap: anywhere;
@@ -289,35 +201,9 @@
     border: 0;
     margin: 18px auto 0;
   }
-  @media (max-width: 1100px) {
-    .aw-auth-panel {
-      padding: 34px 28px;
-    }
-    .aw-auth-art {
-      padding: 30px;
-    }
-  }
   @media (max-width: 767px) {
-    .aw-auth-grid {
-      grid-template-columns: 1fr;
-    }
-    .aw-auth-art {
-      display: none;
-    }
-    .aw-auth-panel {
-      padding: 30px 24px;
-    }
     .aw-auth-panel h1 {
       font-size: 28px;
-    }
-    .aw-auth {
-      padding-top: 20px;
-    }
-    .aw-auth-grid {
-      margin-top: 20px;
-    }
-    .aw-auth-bottom-note {
-      font-size: 9px;
     }
   }
 }

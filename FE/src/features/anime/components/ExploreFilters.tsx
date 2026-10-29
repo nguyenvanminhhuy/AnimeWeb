@@ -1,3 +1,8 @@
+import { Selectbox } from '../../../components/ui/Selectbox';
+import { Combobox } from '../../../components/ui/Combobox';
+import { Input } from '../../../components/ui/Input';
+import { Button } from '../../../components/ui/Button';
+import { Icon } from '../../../components/ui/Icon';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { Form } from 'react-router-dom';
@@ -7,10 +12,11 @@ import type { CatalogQuery } from '../catalogQuery';
 
 interface ExploreFiltersProps {
   query: CatalogQuery;
+  suggestions?: readonly string[];
 }
 export const exploreFormId = 'explore-search-form';
 
-export function ExploreFilters({ query }: ExploreFiltersProps) {
+export function ExploreFilters({ query, suggestions = [] }: ExploreFiltersProps) {
   const [expanded, setExpanded] = useState(() => matchMedia('(min-width: 768px)').matches);
   function submitFilter(event: FormEvent<HTMLSelectElement>) {
     event.currentTarget.form?.requestSubmit();
@@ -20,17 +26,19 @@ export function ExploreFilters({ query }: ExploreFiltersProps) {
       id={exploreFormId}
       action={paths.explore}
       method="get"
-      className="aw-explore-filters aw-surface"
+      className="aw-explore-filters aw-surface tw:p-6 tw:rounded-[12px] tw:max-mobile:p-4"
       role="search"
       aria-label="Tìm và lọc anime"
     >
-      <div className="aw-explore-search-row">
-        <div className="aw-explore-search-field">
+      <div className="aw-explore-search-row tw:gap-3 tw:flex tw:max-mobile:gap-2">
+        <div className="aw-explore-search-field tw:px-4 tw:py-3 tw:gap-3 tw:rounded-[7px] tw:flex tw:items-center tw:flex-1 tw:min-w-0 tw:max-mobile:p-2.5 tw:max-mobile:gap-2">
           <label htmlFor="explore-search" className="visually-hidden">
             Từ khóa anime
           </label>
-          <span aria-hidden="true">⌕</span>
-          <input
+          <Icon name="search" />
+          <Combobox
+            variant="unstyled"
+            suggestions={suggestions}
             id="explore-search"
             name="q"
             type="search"
@@ -40,21 +48,23 @@ export function ExploreFilters({ query }: ExploreFiltersProps) {
             placeholder="Tên anime, tên tiếng Anh…"
           />
         </div>
-        <button className="btn aw-btn-primary" type="submit">
-          Tìm anime <span aria-hidden="true">↗</span>
-        </button>
+        <Button
+          variant="primary"
+          type="submit"
+          label="Tìm anime"
+          endIcon={<Icon name="external-link" size="sm" />}
+        />
       </div>
-      <input type="hidden" name="page" value="1" />
+      <Input variant="unstyled" type="hidden" name="page" value="1" />
       <details open={expanded} onToggle={(event) => setExpanded(event.currentTarget.open)}>
         <summary>
           Bộ lọc <span>Thu gọn / Mở rộng</span>
         </summary>
-        <div className="aw-explore-filter-grid">
-          <div className="aw-explore-field">
+        <div className="aw-explore-filter-grid tw:gap-4.5 tw:grid tw:grid-cols-4 tw:mt-4.25 tw:max-tablet:grid-cols-2">
+          <div className="aw-explore-field tw:grid tw:text-body">
             <label htmlFor="explore-genre">Thể loại</label>
-            <select
+            <Selectbox
               id="explore-genre"
-              className="form-select"
               name="genre"
               key={query.genre}
               defaultValue={query.genre}
@@ -66,13 +76,12 @@ export function ExploreFilters({ query }: ExploreFiltersProps) {
                   {option.label}
                 </option>
               ))}
-            </select>
+            </Selectbox>
           </div>
-          <div className="aw-explore-field">
+          <div className="aw-explore-field tw:grid tw:text-body">
             <label htmlFor="explore-year">Năm phát hành</label>
-            <select
+            <Selectbox
               id="explore-year"
-              className="form-select"
               name="year"
               key={query.year}
               defaultValue={query.year}
@@ -84,13 +93,12 @@ export function ExploreFilters({ query }: ExploreFiltersProps) {
                   {year}
                 </option>
               ))}
-            </select>
+            </Selectbox>
           </div>
-          <div className="aw-explore-field">
+          <div className="aw-explore-field tw:grid tw:text-body">
             <label htmlFor="explore-status">Trạng thái</label>
-            <select
+            <Selectbox
               id="explore-status"
-              className="form-select"
               name="status"
               key={query.status}
               defaultValue={query.status}
@@ -102,13 +110,12 @@ export function ExploreFilters({ query }: ExploreFiltersProps) {
                   {option.label}
                 </option>
               ))}
-            </select>
+            </Selectbox>
           </div>
-          <div className="aw-explore-field">
+          <div className="aw-explore-field tw:grid tw:text-body">
             <label htmlFor="explore-format">Định dạng</label>
-            <select
+            <Selectbox
               id="explore-format"
-              className="form-select"
               name="format"
               key={query.format}
               defaultValue={query.format}
@@ -120,7 +127,7 @@ export function ExploreFilters({ query }: ExploreFiltersProps) {
                   {option.label}
                 </option>
               ))}
-            </select>
+            </Selectbox>
           </div>
         </div>
       </details>
