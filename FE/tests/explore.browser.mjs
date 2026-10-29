@@ -187,7 +187,7 @@ export async function verifyExplore(browser, baseURL) {
     await ready();
     assert.deepEqual(await hrefs(), publicResults);
     assert.equal(new URL(page.url()).searchParams.get('genre'), 'fantasy');
-    await page.getByRole('button', { name: 'Đăng xuất demo' }).click();
+    await page.getByRole('button', { name: 'Đăng xuất' }).click();
     assert.deepEqual(await hrefs(), publicResults);
 
     await page.route('**/images/starlight.svg', (route) => route.abort());

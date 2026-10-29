@@ -1,6 +1,6 @@
 # Prompt thực thi: tạo màn hình từ tên
 
-Người dùng chỉ cần yêu cầu: **“Đọc Anime-Web/DOC/prompts/screen-generation.md và tạo màn hình [tên màn hình].”** Không yêu cầu họ điền template hoặc cung cấp thêm ảnh UI. Khi chỉ được yêu cầu đọc/review tài liệu, không tự triển khai màn hình.
+Người dùng chỉ cần yêu cầu: **“Đọc Anime-Web/DOC/docs-FE/prompts/screen-generation.md và tạo màn hình [tên màn hình].”** Không yêu cầu họ điền template hoặc cung cấp thêm ảnh UI. Khi chỉ được yêu cầu đọc/review tài liệu, không tự triển khai màn hình.
 
 ## Nhiệm vụ
 
@@ -11,7 +11,7 @@ Chỉ triển khai màn hình được gọi tên và nền/component cần thi�
 ## 1. Tự đọc bối cảnh
 
 - Đọc AGENTS.md áp dụng cho SRC và các thư mục dự án trước khi sửa.
-- Đọc DOC/readme.md, DOC/decisions.md, DOC/entities.md, DOC/api-contract.md, DOC/design/wireframes.md và [mục lục rules](../rules/readme.md). Áp dụng đầy đủ [kiến trúc](../rules/architecture.md), [cấu trúc FE](../rules/fe-structure.md), [style](../rules/styling.md) và [role/permission](../rules/roles-permissions.md).
+- Đọc DOC/readme.md, DOC/decisions.md, DOC/entities.md, DOC/api-contract.md, DOC/docs-FE/design/wireframes.md và [mục lục rules](../rules/readme.md). Áp dụng đầy đủ [kiến trúc](../rules/architecture.md), [cấu trúc FE](../rules/fe-structure.md), [style](../rules/styling.md) và [role/permission](../rules/roles-permissions.md).
 - Đọc thêm [route và navigation](../rules/routes.md); đây là rule bắt buộc cho mọi màn hình được generate.
 - Đọc [component dùng chung](../rules/common/readme.md), áp dụng [Button](../rules/common/button.md) cho nút hành động và CTA; tái sử dụng component thay vì lặp thẻ button/class btn ở page/feature.
 - Button có icon dùng label/startIcon/endIcon theo hướng đọc; không chèn whitespace/margin riêng để căn icon. Chỉ truyền label hoặc children, giữ aria-label cho nút icon-only.
@@ -46,7 +46,7 @@ Nếu màn hình đã tồn tại, cập nhật màn hình đó theo yêu cầu 
 - Nếu FE đã có ứng dụng: giữ stack, routing, design system và thư viện hiện tại.
 - Nếu FE chỉ có khung thư mục: việc người dùng yêu cầu thực thi prompt này cho phép thiết lập nền **React + TypeScript + Vite**, router và scripts dev/build/typecheck tối thiểu. Đây là mặc định của prompt cho lần triển khai, không khẳng định mọi đề xuất trong DOC đều đã được duyệt.
 - Chỉ thêm dependency cần thiết; không cài sẵn một bộ UI/player/state management lớn nếu chưa dùng.
-- Dự án đã cài Tailwind CSS và Bootstrap 5; tuân thủ DOC/rules/styling.md. Layout, flex/grid, spacing, kích thước và responsive ưu tiên utility Tailwind `tw:` trực tiếp trong JSX; dùng tw:text-body cho font token. Tái sử dụng component trước, chỉ thêm CSS cho thiết kế/trạng thái đặc thù khi cần, xóa declaration/rule đã được thay bằng utility. Không import lại thư viện hoặc bật Preflight. Không trộn utility Bootstrap !important với utility Tailwind cùng thuộc tính.
+- Dự án đã cài Tailwind CSS và Bootstrap 5; tuân thủ DOC/docs-FE/rules/styling.md. Layout, flex/grid, spacing, kích thước và responsive ưu tiên utility Tailwind `tw:` trực tiếp trong JSX; dùng tw:text-body cho font token. Tái sử dụng component trước, chỉ thêm CSS cho thiết kế/trạng thái đặc thù khi cần, xóa declaration/rule đã được thay bằng utility. Không import lại thư viện hoặc bật Preflight. Không trộn utility Bootstrap !important với utility Tailwind cùng thuộc tính.
 - Style chung nằm trong `src/styles/common/`, đăng ký qua common/index.css. CSS riêng chỉ thêm khi class/common không đáp ứng; ưu tiên file CSS/CSS Module. Chỉ thật cần mới dùng `<style>...</style>` ở cuối JSX, selector có namespace để không ảnh hưởng trang khác; React không tự scope thẻ style.
 - Font nội dung, metadata, label và control tối thiểu 14px ở thiết lập mặc định; dùng `--aw-font-size-base: 0.875rem`, không giảm font trên mobile để ép layout. Áp dụng [quy tắc font](../rules/styling.md#font-chữ).
 - Nếu chưa có thiết kế: dùng wireframe trong DOC, nền xanh đen, điểm nhấn tím, tiếng Việt, bố cục tập trung poster và nội dung. Tạo tokens dùng chung. Xem đây là mặc định có thể thay đổi, không phải thương hiệu đã chốt.
@@ -112,7 +112,7 @@ FE/src/styles/common/               CSS tái sử dụng giữa component/màn h
 - Nếu có công cụ browser phù hợp, kiểm tra route trực tiếp, thao tác chính, responsive và guest/member liên quan. Nếu không có, ghi rõ chưa kiểm tra trình duyệt, không suy ra UI đúng chỉ từ build.
 - Không đọc .env/credentials; không gọi API/model thật trong kiểm tra. Dùng fixture/mock/server cục bộ; tránh request ngoài từ asset/video khi kiểm thử.
 - Chỉ thêm test khi có giá trị kiểm tra hành vi; không tạo test chỉ khẳng định thư mục tồn tại.
-- Cập nhật tài liệu bị ảnh hưởng và thêm kết quả thật vào DOC/verification.md; giữ lịch sử cũ. Ghi giả định/mặc định đang dùng, không biến chúng thành quyết định người dùng đã xác nhận.
+- Cập nhật tài liệu bị ảnh hưởng và thêm kết quả thật vào DOC/docs-FE/verification.md; giữ lịch sử cũ. Ghi giả định/mặc định đang dùng, không biến chúng thành quyết định người dùng đã xác nhận.
 
 ## 8. Điều kiện hoàn thành và bàn giao
 

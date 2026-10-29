@@ -10,13 +10,13 @@
 | Source chung trong Anime-Web, tách FE/BE/DOC | Đã tạo thư mục |
 | Thảo luận và đọc tài liệu trước khi code màn hình | Đang áp dụng; đã cho phép thiết lập thư viện FE |
 | Dùng pnpm và lockfile chung tại SRC | Theo AGENTS.md |
-| Dùng React Router, quản lý tập trung tại FE/src/routes và có rule cho lần generate sau | Xác nhận 2026-10-28; DOC/rules/routes.md |
+| Dùng React Router, quản lý tập trung tại FE/src/routes và có rule cho lần generate sau | Xác nhận 2026-10-28; DOC/docs-FE/rules/routes.md |
 | Khách tìm kiếm, xem phim qua API /common | Xác nhận 2026-10-24 |
 | Thư viện và đăng bình luận yêu cầu đăng nhập | Xác nhận 2026-10-24 |
 | API phải có thiết kế role và permission | Xác nhận 2026-10-24; mô hình chi tiết còn là đề xuất |
 | Cài Tailwind và Bootstrap 5 bằng pnpm | Yêu cầu 2026-10-24; đã tích hợp trên nền React + TypeScript + Vite |
 | Ưu tiên class; style riêng chỉ khi cần; có style common | Yêu cầu 2026-10-24; quy ước chi tiết tại rules/styling.md |
-| Tập trung quy định generate màn hình trong DOC/rules | Yêu cầu 2026-10-24; prompt thực thi giữ trong DOC/prompts |
+| Tập trung quy định generate màn hình trong DOC/docs-FE/rules | Yêu cầu 2026-10-24; prompt thực thi giữ trong DOC/docs-FE/prompts |
 
 ## Đề xuất đang chờ duyệt
 

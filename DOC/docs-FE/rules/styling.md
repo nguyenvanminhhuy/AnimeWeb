@@ -95,7 +95,7 @@ pnpm --filter anime-web-fe run format:check
 
 Hoặc tại Anime-Web/FE chạy `pnpm format` / `pnpm format:check`; tại Anime-Web cũng có hai script điều phối tương ứng. `format` sửa file, `format:check` chỉ kiểm tra. Script `build` chạy format:check trước typecheck/Vite, vì vậy code chưa đúng định dạng sẽ khiến build dừng và cần chạy format.
 
-Quy tắc trong `Anime-Web/AGENTS.md` yêu cầu chạy format trước khi bàn giao code được tạo/sửa. Chưa thiết lập watcher định dạng mọi thay đổi file ngoài editor. `FE/.prettierignore` loại trừ node_modules, dist, test-results, coverage, artwork SVG cục bộ và file môi trường; lệnh chỉ chạy trong FE, không ghi lại lịch sử DOC/verification.md.
+Quy tắc trong `Anime-Web/AGENTS.md` yêu cầu chạy format trước khi bàn giao code được tạo/sửa. Chưa thiết lập watcher định dạng mọi thay đổi file ngoài editor. `FE/.prettierignore` loại trừ node_modules, dist, test-results, coverage, artwork SVG cục bộ và file môi trường; lệnh chỉ chạy trong FE, không ghi lại lịch sử DOC/docs-FE/verification.md.
 
 Tham chiếu: [cài và chạy Prettier](https://prettier.io/docs/install), [extension VS Code](https://github.com/prettier/prettier-vscode).
 
