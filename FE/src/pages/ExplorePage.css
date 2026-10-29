@@ -85,23 +85,6 @@
   .aw-explore-search-field input::placeholder {
     color: #9298ad;
   }
-  .aw-explore-search-row .btn {
-    min-width: 135px;
-  }
-  .aw-explore-filters details {
-    margin-top: 22px;
-  }
-  .aw-explore-filters summary {
-    font-size: var(--aw-font-size-base);
-    color: #d2cddd;
-    cursor: pointer;
-    padding-bottom: 4px;
-  }
-  .aw-explore-filters summary span {
-    float: right;
-    font-size: var(--aw-font-size-base);
-    color: var(--aw-muted);
-  }
   .aw-explore-field {
     gap: 9px;
     color: var(--aw-muted);
@@ -201,14 +184,6 @@
   @media (max-width: 767px) {
     .aw-explore-search-field input {
       font-size: var(--aw-font-size-base);
-    }
-    .aw-explore-search-row .btn {
-      min-width: auto;
-      padding: 12px;
-      font-size: var(--aw-font-size-base);
-    }
-    .aw-explore-search-row .btn > .aw-button-icon {
-      display: none;
     }
     .aw-explore-sort .aw-explore-field:first-child {
       flex: 1;

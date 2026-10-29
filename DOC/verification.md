@@ -365,3 +365,32 @@ Kết quả kiểm tra file/liên kết tài liệu được bổ sung sau khi c
 - Toàn bộ verifyExplore, verifyLibrary, verifyDetail, verifyHome, verifyAuth, verifyNavigation, verifyFormControls, verifyControlSizes, verifyIcons, verifyPagination và verifyButton PASS, giữ nguyên assertion. Tối đa ba bộ chạy song song với browser context độc lập; kiểm tra cả loading/empty/error/guest/member, size, focus, font 14px, form/query/history và ownership.
 - Production preview 4175 chụp lại 49 view: mọi bounding box khớp baseline. Hai giá trị computed margin ở Login được lấy mẫu khác nhau, kiểm tra lại trực tiếp ở 768/1000px xác nhận margin 40px và hình học không thay đổi. Production smoke PASS mobile search/query, login returnTo, favorite/Library, SVG từ chunk riêng, không runtime style injection, không tràn ngang/request ngoài/pageerror.
 - Đã xem ảnh Home mobile và Explore desktop sau refactor. Không đọc .env/credentials, không gọi API/model thật hoặc deploy. Test dùng Chromium hiện có; chưa xác nhận browser khác.
+
+## 2026-10-29 — Bộ lọc Khám phá luôn hiển thị
+
+- Thay details/summary và state đóng/mở bằng section luôn hiển thị, có aria-label Bộ lọc. Bỏ thao tác Thu gọn/Mở rộng trên mọi kích thước; giữ layout Tailwind và form/query hiện có. Xóa CSS chỉ dùng cho phần thu gọn.
+- Đồng bộ explore-screen.md và design/wireframes.md; giữ nguyên bằng chứng lịch sử cũ.
+- Chạy pnpm --filter anime-web-fe run format và build (format:check/typecheck/Vite): PASS.
+- Chạy verifyExplore bằng Chromium tại http://127.0.0.1:4174: PASS ở 375/768/1440px. Assertion mới xác nhận cả bốn control lọc hiển thị ngay và không còn details/summary. Hồi quy tìm kiếm, lọc kết hợp/xóa lọc, sắp xếp, phân trang, reload/Back/Forward, query sai, loading/error/empty, guest/member và ảnh dự phòng đều PASS; không request ngoài hoặc pageerror.
+
+## 2026-10-29 — Cảnh báo editor tại ExploreFilters
+
+- Đổi tw:rounded-[12px] thành utility chuẩn tw:rounded-xl theo gợi ý Tailwind IntelliSense; thêm Selectbox vào words của cspell.json tại project, giữ kiểm tra chính tả hoạt động.
+- pnpm --filter anime-web-fe run format và build (format:check/typecheck/Vite): PASS. Không chạy lại browser cho thay đổi class tương đương và từ điển; chưa xác nhận trực tiếp diagnostics của extension trong editor.
+
+## 2026-10-29 — Chuẩn hóa class Tailwind tại AnimeDetailPage
+
+- Áp dụng tám gợi ý canonical class: năm minmax(0,_1fr) thành minmax(0,1fr), rounded-[8px] thành rounded-lg, leading-[2] thành leading-loose và max-mobile:order-[-1] thành max-mobile:-order-1. Giữ các chỉnh sửa có sẵn khác trong file.
+- pnpm --filter anime-web-fe run format và build (format:check/typecheck/Vite): PASS. Tìm kiếm xác nhận không còn các class được báo trong AnimeDetailPage.tsx; chưa kiểm tra trực tiếp diagnostics của extension hoặc chạy lại browser cho thay đổi tương đương này.
+
+## 2026-10-29 — Tìm kiếm tự động tại Khám phá
+
+- Bỏ nút Tìm anime và CSS chỉ dành cho nút này. Ô Combobox tự submit GET qua React Router sau 350ms ngừng nhập; Enter submit ngay. Giữ bộ lọc/sort/pageSize, về trang 1, hỗ trợ xóa nội dung và chờ composition kết thúc. Không remount ô nhập theo từ khóa nên giữ focus.
+- Hủy timer khi submit, điều hướng hoặc unmount; đồng bộ nội dung khi Back/Forward. Hai lượt test ban đầu phát hiện replace chuẩn hóa URL hủy lần nhập mới sau đổi sort; sửa để replace cùng từ khóa không hủy timer/ghi đè nội dung đang nhập.
+- Cập nhật explore-screen.md và assertion browser cho giao diện không có nút submit. verifyFormControls PASS: tự tìm không click/Enter, debounce, focus, free text, xóa từ khóa giữ sort, IME, hủy tìm đang chờ khi Back và đồng bộ ô nhập. verifyExplore PASS tại 375/768/1440px: Enter, lọc/sort/phân trang, reload/history, query sai, trạng thái mock, guest/member và ảnh dự phòng; không request ngoài hoặc pageerror.
+- pnpm --filter anime-web-fe run format và build (format:check/typecheck/Vite): PASS. Test chỉ dùng dữ liệu mock và Chromium hiện có, không gọi API/model thật.
+
+## 2026-10-29 — Ẩn chip từ khóa tìm kiếm
+
+- Bỏ q khỏi danh sách chip Đang lọc, giữ từ khóa trong ô nhập/URL và tiêu đề Kết quả dành cho bạn khi tìm kiếm. Các chip thể loại/năm/trạng thái/định dạng giữ nguyên. Đồng bộ explore-screen.md.
+- pnpm --filter anime-web-fe run format và build (format:check/typecheck/Vite): PASS. Chromium smoke với q=moon và q=moon&year=2025: không có chip từ khóa, chip năm vẫn hiện khi có chọn, ô tìm kiếm giữ moon. Không thêm file test cho thay đổi hiển thị nhỏ.

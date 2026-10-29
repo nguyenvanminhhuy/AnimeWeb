@@ -22,7 +22,7 @@ export function AnimeDetailPage() {
         role="status"
         aria-label="Đang tải chi tiết anime"
       >
-        <div className="aw-skeleton aw-detail-loading-banner tw:rounded-[12px] tw:h-102.5 tw:mb-5" />
+        <div className="aw-skeleton aw-detail-loading-banner tw:rounded-xl tw:h-102.5 tw:mb-5" />
         <p>Đang mở câu chuyện…</p>
       </div>
     );
@@ -78,7 +78,7 @@ export function AnimeDetailPage() {
         <span aria-current="page">{data.title}</span>
       </nav>
       <section
-        className="aw-detail-hero tw:p-10.5 tw:gap-9 tw:grid tw:grid-cols-[190px_minmax(0,_1fr)] tw:rounded-[14px] tw:relative tw:isolate tw:overflow-hidden tw:max-tablet:p-7 tw:max-tablet:gap-6.5 tw:max-tablet:grid-cols-[150px_minmax(0,_1fr)] tw:max-mobile:p-6 tw:max-mobile:gap-4.5 tw:max-mobile:grid-cols-[90px_minmax(0,_1fr)]"
+        className="aw-detail-hero tw:p-10.5 tw:gap-9 tw:grid tw:grid-cols-[190px_minmax(0,1fr)] tw:rounded-[14px] tw:relative tw:isolate tw:overflow-hidden tw:max-tablet:p-7 tw:max-tablet:gap-6.5 tw:max-tablet:grid-cols-[150px_minmax(0,1fr)] tw:max-mobile:p-6 tw:max-mobile:gap-4.5 tw:max-mobile:grid-cols-[90px_minmax(0,1fr)]"
         aria-labelledby="detail-title"
       >
         <Artwork
@@ -93,7 +93,7 @@ export function AnimeDetailPage() {
           key={data.posterUrl}
           src={data.posterUrl}
           alt={`Poster minh họa ${data.title}`}
-          className="aw-detail-poster tw:w-47.5 tw:object-cover tw:rounded-[8px] tw:max-tablet:w-37.5 tw:max-mobile:w-22.5"
+          className="aw-detail-poster tw:w-47.5 tw:object-cover tw:rounded-lg tw:max-tablet:w-37.5 tw:max-mobile:w-22.5"
           eager
         />
         <div className="aw-detail-hero-copy tw:min-w-0">
@@ -131,13 +131,7 @@ export function AnimeDetailPage() {
                 label={playable.id === saved?.episodeId ? 'Xem tiếp' : 'Xem ngay'}
               />
             ) : (
-              <Button
-                as="anchor"
-                variant="primary"
-                href="#episodes"
-                label="Danh sách tập"
-                endIcon={<Icon name="arrow-down" size="sm" />}
-              />
+              <Button as="anchor" variant="primary" href="#episodes" label="Danh sách tập" />
             )}
             {user ? (
               <Button
@@ -165,12 +159,12 @@ export function AnimeDetailPage() {
           </p>
         </div>
       </section>
-      <div className="aw-detail-body tw:gap-10.5 tw:grid tw:grid-cols-[minmax(0,_1fr)_280px] tw:mt-10 tw:max-tablet:gap-6.25 tw:max-tablet:grid-cols-[minmax(0,_1fr)_230px] tw:max-mobile:grid-cols-[1fr]">
+      <div className="aw-detail-body tw:gap-10.5 tw:grid tw:grid-cols-[minmax(0,1fr)_280px] tw:mt-10 tw:max-tablet:gap-6.25 tw:max-tablet:grid-cols-[minmax(0,1fr)_230px] tw:max-mobile:grid-cols-[1fr]">
         <div className="aw-detail-main tw:min-w-0">
           <section className="aw-detail-section" aria-labelledby="synopsis-title">
             <span className="aw-eyebrow">ĐIỀU GÌ ĐANG CHỜ PHÍA TRƯỚC?</span>
             <h2 id="synopsis-title">Câu chuyện</h2>
-            <p className="aw-detail-synopsis tw:text-body tw:leading-[2]">{data.synopsis}</p>
+            <p className="aw-detail-synopsis tw:text-body tw:leading-loose">{data.synopsis}</p>
             <p className="aw-detail-fiction-note tw:mx-0 tw:my-4.5 tw:text-body tw:leading-[1.8]">
               Tên phim, nội dung và hình ảnh là minh họa cho bản demo Anime Web.
             </p>
@@ -189,7 +183,7 @@ export function AnimeDetailPage() {
           <CommentsPanel key={`${data.id}:${user ?? 'guest'}`} animeId={data.id} />
         </div>
         <aside
-          className="aw-detail-info tw:p-6 tw:rounded-[10px] tw:max-tablet:p-5 tw:max-mobile:order-[-1]"
+          className="aw-detail-info tw:p-6 tw:rounded-[10px] tw:max-tablet:p-5 tw:max-mobile:-order-1"
           aria-labelledby="anime-info-title"
         >
           <span className="aw-eyebrow">GÓC NHỎ VỀ CÂU CHUYỆN</span>

@@ -118,7 +118,7 @@ Trang thư viện yêu cầu đăng nhập; guest thấy lời mời đăng nh�
 
 ## Responsive và khả năng sử dụng chung
 
-- Điện thoại: poster xếp khoảng hai cột tùy chiều rộng; bộ lọc thu gọn; danh sách tập nằm dưới player.
+- Điện thoại: poster xếp khoảng hai cột tùy chiều rộng; bộ lọc Khám phá luôn hiển thị; danh sách tập nằm dưới player.
 - Máy tính: grid mở rộng; danh sách tập có thể đặt cạnh player.
 - Điều khiển dùng được bằng bàn phím; có focus rõ, label cho input, văn bản thay thế cho ảnh.
 - Dùng controls video có sẵn trước; chỉ thay bằng player tùy biến khi có nhu cầu rõ.
