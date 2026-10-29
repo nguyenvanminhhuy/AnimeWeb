@@ -62,7 +62,7 @@ export async function verifyNavigation(browser, baseURL) {
     await page.getByRole('link', { name: /Tiếp tục về trang/ }).click();
     await page.getByRole('heading', { name: 'Thư viện của bạn', exact: true }).waitFor();
     await unchangedDocument();
-    await page.getByRole('button', { name: 'Đăng xuất demo' }).click();
+    await page.getByRole('button', { name: 'Đăng xuất' }).click();
     await page
       .getByRole('heading', { name: 'Thư viện dành cho thành viên', exact: true })
       .waitFor();

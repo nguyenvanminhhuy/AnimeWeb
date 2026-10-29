@@ -18,7 +18,7 @@ export async function verifyAuth(browser, baseURL) {
     page.on('pageerror', (error) => errors.push(error.message));
     const success = () =>
       page.getByRole('heading', { name: 'Phiên demo đã sẵn sàng', exact: true }).waitFor();
-    const logout = () => page.getByRole('button', { name: 'Đăng xuất demo', exact: true }).click();
+    const logout = () => page.getByRole('button', { name: 'Đăng xuất', exact: true }).click();
     const password = 'OnlyDemo!234';
     const fillRegistration = async (email, name = 'Người xem thử') => {
       await page.getByLabel('Tên hiển thị', { exact: true }).fill(name);
@@ -51,7 +51,7 @@ export async function verifyAuth(browser, baseURL) {
     }
 
     await page.goto(`${baseURL}/login?returnTo=%2Flibrary%3Ftab%3Dhistory`);
-    await page.getByRole('button', { name: 'Đăng nhập demo', exact: true }).click();
+    await page.getByRole('button', { name: 'Đăng nhập', exact: true }).click();
     await page.getByRole('alert').waitFor();
     assert.equal(
       await page.getByLabel('Email demo', { exact: true }).getAttribute('aria-invalid'),
@@ -66,7 +66,7 @@ export async function verifyAuth(browser, baseURL) {
       'text',
     );
     await page.getByRole('button', { name: 'Ẩn mật khẩu demo', exact: true }).click();
-    await page.getByRole('button', { name: 'Đăng nhập demo', exact: true }).click();
+    await page.getByRole('button', { name: 'Đăng nhập', exact: true }).click();
     assert.equal(
       await page.getByLabel('Mật khẩu demo', { exact: true }).getAttribute('aria-invalid'),
       'true',
@@ -83,14 +83,14 @@ export async function verifyAuth(browser, baseURL) {
     await page.getByRole('heading', { name: 'Tạo tài khoản demo', exact: true }).waitFor();
     assert.equal(new URL(page.url()).searchParams.get('returnTo'), '/library?tab=history');
     assert.equal(await page.getByLabel('Mật khẩu demo', { exact: true }).inputValue(), '');
-    await page.getByRole('button', { name: 'Đăng ký demo', exact: true }).click();
+    await page.getByRole('button', { name: 'Đăng ký', exact: true }).click();
     await page.waitForFunction(() => document.activeElement?.id === 'register-displayName');
     await fillRegistration('viewer@anime.test');
     await page.getByLabel('Nhập lại mật khẩu demo', { exact: true }).fill('Mismatch!123');
-    await page.getByRole('button', { name: 'Đăng ký demo', exact: true }).click();
+    await page.getByRole('button', { name: 'Đăng ký', exact: true }).click();
     await page.getByText('Mật khẩu nhập lại chưa khớp.', { exact: true }).waitFor();
     await page.getByLabel('Nhập lại mật khẩu demo', { exact: true }).fill(password);
-    await page.getByRole('button', { name: 'Đăng ký demo', exact: true }).click();
+    await page.getByRole('button', { name: 'Đăng ký', exact: true }).click();
     await page
       .getByText('Email này đã có hồ sơ demo. Hãy chuyển sang đăng nhập.', { exact: true })
       .waitFor();
@@ -100,7 +100,7 @@ export async function verifyAuth(browser, baseURL) {
     await page.evaluate(() => {
       window.__authMarker = 'same-document';
     });
-    await page.getByRole('button', { name: 'Đăng ký demo', exact: true }).click();
+    await page.getByRole('button', { name: 'Đăng ký', exact: true }).click();
     await page.getByRole('status').filter({ hasText: 'Đang xử lý hồ sơ demo' }).waitFor();
     assert.equal(await page.getByRole('button', { name: /Đang xử lý/ }).isDisabled(), true);
     await page.locator('form.aw-auth-form').evaluate((form) => form.requestSubmit());
@@ -136,7 +136,7 @@ export async function verifyAuth(browser, baseURL) {
     await logout();
     await page.goto(`${baseURL}/register?returnTo=%2Flibrary`);
     await fillRegistration('second@anime.test', 'W'.repeat(40));
-    await page.getByRole('button', { name: 'Đăng ký demo', exact: true }).click();
+    await page.getByRole('button', { name: 'Đăng ký', exact: true }).click();
     await success();
     await page.setViewportSize({ width: 375, height: 1000 });
     assert.ok(
@@ -152,7 +152,7 @@ export async function verifyAuth(browser, baseURL) {
     await page.getByLabel('Email demo', { exact: true }).fill('READER@ANIME.TEST');
     // The UI explicitly states that passwords only validate the demo form.
     await page.getByLabel('Mật khẩu demo', { exact: true }).fill('OtherDemo!456');
-    await page.getByRole('button', { name: 'Đăng nhập demo', exact: true }).click();
+    await page.getByRole('button', { name: 'Đăng nhập', exact: true }).click();
     await success();
     await page.getByRole('link', { name: /Tiếp tục về trang/ }).click();
     await libraryReady();
@@ -170,14 +170,14 @@ export async function verifyAuth(browser, baseURL) {
     await page.goto(`${baseURL}/login?mock=error`);
     await page.getByLabel('Email demo', { exact: true }).fill('viewer@anime.test');
     await page.getByLabel('Mật khẩu demo', { exact: true }).fill(password);
-    await page.getByRole('button', { name: 'Đăng nhập demo', exact: true }).click();
+    await page.getByRole('button', { name: 'Đăng nhập', exact: true }).click();
     await page.getByRole('alert').filter({ hasText: 'Thao tác demo tạm thời thất bại' }).waitFor();
-    await page.getByRole('button', { name: 'Đăng nhập demo', exact: true }).click();
+    await page.getByRole('button', { name: 'Đăng nhập', exact: true }).click();
     await success();
     await logout();
     await page.goto(`${baseURL}/register?mock=loading`);
     await fillRegistration('cancelled@anime.test');
-    await page.getByRole('button', { name: 'Đăng ký demo', exact: true }).click();
+    await page.getByRole('button', { name: 'Đăng ký', exact: true }).click();
     await page
       .locator('.aw-auth-switch')
       .getByRole('link', { name: 'Đăng nhập', exact: true })
@@ -202,7 +202,7 @@ export async function verifyAuth(browser, baseURL) {
         throw new Error('QuotaExceededError');
       };
     });
-    await page.getByRole('button', { name: 'Đăng ký demo', exact: true }).click();
+    await page.getByRole('button', { name: 'Đăng ký', exact: true }).click();
     await page
       .getByRole('alert')
       .filter({ hasText: 'Trình duyệt không lưu được hồ sơ demo' })
@@ -216,7 +216,7 @@ export async function verifyAuth(browser, baseURL) {
       localStorage.setItem('aw:profiles:v1', '{broken');
     });
     await fillRegistration('broken@anime.test');
-    await page.getByRole('button', { name: 'Đăng ký demo', exact: true }).click();
+    await page.getByRole('button', { name: 'Đăng ký', exact: true }).click();
     await page.getByRole('alert').filter({ hasText: 'Không đọc được hồ sơ demo' }).waitFor();
     assert.equal(await page.evaluate(() => localStorage.getItem('aw:profiles:v1')), '{broken');
     await page

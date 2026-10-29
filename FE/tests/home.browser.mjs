@@ -82,7 +82,7 @@ export async function verifyHome(browser, baseURL) {
   await page.getByText(/Chưa có video demo/).waitFor();
   await page.getByRole('link', { name: 'Về Trang chủ' }).click();
   await homeReady();
-  await page.getByRole('button', { name: 'Đăng xuất demo' }).click();
+  await page.getByRole('button', { name: 'Đăng xuất' }).click();
   assert.equal(await page.locator('progress').count(), 0);
   await page.goto(`${baseURL}/login`);
   await page.getByRole('button', { name: 'Dùng tài khoản mới' }).click();
@@ -93,7 +93,7 @@ export async function verifyHome(browser, baseURL) {
     await page.getByRole('button', { name: 'Yêu thích', exact: true }).getAttribute('aria-pressed'),
     'false',
   );
-  await page.getByRole('button', { name: 'Đăng xuất demo' }).click();
+  await page.getByRole('button', { name: 'Đăng xuất' }).click();
   await page.goto(`${baseURL}/library`);
   await page.getByRole('heading', { name: 'Thư viện dành cho thành viên' }).waitFor();
   await page.goto(`${baseURL}/`);

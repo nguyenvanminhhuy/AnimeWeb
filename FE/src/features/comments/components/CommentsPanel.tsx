@@ -91,7 +91,7 @@ export function CommentsPanel({ animeId }: { animeId: string }) {
               variant="primary"
               disabled={comments.pending || comments.loading}
               type="submit"
-              label={comments.pending ? 'Đang lưu…' : 'Gửi bình luận demo'}
+              label={comments.pending ? 'Đang lưu…' : 'Gửi bình luận'}
             />
           </div>
         </form>
