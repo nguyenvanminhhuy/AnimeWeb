@@ -1,0 +1,13 @@
+{
+  "name": "anime-web",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@11.10.0",
+  "scripts": {
+    "dev": "pnpm --filter anime-web-fe run dev",
+    "build": "pnpm --filter anime-web-fe run build",
+    "typecheck": "pnpm --filter anime-web-fe run typecheck",
+    "format": "pnpm --filter anime-web-fe run format",
+    "format:check": "pnpm --filter anime-web-fe run format:check"
+  }
+}

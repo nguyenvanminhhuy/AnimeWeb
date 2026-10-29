@@ -1,0 +1,14 @@
+/* One CSS entry: Bootstrap provides the reset, Tailwind provides prefixed utilities. */
+@layer theme, bootstrap, base, components, utilities, overrides;
+
+@import 'tailwindcss/theme.css' layer(theme) prefix(tw);
+@import 'bootstrap/dist/css/bootstrap.css' layer(bootstrap);
+@import './tokens.css' layer(base);
+@import './global.css' layer(base);
+@import './common/index.css' layer(components);
+@import '../pages/HomePage.css';
+@import '../pages/ExplorePage.css';
+@import '../pages/LibraryPage.css';
+@import '../pages/AuthPages.css';
+@import '../pages/AnimeDetailPage.css';
+@import 'tailwindcss/utilities.css' layer(utilities) prefix(tw) source('../');

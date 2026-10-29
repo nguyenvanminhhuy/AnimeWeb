@@ -1,0 +1,41 @@
+body {
+  min-width: 320px;
+  margin: 0;
+  background: var(--aw-background);
+  color: var(--aw-text);
+}
+
+#root {
+  min-height: 100dvh;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+a:hover {
+  color: var(--aw-accent);
+}
+button,
+input {
+  font: inherit;
+}
+button,
+a,
+input {
+  -webkit-tap-highlight-color: transparent;
+}
+:focus-visible {
+  outline: 3px solid #c7baff;
+  outline-offset: 5px;
+}
+::selection {
+  background: #7761c8;
+  color: white;
+}
+img {
+  max-width: 100%;
+}

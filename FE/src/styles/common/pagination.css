@@ -1,0 +1,40 @@
+.aw-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 36px;
+  font-size: 12px;
+}
+.aw-pagination a,
+.aw-pagination > span[aria-disabled] {
+  display: inline-flex;
+  min-width: 40px;
+  height: 40px;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 12px;
+  border: 1px solid var(--aw-border);
+  border-radius: 7px;
+}
+.aw-pagination a:hover {
+  background: #a697ff16;
+  border-color: var(--aw-accent);
+}
+.aw-pagination a[aria-current] {
+  background: #a697ff22;
+  border-color: #a697ff88;
+  color: #d7ccff;
+}
+.aw-pagination > span[aria-disabled] {
+  color: #737b93;
+}
+.aw-pagination-item {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+.aw-pagination-gap {
+  color: var(--aw-muted);
+}

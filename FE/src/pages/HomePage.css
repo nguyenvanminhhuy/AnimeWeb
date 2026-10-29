@@ -1,0 +1,400 @@
+@layer components {
+  .aw-hero {
+    position: relative;
+    isolation: isolate;
+    margin-top: 28px;
+    min-height: 535px;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #15152c;
+    border: 1px solid #ffffff0b;
+  }
+  .aw-hero-art {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -3;
+  }
+  .aw-hero-shade {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    background:
+      linear-gradient(90deg, #0f1226f5 0%, #11152bd9 32%, #11152b25 75%),
+      linear-gradient(0deg, #0b1020d9, transparent 45%);
+  }
+  .aw-hero-content {
+    padding: 48px 48px 100px;
+    max-width: 650px;
+  }
+  .aw-hero .aw-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 32px;
+    font-size: 9px;
+  }
+  .aw-hero .aw-demo {
+    margin: 0;
+    font-size: 8px;
+  }
+  .aw-hero-subtitle {
+    font-size: 11px;
+    color: #c0b8df;
+    letter-spacing: 4px;
+    margin-bottom: 8px;
+  }
+  .aw-hero h1 {
+    font-size: clamp(36px, 4.3vw, 59px);
+    letter-spacing: -2px;
+    font-weight: 750;
+    line-height: 1.08;
+    max-width: 480px;
+    margin-bottom: 20px;
+  }
+  .aw-hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    font-size: 11px;
+    color: #d4d1e1;
+  }
+  .aw-status-dot {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    background: #99d5b8;
+    border-radius: 50%;
+  }
+  .aw-language {
+    border: 1px solid #9c97b5;
+    font-size: 8px;
+    padding: 1px 4px;
+    border-radius: 3px;
+  }
+  .aw-hero-synopsis {
+    color: #c1bfd1;
+    font-size: 13px;
+    line-height: 1.9;
+    margin: 20px 0 16px;
+    max-width: 430px;
+  }
+  .aw-genre-tags a {
+    border-radius: 4px;
+    background: #ffffff0c;
+    padding: 4px 9px;
+    font-size: 10px;
+    color: #d6d0e8;
+  }
+  .aw-hero-actions {
+    margin-top: 25px;
+  }
+  .aw-hero-actions .aw-btn-primary span {
+    margin-right: 6px;
+  }
+  .aw-hero-bottom {
+    position: absolute;
+    bottom: 24px;
+    left: 48px;
+    right: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  .aw-hero-caption {
+    font-size: 8px;
+    letter-spacing: 3px;
+    color: #a8abc6;
+  }
+  .aw-slide-controls {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .aw-slide-controls button {
+    background: #ffffff44;
+    width: 7px;
+    height: 7px;
+    border: 0;
+    border-radius: 100px;
+    padding: 0;
+    position: relative;
+  }
+  .aw-slide-controls button::after {
+    content: '';
+    position: absolute;
+    inset: -8px;
+  }
+  .aw-slide-controls button.active {
+    width: 25px;
+    background: #bba9ff;
+  }
+  .aw-slide-counter {
+    font-size: 12px;
+    margin-right: 12px;
+  }
+  .aw-slide-counter span {
+    color: #aaa6bb;
+  }
+  .aw-slide-controls .aw-slide-next {
+    width: 32px;
+    height: 32px;
+    color: #fff;
+    background: #ffffff09;
+    border: 1px solid #ffffff30;
+    margin-left: 12px;
+  }
+  .aw-home-intro {
+    padding-block: 23px;
+    border-bottom: 1px solid #ffffff0e;
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    color: #8e93a8;
+    font-size: 11px;
+  }
+  .aw-home-intro > span:first-child {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+  }
+  .aw-home-intro i {
+    margin-right: 8px;
+  }
+  .aw-home-intro > span:last-child > span {
+    color: #bba9ff;
+    margin-left: 16px;
+  }
+  .aw-section {
+    margin-top: 42px;
+  }
+  .aw-section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 22px;
+  }
+  .aw-section-heading .aw-eyebrow {
+    color: #9594ac;
+    font-size: 8px;
+  }
+  .aw-section-heading h2 {
+    font-size: 26px;
+    letter-spacing: -0.7px;
+    font-weight: 700;
+    margin: 6px 0 0;
+  }
+  .aw-anime-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 20px;
+  }
+  .aw-curated {
+    color: #b8abc9;
+    font-size: 10px;
+  }
+  .aw-recommendations {
+    border-top: 1px solid #ffffff0c;
+    padding-top: 32px;
+  }
+  .aw-filter-chips {
+    display: flex;
+    gap: 9px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .aw-filter-chips button {
+    background: transparent;
+    border: 1px solid #292d3e;
+    color: #b0b0c2;
+    padding: 7px 14px;
+    font-size: 11px;
+    border-radius: 6px;
+  }
+  .aw-filter-chips button[aria-pressed='true'] {
+    background: #a697ff1c;
+    color: #cbbdff;
+    border-color: #a697ff66;
+  }
+  .aw-recommendation-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .aw-recommendation-grid .aw-poster {
+    aspect-ratio: 1.2;
+  }
+  .aw-discover-strip {
+    border: 1px solid #a697ff25;
+    border-radius: 12px;
+    background: radial-gradient(ellipse at right, #5a3b782e, transparent 70%), #121521;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 30px;
+    margin-top: 45px;
+  }
+  .aw-discover-strip h2 {
+    font-size: 24px;
+    margin: 10px 0;
+  }
+  .aw-discover-strip p {
+    font-size: 12px;
+    color: var(--aw-muted);
+    margin-bottom: 0;
+  }
+  .aw-continue-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+  .aw-continue-card {
+    display: flex;
+    gap: 18px;
+    padding: 12px;
+    border-radius: 10px;
+  }
+  .aw-continue-card img {
+    width: 90px;
+    height: 110px;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+  .aw-continue-card > div {
+    min-width: 0;
+    flex: 1;
+    padding-block: 8px;
+  }
+  .aw-continue-card h3 {
+    font-size: 14px;
+  }
+  .aw-continue-card p,
+  .aw-continue-card span {
+    font-size: 11px;
+    color: var(--aw-muted);
+  }
+  .aw-continue-card progress {
+    display: block;
+    width: 100%;
+    height: 4px;
+    accent-color: #bba8ff;
+    margin-bottom: 10px;
+  }
+  .aw-home-loading {
+    padding-top: 28px;
+    color: var(--aw-muted);
+  }
+  .aw-skeleton-hero {
+    height: 535px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 1000px) {
+    .aw-anime-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .aw-recommendation-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .aw-hero-content {
+      padding-left: 32px;
+    }
+    .aw-hero-bottom {
+      left: 32px;
+    }
+    .aw-hero-shade {
+      background:
+        linear-gradient(90deg, #0f1226eb, #11152bb3 65%, #11152b40),
+        linear-gradient(0deg, #0b1020b3, transparent);
+    }
+  }
+  @media (max-width: 600px) {
+    .aw-hero {
+      margin-top: 16px;
+      min-height: 620px;
+    }
+    .aw-hero-art {
+      object-position: 67% center;
+      opacity: 0.8;
+    }
+    .aw-hero-shade {
+      background: linear-gradient(0deg, #0f1226fa 5%, #11152bd9 55%, #11152b30);
+    }
+    .aw-hero-content {
+      padding: 130px 22px 90px;
+    }
+    .aw-hero .aw-eyebrow {
+      margin-bottom: 24px;
+      gap: 6px;
+      letter-spacing: 1px;
+    }
+    .aw-hero h1 {
+      font-size: 42px;
+      letter-spacing: -1.8px;
+    }
+    .aw-hero-subtitle {
+      letter-spacing: 2px;
+      font-size: 9px;
+    }
+    .aw-hero-synopsis {
+      font-size: 12px;
+    }
+    .aw-hero-actions .btn {
+      padding: 11px 12px;
+      font-size: 11px;
+    }
+    .aw-hero-bottom {
+      left: 22px;
+      right: 22px;
+      bottom: 18px;
+    }
+    .aw-hero-caption {
+      display: none;
+    }
+    .aw-slide-controls {
+      margin-left: auto;
+    }
+    .aw-home-intro {
+      font-size: 10px;
+    }
+    .aw-home-intro > span:last-child {
+      display: none;
+    }
+    .aw-section {
+      margin-top: 30px;
+    }
+    .aw-section-heading h2 {
+      font-size: 22px;
+    }
+    .aw-section-heading .aw-eyebrow {
+      font-size: 7px;
+      letter-spacing: 1px;
+    }
+    .aw-anime-grid,
+    .aw-recommendation-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px 14px;
+    }
+    .aw-curated {
+      display: none;
+    }
+    .aw-discover-strip {
+      align-items: flex-start;
+      flex-direction: column;
+      padding: 24px;
+    }
+    .aw-discover-strip h2 {
+      font-size: 22px;
+    }
+    .aw-continue-grid {
+      grid-template-columns: 1fr;
+    }
+    .aw-section-heading .aw-demo {
+      display: block;
+      width: max-content;
+      margin: 8px 0 0;
+    }
+  }
+}

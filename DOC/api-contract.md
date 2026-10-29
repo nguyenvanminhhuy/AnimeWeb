@@ -1,0 +1,173 @@
+# API contract sơ bộ
+
+**Bản nháp v0.2 — chưa có server hoặc endpoint hoạt động.** Cập nhật 2026-10-24: chia API công khai `/common` và API cá nhân `/me`, bổ sung role/permission và bình luận. Ví dụ dùng dữ liệu giả. Chi tiết xác thực và các lựa chọn được đánh dấu đề xuất cần chốt trước khi triển khai.
+
+## Quy ước chung
+
+- Prefix: `/api/v1`; JSON dùng camelCase, ID là string.
+- Thời gian ISO 8601 UTC; phân trang bắt đầu từ 1.
+- Danh sách trả `data` và `meta`; đối tượng đơn trả `data`.
+- Lỗi trả `error.code`, `error.message`, tùy chọn `error.fields` và `error.requestId`.
+- Giới hạn pageSize đề xuất 1–50, mặc định 20; dữ liệu sai trả 400.
+- `/common` không yêu cầu đăng nhập, dùng chung cho khách và tài khoản đã đăng nhập; chỉ trả nội dung published/công khai.
+- `/me` yêu cầu đăng nhập, permission tương ứng và kiểm tra quyền sở hữu; lấy userId từ phiên xác thực, không nhận userId do FE chỉ định.
+- Tên prefix không tự tạo quyền truy cập. BE áp dụng middleware/guard cho từng endpoint; xem [rules/roles-permissions.md](rules/roles-permissions.md).
+- Cách đăng nhập/cookie/token chưa chốt; chưa đưa endpoint auth vào hợp đồng này.
+
+## Danh mục và playback
+
+| Method | Path | Nội dung |
+| --- | --- | --- |
+| GET | /common/anime | Tìm, lọc và phân trang anime; catalog:read |
+| GET | /common/anime/:slug | Chi tiết; không có trả 404; catalog:read |
+| GET | /common/genres | Danh sách thể loại; catalog:read |
+| GET | /common/anime/:id/seasons | Danh sách mùa theo sortOrder; catalog:read |
+| GET | /common/seasons/:id/episodes | Tập published, phân trang theo sortOrder; catalog:read |
+| GET | /common/episodes/:id | Chi tiết tập và tham chiếu anime/mùa; catalog:read |
+| GET | /common/episodes/:id/playback | Nguồn phát, phụ đề, tập trước/sau; playback:read |
+
+Các path trong bảng là tương đối với `/api/v1`. Hai permission đọc công khai ở trên được cho phép cho khách; không yêu cầu tạo tài khoản để xem phim.
+
+### Ví dụ tìm kiếm
+
+```http
+GET /api/v1/common/anime?q=hanh%20trinh&genre=adventure&status=airing&year=2026&format=tv&sort=newest&page=1&pageSize=20
+```
+
+`genre` dùng slug; `sort` dự kiến có `newest`, `title`. Chỉ thêm `rating` hoặc `popular` khi có nguồn điểm/lượt xem và cách tính rõ ràng. Mock phải áp dụng các tham số có cùng ý nghĩa với API sau này.
+
+```json
+{
+  "data": [
+    {
+      "id": "anime_demo_001",
+      "slug": "hanh-trinh-anh-sao",
+      "title": "Hành trình ánh sao",
+      "posterUrl": "/images/demo-poster.webp",
+      "status": "airing",
+      "format": "tv",
+      "releaseYear": 2026,
+      "genres": [{ "id": "genre_adventure", "slug": "adventure", "name": "Phiêu lưu" }]
+    }
+  ],
+  "meta": { "page": 1, "pageSize": 20, "total": 1, "totalPages": 1 }
+}
+```
+
+Ảnh trong ví dụ chỉ là đường dẫn minh họa, chưa có file. Chi tiết anime bổ sung synopsis, alternativeTitles và bannerUrl. Season có id, animeId, number, title, sortOrder; Episode có các trường như entities.md. Các danh sách Season/Genre trả `data` là mảng; danh sách Episode dùng `meta` phân trang như anime.
+
+### Ví dụ thông tin phát
+
+```json
+{
+  "data": {
+    "episodeId": "episode_demo_001",
+    "isDemo": true,
+    "sources": [
+      {
+        "id": "source_demo_001",
+        "type": "mp4",
+        "label": "Video demo",
+        "language": "en",
+        "url": "https://media.example.com/demo.mp4",
+        "expiresAt": null,
+        "subtitles": []
+      }
+    ],
+    "previousEpisodeId": null,
+    "nextEpisodeId": "episode_demo_002"
+  }
+}
+```
+
+`example.com` chỉ minh họa, không phải nguồn phát sử dụng được. Mỗi subtitle nếu có gồm id, language, label, format, url, isDefault. URL nguồn có thể hết hạn; FE lấy lại playback khi cần. Episode tồn tại nhưng chưa có nguồn trả 200 với sources rỗng; lỗi nhà cung cấp trả 503. Phân biệt hai trường hợp trên với 404 của tập không tồn tại.
+
+## Thư viện và tiến độ
+
+| Method | Path | Nội dung |
+| --- | --- | --- |
+| GET | /me/library | library:read:own; lọc theo status/isFavorite, phân trang |
+| PUT | /me/library/:animeId | library:write:own; tạo/thay thế trạng thái và yêu thích |
+| DELETE | /me/library/:animeId | library:write:own; bỏ khỏi thư viện, giữ lịch sử, trả 204 |
+| GET | /me/progress | progress:read:own; lọc animeId/completed, phân trang |
+| PUT | /me/progress/:episodeId | progress:write:own; lưu tiến độ một tập |
+
+PUT thư viện nhận đủ `status` và `isFavorite`, trả 200 với `data` là LibraryEntry. PUT tiến độ nhận `positionSeconds` và `completed`, trả 200 với WatchProgress; updatedAt do server cấp. GET thư viện và tiến độ kèm tóm tắt anime/tập để FE dựng danh sách mà không gọi từng item riêng.
+
+```json
+{
+  "positionSeconds": 325,
+  "completed": false
+}
+```
+
+FE lưu theo chu kỳ có giới hạn và khi pause/chuyển tập, không gửi mỗi frame. Phải chốt thêm xung đột nhiều thiết bị, trường hợp xem lại và nhập dữ liệu khách trước khi triển khai đồng bộ. Chưa có API xóa lịch sử trong phạm vi này.
+
+Khách không gọi được các API này và không được mở trang thư viện như thành viên. Mock FE cần mô phỏng trạng thái đăng nhập và quyền; dữ liệu localStorage chỉ phục vụ demo, không phải bằng chứng xác thực BE. Sau đăng nhập, quyền được xác định từ tài khoản trên BE.
+
+## Hồ sơ và quyền hiện tại
+
+Đề xuất `GET /me` trả thông tin tối thiểu cho FE dựng giao diện:
+
+```json
+{
+  "data": {
+    "id": "user_demo_001",
+    "displayName": "Người xem demo",
+    "roles": ["member"],
+    "permissions": [
+      "catalog:read", "playback:read", "comment:read",
+      "library:read:own", "library:write:own",
+      "progress:read:own", "progress:write:own",
+      "comment:create", "comment:update:own", "comment:delete:own"
+    ]
+  }
+}
+```
+
+Endpoint này yêu cầu phiên hợp lệ và tài khoản hoạt động. FE dùng permissions để hiển thị chức năng; BE vẫn kiểm tra quyền lại cho mọi request. Các permission thao tác tài nguyên `own` còn phụ thuộc chủ sở hữu và trạng thái tài nguyên.
+
+## Bình luận anime
+
+Đăng bình luận yêu cầu đăng nhập theo yêu cầu người dùng. Đọc bình luận công khai, sửa/xóa bình luận của mình là đề xuất bổ sung, có thể điều chỉnh khi duyệt.
+
+| Method | Path | Quyền / hành vi |
+| --- | --- | --- |
+| GET | /common/anime/:animeId/comments | comment:read; đọc bình luận visible, phân trang |
+| POST | /me/anime/:animeId/comments | comment:create; tạo bình luận, trả 201 |
+| PATCH | /me/comments/:commentId | comment:update:own; cập nhật bình luận của mình, trả 200 |
+| DELETE | /me/comments/:commentId | comment:delete:own; xóa mềm của mình, trả 204 |
+
+POST/PATCH nhận `body` là plain text, đề xuất 1–2000 ký tự sau khi trim; không nhận authorId, status, roles hoặc permissions. Chưa hỗ trợ trả lời lồng nhau, ảnh, HTML và reaction. Quy tắc duyệt trước hay hiện ngay còn mở; mock tạm dùng visible và ghi rõ đây là lựa chọn đề xuất.
+
+```json
+{
+  "data": {
+    "id": "comment_demo_001",
+    "animeId": "anime_demo_001",
+    "author": { "id": "user_demo_001", "displayName": "Người xem demo", "avatarUrl": null },
+    "body": "Mình thích hành trình của các nhân vật.",
+    "status": "visible",
+    "createdAt": "2026-10-24T03:00:00Z",
+    "updatedAt": "2026-10-24T03:00:00Z"
+  }
+}
+```
+
+Không trả email, thông tin phiên hoặc quyền nội bộ của tác giả trong API bình luận công khai. POST chỉ nhận anime có thể truy cập công khai. Sửa/xóa phải kiểm tra tác giả bằng userId từ phiên; đề xuất trả 404 khi ID không thuộc người dùng, không tự cấp quyền thao tác bình luận của người khác. Bình luận hidden/deleted không được sửa để tự xuất hiện lại. Endpoint kiểm duyệt riêng chưa thuộc contract này.
+
+## Ví dụ lỗi
+
+```json
+{
+  "error": {
+    "code": "ANIME_NOT_FOUND",
+    "message": "Không tìm thấy anime.",
+    "requestId": "request_demo_001"
+  }
+}
+```
+
+Mã HTTP dự kiến: 400 dữ liệu sai; 401 chưa đăng nhập; 403 không đủ quyền; 404 không tồn tại; 429 quá nhiều yêu cầu; 500 lỗi nội bộ; 503 dịch vụ phát tạm thời không khả dụng. Không gửi stack trace hoặc thông tin bí mật cho FE.
+
+Thiếu phiên hoặc phiên không hợp lệ trả 401; có phiên hợp lệ nhưng thiếu permission/tài khoản bị khóa trả 403. Riêng tài nguyên cá nhân không thuộc người dùng áp dụng 404 như quy tắc trên. API quản trị, xác thực đăng nhập và lịch phát sóng sẽ được đặc tả riêng.

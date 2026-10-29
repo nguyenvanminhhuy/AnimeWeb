@@ -1,0 +1,4 @@
+.aw-surface {
+  background-color: var(--aw-surface);
+  border: 1px solid var(--aw-border);
+}

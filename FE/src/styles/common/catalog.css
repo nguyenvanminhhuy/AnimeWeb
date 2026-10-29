@@ -1,0 +1,89 @@
+.aw-anime-card {
+  min-width: 0;
+}
+.aw-poster {
+  position: relative;
+  aspect-ratio: 2 / 2.9;
+  overflow: hidden;
+  border-radius: 9px;
+  background: #242a41;
+}
+.aw-poster::after {
+  content: '';
+  position: absolute;
+  inset: 45% 0 0;
+  background: linear-gradient(transparent, #080b169e);
+  pointer-events: none;
+}
+.aw-poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.25s;
+}
+.aw-anime-card a:hover img {
+  transform: scale(1.04);
+}
+.aw-poster-tag {
+  position: absolute;
+  z-index: 1;
+  left: 10px;
+  bottom: 10px;
+  padding: 4px 7px;
+  border-radius: 4px;
+  background: #0b101dc9;
+  border: 1px solid #ffffff20;
+  color: #edeafa;
+  font-size: 9px;
+  backdrop-filter: blur(10px);
+}
+.aw-poster-play {
+  position: absolute;
+  top: 9px;
+  right: 10px;
+  color: white;
+  opacity: 0;
+}
+.aw-anime-card a:hover .aw-poster-play,
+.aw-anime-card a:focus-visible .aw-poster-play {
+  opacity: 1;
+}
+.aw-anime-card h3 {
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 12px 0 5px;
+  font-weight: 600;
+}
+.aw-anime-card > p {
+  font-size: 10px;
+  color: #a5a7bb;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 0;
+}
+.aw-heading-dot {
+  color: #b19bff;
+}
+.aw-skeleton {
+  border-radius: 12px;
+  background: linear-gradient(100deg, #181c2c, #28283b, #181c2c);
+  background-size: 200% 100%;
+  animation: aw-loading 1.7s ease-in-out infinite;
+}
+.aw-skeleton-poster {
+  aspect-ratio: 2/3;
+}
+@keyframes aw-loading {
+  to {
+    background-position: -200% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .aw-skeleton {
+    animation: none;
+  }
+  .aw-poster img {
+    transition: none;
+  }
+}

@@ -1,0 +1,257 @@
+.aw-shell {
+  width: min(1280px, calc(100% - 80px));
+  margin-inline: auto;
+}
+.aw-header {
+  border-bottom: 1px solid #ffffff0c;
+  background: #0c0f18;
+}
+.aw-header-inner {
+  min-height: 88px;
+  display: flex;
+  align-items: center;
+  gap: 34px;
+}
+.aw-brand {
+  display: inline-flex;
+  align-items: center;
+  font-size: 23px;
+  font-weight: 750;
+  letter-spacing: -0.9px;
+  white-space: nowrap;
+}
+.aw-brand > span:not(.aw-demo):not(.aw-brand-mark) {
+  color: var(--aw-accent);
+  font-weight: 400;
+}
+.aw-brand-mark {
+  color: var(--aw-accent);
+  font-size: 35px;
+  margin-right: 8px;
+}
+.aw-demo {
+  font-size: 9px;
+  letter-spacing: 1px;
+  border: 1px solid #b7a7ff4d;
+  color: #c5bafa;
+  border-radius: 4px;
+  padding: 3px 6px;
+  margin-left: 10px;
+  vertical-align: middle;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.aw-nav {
+  display: flex;
+  align-self: stretch;
+  align-items: stretch;
+  gap: 26px;
+  font-size: 13px;
+  font-weight: 550;
+  white-space: nowrap;
+}
+.aw-nav a {
+  display: flex;
+  align-items: center;
+  position: relative;
+  color: var(--aw-muted);
+}
+.aw-nav a[aria-current] {
+  color: #fff;
+}
+.aw-nav a[aria-current]::after {
+  position: absolute;
+  content: '';
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--aw-accent);
+}
+.aw-search {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  min-width: 130px;
+  width: 240px;
+  padding: 8px 12px;
+  gap: 8px;
+  background: #ffffff06;
+  border: 1px solid #ffffff0e;
+  border-radius: 8px;
+  color: var(--aw-muted);
+}
+.aw-search input {
+  width: 100%;
+  min-width: 0;
+  background: transparent;
+  border: 0;
+  color: var(--aw-text);
+  font-size: 12px;
+}
+.aw-search button {
+  border: 0;
+  background: transparent;
+  color: var(--aw-muted);
+}
+.aw-search input::placeholder {
+  color: #a3a7b9;
+}
+.btn {
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 7px;
+  padding: 12px 20px;
+}
+.aw-btn-primary {
+  background: #ac9af7;
+  border: 1px solid #ac9af7;
+  color: #17112b;
+}
+.aw-btn-primary:hover {
+  background: #c4b7ff;
+  border-color: #c4b7ff;
+  color: #17112b;
+}
+.aw-btn-glass {
+  background: #ffffff08;
+  border: 1px solid #ffffff38;
+  color: #f0edf8;
+}
+.aw-btn-glass:hover,
+.aw-btn-glass[aria-pressed='true'] {
+  background: #9f85fa29;
+  color: #e3daff;
+  border-color: #a697ff;
+}
+.aw-btn-quiet {
+  border: 1px solid var(--aw-border);
+  color: var(--aw-text);
+  white-space: nowrap;
+  padding: 9px 14px;
+}
+.aw-btn-quiet:hover {
+  border-color: var(--aw-accent);
+  color: var(--aw-accent);
+}
+.aw-text-link {
+  color: #c4b6ff;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.aw-text-link span {
+  margin-left: 9px;
+}
+.aw-eyebrow {
+  font-size: 10px;
+  letter-spacing: 1.9px;
+  color: #b4a4ee;
+  font-weight: 600;
+}
+.aw-state {
+  border-radius: 16px;
+  padding: 64px 24px;
+  text-align: center;
+  margin: 48px auto;
+  max-width: 840px;
+}
+.aw-state h1,
+.aw-state h2 {
+  font-size: clamp(22px, 4vw, 32px);
+  margin: 16px 0;
+}
+.aw-state p {
+  color: var(--aw-muted);
+  line-height: 1.8;
+  max-width: 600px;
+  margin: 16px auto 24px;
+}
+.aw-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px;
+  border-top: 1px solid var(--aw-border);
+  padding-block: 28px;
+  margin-top: 60px;
+  color: var(--aw-muted);
+  font-size: 11px;
+}
+.aw-footer p {
+  margin: 0 auto 0 0;
+}
+.aw-footer .aw-brand {
+  font-size: 20px;
+  color: var(--aw-text);
+}
+.aw-session-note,
+.aw-notice {
+  overflow-wrap: anywhere;
+  color: #c4b8ef;
+  font-size: 12px;
+  padding-block: 10px;
+}
+.aw-notice {
+  margin-block: 0;
+}
+.aw-skip {
+  position: fixed;
+  top: -100px;
+  left: 20px;
+  background: #bba8ff;
+  color: #111;
+  padding: 12px;
+  z-index: 10;
+}
+.aw-skip:focus {
+  top: 12px;
+}
+@media (max-width: 1100px) {
+  .aw-header-inner {
+    gap: 24px;
+    flex-wrap: wrap;
+    padding-block: 18px;
+  }
+  .aw-search {
+    order: 3;
+    width: 100%;
+  }
+  .aw-account {
+    margin-left: auto;
+  }
+  .aw-nav {
+    align-self: center;
+  }
+  .aw-nav a {
+    padding-block: 8px;
+  }
+}
+@media (max-width: 600px) {
+  .aw-shell {
+    width: calc(100% - 32px);
+  }
+  .aw-header-inner {
+    gap: 12px;
+    min-height: 72px;
+  }
+  .aw-brand {
+    font-size: 21px;
+  }
+  .aw-brand .aw-demo {
+    display: none;
+  }
+  .aw-nav {
+    order: 2;
+    width: 100%;
+    justify-content: space-between;
+  }
+  .aw-account {
+    font-size: 11px;
+    padding: 9px;
+  }
+  .aw-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
