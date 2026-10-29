@@ -1,6 +1,6 @@
 # Selectbox dùng chung
 
-Source: `FE/src/components/ui/Selectbox.tsx`. Selectbox render select HTML gốc để chọn trong danh sách, không cho gõ giá trị ngoài options. Dùng khi lựa chọn giới hạn như thể loại, năm, trạng thái, sort hoặc mùa anime. Ô nhập có gợi ý dùng [Combobox](combobox.md).
+Source: `FE/src/components/ui/selectbox.tsx`. Selectbox render select HTML gốc để chọn trong danh sách, không cho gõ giá trị ngoài options. Dùng khi lựa chọn giới hạn như thể loại, năm, trạng thái, sort hoặc mùa anime. Ô nhập có gợi ý dùng [Combobox](combobox.md).
 
 ## API
 
@@ -29,7 +29,7 @@ interface SelectboxOption {
 ## Ví dụ
 
 ```tsx
-import { Selectbox } from '../components/ui/Selectbox';
+import { Selectbox } from '@/components/ui/selectbox';
 
 <label htmlFor="genre">Thể loại</label>
 <Selectbox

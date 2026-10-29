@@ -1,10 +1,10 @@
 import { createRoot } from 'react-dom/client';
 import { MemoryRouter } from 'react-router-dom';
-import { Button } from '../../src/components/ui/Button';
-import { Input } from '../../src/components/ui/Input';
-import { Combobox } from '../../src/components/ui/Combobox';
-import { Selectbox } from '../../src/components/ui/Selectbox';
-import '../../src/styles/index.css';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Combobox } from '@/components/ui/combobox';
+import { Selectbox } from '@/components/ui/selectbox';
+import '@/styles/index.css';
 
 const options = [
   { value: 'one', label: 'One' },

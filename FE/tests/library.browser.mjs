@@ -60,7 +60,7 @@ export async function verifyLibrary(browser, baseURL) {
       '/watch/episode-01-03',
     );
     await cards().first().getByRole('link', { name: 'Xem tiếp' }).click();
-    await page.getByRole('heading', { name: 'Xem anime', exact: true }).waitFor();
+    await page.locator('.aw-watch[data-episode-id="episode-01-03"]').waitFor();
     await page.goBack();
     await ready();
     await tab('Yêu thích');

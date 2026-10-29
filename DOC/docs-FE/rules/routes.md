@@ -5,12 +5,17 @@
 ## Cấu trúc
 
 ```text
-FE/src/routes/
-├── paths.ts        # Pattern, URL builders và kiểm tra returnTo
-└── router.tsx      # createBrowserRouter, layout và đăng ký màn hình
+FE/src/
+├── app/
+│   ├── app.tsx
+│   ├── provider.tsx
+│   ├── router.tsx       # createBrowserRouter và đăng ký route
+│   └── routes/         # Các màn hình
+└── config/
+    └── paths.ts        # Pattern, URL builders, safeReturnTo
 ```
 
-FE dùng react-router-dom 7.18.5 ở Data mode: một createBrowserRouter tại routes/router.tsx và một RouterProvider trong app/App.tsx. SessionProvider nằm trên RouterProvider để giữ phiên khi chuyển trang. MainLayout dùng Outlet render route con và ScrollRestoration quản lý cuộn.
+FE dùng react-router-dom 7.18.5 ở Data mode: một createBrowserRouter tại app/router.tsx và một RouterProvider trong app/app.tsx. AppProvider ghép SessionProvider từ stores/session.tsx phía trên RouterProvider để giữ phiên khi chuyển trang. MainLayout dùng Outlet render route con và ScrollRestoration quản lý cuộn.
 
 Không tạo BrowserRouter/RouterProvider mới trong page/feature/layout con. Không phân tuyến thủ công bằng if/switch trên window.location.pathname.
 
@@ -21,15 +26,17 @@ Không tạo BrowserRouter/RouterProvider mới trong page/feature/layout con. K
 | `/` | HomePage | Công khai |
 | `/anime` | ExplorePage | Công khai |
 | `/anime/:slug` | AnimeDetailPage | Công khai; favorite/ghi bình luận yêu cầu member |
-| `/watch/:episodeId` | DestinationPage kind watch | Công khai; thông báo tối thiểu |
+| `/watch/:episodeId` | WatchPage | Công khai; xem watch-screen.md, chưa có asset video |
 | `/library` | LibraryPage, query tab/q/sort/page | Member; guest thấy lời mời đăng nhập giữ returnTo |
 | `/login` | LoginPage | Phiên demo; xem auth-screens.md |
 | `/register` | RegisterPage | Tạo hồ sơ demo cục bộ, chưa có auth BE |
-| `*` | DestinationPage kind not-found | Không tìm thấy |
+| `*` | DestinationPage | Không tìm thấy |
+
+Watch dùng query `season` cho danh sách tập, có nhánh nguồn MP4/WebM native và lưu tiến độ member; hiện repository chưa có asset video. Xem [màn hình Xem phim](../watch-screen.md). Browser bổ sung: `tests/watch.browser.mjs` export verifyWatch và `tests/player.browser.mjs` export verifyPlayer (sự kiện media mô phỏng, không chứng minh playback thực tế).
 
 ## Khi generate màn hình
 
-1. Đọc routes/paths.ts và routes/router.tsx, tái sử dụng pattern đã có.
+1. Đọc config/paths.ts và app/router.tsx, tái sử dụng pattern đã có.
 2. Thêm/cập nhật pattern và builder tại paths.ts nếu cần. Dùng generatePath và encode giá trị slug/episodeId khi xây URL.
 3. Đăng ký page dưới MainLayout trong router.tsx. Nếu có placeholder, thay element của route đó; không tạo route trùng.
 4. Đọc URL bằng useParams/useSearchParams/useLocation. Không quyết định màn hình bằng cách phân tích pathname thủ công trong page.

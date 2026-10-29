@@ -18,7 +18,7 @@ AnimeDetailPage gọi useAnimeDetail → AnimeRepository.getBySlug → mock fixt
 
 Mặc định tạm thời vẫn là một anime có nhiều phần; phim điện ảnh một phần/một tập. Đây là fixture FE theo entities.md, chưa phải mô hình nghiệp vụ được chốt. Season/Episode có ID và sortOrder; UI không cộng số vào ID để chuyển tập. Các ID tiến độ `episode-01-03`, `episode-02-02` giữ nguyên. Draft không được trả qua repository danh mục; ngoại truyện minh họa ID không liên tiếp.
 
-Chọn mùa lưu trong query season, hỗ trợ reload/Back/Forward, giá trị sai về phần đầu bằng router replace. Đếm tập là tổng metadata published của các phần, không phải số video phát được. Card tập mở route Watch thông báo tối thiểu, được ghi rõ là thông tin tập, chưa có video.
+Chọn mùa lưu trong query season, hỗ trợ reload/Back/Forward, giá trị sai về phần đầu bằng router replace. Đếm tập là tổng metadata published của các phần, không phải số video phát được. Card tập mở màn hình [Xem phim](watch-screen.md) với trạng thái chưa có video, được ghi rõ là thông tin tập, chưa có video.
 
 Không có asset video hoặc nguồn phát, nên toàn bộ fixture hasPlayback=false. Trang hiện “Chưa có video demo”, primary action dẫn xuống danh sách tập; không có nút Xem ngay/Xem tiếp gây hiểu nhầm. Code đã có nhánh chọn tập khả dụng đầu tiên hoặc tập có tiến độ khi sau này có dữ liệu phát thực sự. Chưa kiểm chứng playback hoặc tạo player đầy đủ trong nhiệm vụ này.
 
@@ -38,10 +38,10 @@ Guest đọc mọi thông tin công khai; yêu thích/bình luận dẫn Login v
 
 ## Source và trạng thái
 
-- Page: FE/src/pages/AnimeDetailPage.tsx; CSS: AnimeDetailPage.css, nạp qua styles/index.css.
+- Page: FE/src/app/routes/anime-detail.tsx; CSS: AnimeDetailPage.css, nạp qua styles/index.css.
 - Layout/spacing/responsive trong Detail, SeasonEpisodes và CommentsPanel dùng utility Tailwind trong TSX; CSS giữ thiết kế, trạng thái và selector theo ngữ cảnh. Theo rule styling cho breakpoint và font 14px.
-- Feature anime: useAnimeDetail và AnimeDetail type; feature episode: SeasonEpisodes và Season/Episode types; feature comments: component/hook/types; data layer: contract, mock details/comments fixtures và local comment adapter.
-- Tái sử dụng AnimeCard, Artwork, ContentState, Pagination, SessionProvider/MainLayout/Header và URL builders hiện có. Route cũ đã thay placeholder; DestinationPage chỉ còn Watch/Not found.
+- Feature anime giữ useAnimeDetail, feature episode giữ SeasonEpisodes, feature comments giữ component/hook. Entity chia sẻ AnimeDetail/Season/Episode/Comment nằm trong src/types; contracts/adapters ở lib/api và lib/storage, fixture ở testing/mocks/fixtures.
+- Tái sử dụng AnimeCard, Artwork, ContentState, Pagination, SessionProvider/MainLayout/Header và URL builders hiện có. Route cũ đã thay placeholder; DestinationPage chỉ còn Not found; Watch đã có màn hình riêng.
 - Dev: `?mock=loading|error|empty` cho chi tiết; `?comments=loading|error|empty|forbidden` cho bình luận. Mock empty của detail giữ thông tin anime nhưng không có tập/đề xuất; forbidden mô phỏng member không có quyền viết. Retry bỏ mock lỗi; production bỏ qua các query mock.
 - Không thêm dependency, ảnh AI, API key hoặc request asset ngoài.
 

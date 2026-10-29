@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { MemoryRouter, useLocation } from 'react-router-dom';
-import { Button } from '../../src/components/ui/Button';
-import { Icon } from '../../src/components/ui/Icon';
-import '../../src/styles/index.css';
+import { Button } from '@/components/ui/button';
+import { Icon } from '@/components/ui/icon';
+import '@/styles/index.css';
 
 function Fixture() {
   const [submitted, setSubmitted] = useState(0);

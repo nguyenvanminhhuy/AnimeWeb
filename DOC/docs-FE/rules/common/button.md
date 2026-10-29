@@ -1,13 +1,13 @@
 # Button dùng chung
 
-Source: `FE/src/components/ui/Button.tsx`. Đây là component UI cơ bản dùng chung toàn FE; đặt trong `components/ui/` theo [cấu trúc FE](../fe-structure.md). Component không phụ thuộc page/feature, không tự gọi repository, kiểm tra quyền hoặc chuyển hướng đăng nhập.
+Source: `FE/src/components/ui/button.tsx`. Đây là component UI cơ bản dùng chung toàn FE; đặt trong `components/ui/` theo [cấu trúc FE](../fe-structure.md). Component không phụ thuộc page/feature, không tự gọi repository, kiểm tra quyền hoặc chuyển hướng đăng nhập.
 
 ## Cách dùng
 
 ```tsx
-import { Button } from '../components/ui/Button';
-import { Icon } from '../components/ui/Icon';
-import { paths } from '../routes/paths';
+import { Button } from '@/components/ui/button';
+import { Icon } from '@/components/ui/icon';
+import { paths } from '@/config/paths';
 
 // Hành động: render button, mặc định type="button".
 <Button label="Lưu" onClick={save} startIcon={<Icon name="check" />} />
@@ -89,7 +89,7 @@ Dùng Button cho các nút hành động và link có hình thức button trên 
 Kiểm thử riêng: tests/button.browser.mjs export verifyButton với fixture HTML/JSX, kiểm tra slot order/gap, nhãn truy cập, icon-only, children, loading, submit, Link/anchor/ref, RTL và size. Hợp đồng TypeScript tại tests/button.types.tsx kiểm tra các trường hợp label + children bị từ chối. Chạy tại SRC:
 
 ```powershell
-pnpm --filter anime-web-fe exec tsc --noEmit --strict --skipLibCheck --jsx react-jsx --module ESNext --target ES2022 --moduleResolution Bundler tests/button.types.tsx
+pnpm --filter anime-web-fe run typecheck:tests
 ```
 
 Kiểm chứng sau thay đổi: chạy format và build (bao gồm format:check/typecheck); kiểm tra submit/Enter, nút phụ không submit, loading/disabled, focus bàn phím và điều hướng Link. Khi thay nhiều màn hình, chạy hồi quy browser tương ứng theo [routes.md](../routes.md). Kết quả thực tế được thêm vào `DOC/docs-FE/verification.md`.

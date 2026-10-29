@@ -1,6 +1,6 @@
 # Combobox dùng chung
 
-Source: `FE/src/components/ui/Combobox.tsx`. Đây là **ô nhập một dòng có gợi ý native**: Input + datalist. Người dùng có thể chọn gợi ý hoặc gõ giá trị khác. Chọn một ID bắt buộc nằm trong tập options dùng [Selectbox](selectbox.md).
+Source: `FE/src/components/ui/combobox.tsx`. Đây là **ô nhập một dòng có gợi ý native**: Input + datalist. Người dùng có thể chọn gợi ý hoặc gõ giá trị khác. Chọn một ID bắt buộc nằm trong tập options dùng [Selectbox](selectbox.md).
 
 ## API
 
@@ -20,7 +20,7 @@ Component tự dùng useId tạo id datalist riêng cho từng instance, nối q
 ## Ví dụ
 
 ```tsx
-import { Combobox } from '../components/ui/Combobox';
+import { Combobox } from '@/components/ui/combobox';
 
 <label htmlFor="anime-search">Từ khóa anime</label>
 <Combobox

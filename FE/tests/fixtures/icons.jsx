@@ -1,8 +1,8 @@
 import { createRoot } from 'react-dom/client';
-import { Icon } from '../../src/components/ui/Icon';
-import { Button } from '../../src/components/ui/Button';
-import { iconDefinitions } from '../../src/components/ui/iconDefinitions';
-import '../../src/styles/index.css';
+import { Icon } from '@/components/ui/icon';
+import { Button } from '@/components/ui/button';
+import { iconDefinitions } from '@/components/ui/icon-definitions';
+import '@/styles/index.css';
 
 createRoot(document.getElementById('root')).render(
   <main className="container py-4">

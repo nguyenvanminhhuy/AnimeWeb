@@ -1,6 +1,6 @@
 # Size của common controls
 
-Button, Input, Combobox và Selectbox dùng chung `ControlSize = 'sm' | 'md' | 'lg'`, export tại `FE/src/components/ui/control.types.ts`. `size` là kích thước giao diện; mặc định `md` cho component có style nền.
+Button, Input, Combobox và Selectbox dùng chung `ControlSize = 'sm' | 'md' | 'lg'`, export tại `FE/src/types/control.ts`. `size` là kích thước giao diện; mặc định `md` cho component có style nền.
 
 | size | Chiều cao tối thiểu | Padding trên/dưới | Font |
 | --- | --- | --- | --- |

@@ -1,6 +1,6 @@
 # Icon — Font Awesome Free
 
-Source: `FE/src/components/ui/Icon.tsx`; registry tên icon tại `iconDefinitions.ts`. FE dùng component React chính thức để render SVG inline, đóng gói cùng ứng dụng; không dùng CDN, Kit script, icon font hoặc API key.
+Source: `FE/src/components/ui/icon.tsx`; registry tên icon tại `iconDefinitions.ts`. FE dùng component React chính thức để render SVG inline, đóng gói cùng ứng dụng; không dùng CDN, Kit script, icon font hoặc API key.
 
 ## Dependencies và CSS
 
@@ -32,8 +32,8 @@ Các tên hiện có: search, heart, heart-filled, play, history, external-link,
 ## Ví dụ
 
 ```tsx
-import { Icon } from '../components/ui/Icon';
-import { Button } from '../components/ui/Button';
+import { Icon } from '@/components/ui/icon';
+import { Button } from '@/components/ui/button';
 
 // Có chữ bên cạnh: icon chỉ trang trí, nhãn nút lấy từ chữ.
 <Button onClick={search} label="Tìm kiếm" startIcon={<Icon name="search" size="sm" />} />

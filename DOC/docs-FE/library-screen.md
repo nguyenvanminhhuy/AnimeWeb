@@ -18,7 +18,7 @@ Guest chỉ thấy lời mời đăng nhập, không thấy số lượng hoặc
 - Đang xem dùng bản ghi tiến độ mới nhất của mỗi anime và chỉ hiện bản ghi chưa hoàn thành. Lịch sử hiện từng episode, gồm cả tập đã hoàn thành. Hai mục này không dùng danh sách yêu thích làm nguồn dữ liệu.
 - Mặc định tạm thời: chưa có LibraryEntry.status riêng trong local adapter nên Đang xem được suy ra từ tiến độ, chưa triển khai chỉnh trạng thái plan_to_watch/on_hold/dropped. Đây là lựa chọn FE demo, không sửa quyết định mô hình entity/API.
 - Progress cũ schema v1 vẫn đọc được. Thêm hai trường tùy chọn completed/updatedAt; chấp nhận positionSeconds bằng durationSeconds cho tập đã xem hết. Không ghi timestamp giả vào dữ liệu có sẵn. Khi không có updatedAt, giữ thứ tự fixture/adapter; có thời gian thì hiển thị theo Asia/Ho_Chi_Minh, có nhãn tiến độ mẫu.
-- Xem tiếp/Xem lại dùng episodeId trong bản ghi. Trang `/watch/:episodeId` vẫn là thông báo chưa có video demo; chưa có playback thật hoặc việc ghi tiến độ từ player.
+- Xem tiếp/Xem lại dùng episodeId trong bản ghi. Trang [Xem phim](watch-screen.md) đã có danh sách/chuyển tập và nhánh lưu tiến độ khi có nguồn; hiện chưa có video nên không ghi tiến độ chỉ vì mở tập.
 - Tab, tìm kiếm tên có/không dấu, sort thứ tự lưu/tên A–Z và phân trang lưu trên URL. Mỗi trang 8 item; đổi tab/tìm/sort về trang 1. Xóa hết item ở trang cuối tự về trang hợp lệ. Reload, direct URL và Back/Forward giữ trạng thái; query không hợp lệ được chuẩn hóa bằng router replace.
 - Tóm tắt số lượng là dữ liệu tài khoản demo, không phải chỉ số vận hành. Danh mục lấy qua AnimeRepository.getByIds và fixture chung; ID không có trong danh mục được bỏ qua.
 - Thành viên demo được cấp các permission own cho library/progress trong SessionProvider. Trang kiểm tra quyền đọc trước khi lấy dữ liệu; chỉ hiện nút yêu thích khi có quyền ghi. Chưa phải phân quyền/xác thực BE.
@@ -26,10 +26,10 @@ Guest chỉ thấy lời mời đăng nhập, không thấy số lượng hoặc
 
 ## Source
 
-- `FE/src/pages/LibraryPage.tsx`: ghép header/tóm tắt/collections, guard guest/quyền, controls và các trạng thái.
+- `FE/src/app/routes/library.tsx`: ghép header/tóm tắt/collections, guard guest/quyền, controls và các trạng thái.
 - `FE/src/features/library/`: useLibrary, LibraryCard, query parser/builder và types.
-- Tái sử dụng AnimeCard, Artwork fallback, Pagination, ContentState, MainLayout/Header và SessionProvider. Hook → repository interface → mock adapter; localStorage vẫn chỉ truy cập trong data/local.
-- Route `/library` tại routes/router.tsx đã thay placeholder bằng LibraryPage; không thêm router hoặc route trùng. CSS riêng đăng ký tại styles/index.css, không import lại Bootstrap/Tailwind.
+- Tái sử dụng AnimeCard tại components/anime, Artwork fallback, Pagination, ContentState, MainLayout/Header và store phiên dùng chung. Hook → repository interface → mock adapter; localStorage chỉ truy cập trong lib/storage.
+- Route `/library` tại app/router.tsx đã thay placeholder bằng LibraryPage; không thêm router hoặc route trùng. CSS riêng đăng ký tại styles/index.css, không import lại Bootstrap/Tailwind.
 - Layout/spacing/responsive của LibraryPage/LibraryCard dùng utility Tailwind trong TSX; CSS giữ thiết kế summary/tab, trạng thái và selector theo ngữ cảnh. Theo rules/styling.md khi generate/chỉnh sửa tiếp.
 
 ## Kiểm tra
