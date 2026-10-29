@@ -92,4 +92,4 @@ Kiểm thử riêng: tests/button.browser.mjs export verifyButton với fixture 
 pnpm --filter anime-web-fe exec tsc --noEmit --strict --skipLibCheck --jsx react-jsx --module ESNext --target ES2022 --moduleResolution Bundler tests/button.types.tsx
 ```
 
-Kiểm chứng sau thay đổi: chạy format và build (bao gồm format:check/typecheck); kiểm tra submit/Enter, nút phụ không submit, loading/disabled, focus bàn phím và điều hướng Link. Khi thay nhiều màn hình, chạy hồi quy browser tương ứng theo [routes.md](../routes.md). Kết quả thực tế được thêm vào `DOC/verification.md`.
+Kiểm chứng sau thay đổi: chạy format và build (bao gồm format:check/typecheck); kiểm tra submit/Enter, nút phụ không submit, loading/disabled, focus bàn phím và điều hướng Link. Khi thay nhiều màn hình, chạy hồi quy browser tương ứng theo [routes.md](../routes.md). Kết quả thực tế được thêm vào `DOC/docs-FE/verification.md`.

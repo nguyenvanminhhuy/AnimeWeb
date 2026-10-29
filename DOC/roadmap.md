@@ -29,7 +29,7 @@ Chưa đưa vào bản đầu: thanh toán, mạng xã hội, đề xuất bằn
 | 5. Triển khai BE | Database, API danh mục, xác thực, thư viện, tiến độ | Kiểm thử bằng fixture hoặc dịch vụ giả lập; không gọi API thật khi kiểm tra |
 | 6. Tích hợp và vận hành | Đổi adapter, cấu hình nguồn hợp lệ, triển khai theo môi trường | Kiểm tra luồng FE/BE cục bộ; xác định rõ khả năng phát video thực tế |
 
-Cập nhật phạm vi: giai đoạn 3 có giả lập guest/member và bình luận; giai đoạn 4–5 có role/permission, ownership và API comments. Khách không được mở thư viện chỉ vì có dữ liệu localStorage. Kiểm tra các tình huống quyền trong [rules/roles-permissions.md](rules/roles-permissions.md) khi triển khai.
+Cập nhật phạm vi: giai đoạn 3 có giả lập guest/member và bình luận; giai đoạn 4–5 có role/permission, ownership và API comments. Khách không được mở thư viện chỉ vì có dữ liệu localStorage. Kiểm tra các tình huống quyền trong [rules/roles-permissions.md](docs-FE/rules/roles-permissions.md) khi triển khai.
 
 ## Luồng dùng để nghiệm thu
 

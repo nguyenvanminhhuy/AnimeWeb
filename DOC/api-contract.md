@@ -11,7 +11,7 @@
 - Giới hạn pageSize đề xuất 1–50, mặc định 20; dữ liệu sai trả 400.
 - `/common` không yêu cầu đăng nhập, dùng chung cho khách và tài khoản đã đăng nhập; chỉ trả nội dung published/công khai.
 - `/me` yêu cầu đăng nhập, permission tương ứng và kiểm tra quyền sở hữu; lấy userId từ phiên xác thực, không nhận userId do FE chỉ định.
-- Tên prefix không tự tạo quyền truy cập. BE áp dụng middleware/guard cho từng endpoint; xem [rules/roles-permissions.md](rules/roles-permissions.md).
+- Tên prefix không tự tạo quyền truy cập. BE áp dụng middleware/guard cho từng endpoint; xem [rules/roles-permissions.md](docs-FE/rules/roles-permissions.md).
 - Cách đăng nhập/cookie/token chưa chốt; chưa đưa endpoint auth vào hợp đồng này.
 
 ## Danh mục và playback
