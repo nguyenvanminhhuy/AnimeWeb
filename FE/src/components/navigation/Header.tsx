@@ -25,9 +25,6 @@ export function Header() {
             ✦
           </span>
           anime<span>web</span>
-          <span className="aw-demo tw:px-1.5 tw:py-0.75 tw:rounded-sm tw:whitespace-nowrap">
-            DEMO
-          </span>
         </Link>
         <nav
           className="aw-nav tw:gap-6.5 tw:flex tw:self-stretch tw:items-stretch tw:text-body tw:whitespace-nowrap tw:max-desktop:self-center tw:max-phone:order-2 tw:max-phone:w-full tw:max-phone:justify-between"
@@ -66,7 +63,7 @@ export function Header() {
             variant="quiet"
             className="aw-account tw:max-desktop:ml-auto tw:max-phone:p-2.25 tw:max-phone:text-body"
             onClick={logout}
-            label="Đăng xuất demo"
+            label="Đăng xuất"
           />
         ) : (
           <Button

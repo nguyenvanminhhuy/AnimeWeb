@@ -38,7 +38,7 @@ Tập đã xuất bản có thể chưa có nguồn phát khả dụng. FE cần
 | WatchProgress | userId, episodeId, positionSeconds, completed, updatedAt | Tiến độ của từng tập |
 | Comment | id, animeId, userId, body, status, createdAt, updatedAt, deletedAt | Bình luận anime, tác giả lấy từ phiên |
 
-Role/Permission là mô hình RBAC đề xuất; guest không phải tài khoản hoặc dòng trong UserRole. `User.status` đề xuất active/blocked; `Comment.status` đề xuất visible/hidden/deleted. Bình luận chưa hỗ trợ reply lồng nhau trong bản đầu. API hồ sơ riêng `/me` tổng hợp roles và permissions từ các quan hệ, không nhận các quyền này do FE tự khai báo. Xem [rules/roles-permissions.md](rules/roles-permissions.md).
+Role/Permission là mô hình RBAC đề xuất; guest không phải tài khoản hoặc dòng trong UserRole. `User.status` đề xuất active/blocked; `Comment.status` đề xuất visible/hidden/deleted. Bình luận chưa hỗ trợ reply lồng nhau trong bản đầu. API hồ sơ riêng `/me` tổng hợp roles và permissions từ các quan hệ, không nhận các quyền này do FE tự khai báo. Xem [rules/roles-permissions.md](docs-FE/rules/roles-permissions.md).
 
 `LibraryEntry.status` đề xuất: `plan_to_watch`, `watching`, `completed`, `on_hold`, `dropped`. Yêu thích độc lập với trạng thái xem.
 

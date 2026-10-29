@@ -37,7 +37,7 @@ export async function verifyDetail(browser, baseURL) {
     };
     const post = async (body) => {
       await page.getByLabel('Cảm nhận của bạn', { exact: true }).fill(body);
-      await page.getByRole('button', { name: 'Gửi bình luận demo', exact: true }).click();
+      await page.getByRole('button', { name: 'Gửi bình luận', exact: true }).click();
       await page.locator('.aw-comment-content').getByText(body, { exact: true }).waitFor();
       await commentsReady();
     };
@@ -105,7 +105,7 @@ export async function verifyDetail(browser, baseURL) {
     await page.locator('.aw-library-card .aw-anime-card a').click();
     await title();
     await commentsReady();
-    await page.getByRole('button', { name: 'Gửi bình luận demo', exact: true }).click();
+    await page.getByRole('button', { name: 'Gửi bình luận', exact: true }).click();
     await page
       .getByRole('alert')
       .filter({ hasText: 'Bình luận cần từ 1 đến 2000 ký tự.' })
@@ -156,7 +156,7 @@ export async function verifyDetail(browser, baseURL) {
     await page
       .getByLabel('Cảm nhận của bạn', { exact: true })
       .fill('Bản nháp phải được xóa khi đổi tài khoản');
-    await page.getByRole('button', { name: 'Đăng xuất demo', exact: true }).click();
+    await page.getByRole('button', { name: 'Đăng xuất', exact: true }).click();
     await commentsReady();
     assert.equal(await page.locator('#comment-body').count(), 0);
     await page.getByText('Bình luận đã sửa', { exact: true }).waitFor();
@@ -169,7 +169,7 @@ export async function verifyDetail(browser, baseURL) {
       await page.getByText('Bản nháp phải được xóa khi đổi tài khoản', { exact: true }).count(),
       0,
     );
-    await page.getByRole('button', { name: 'Đăng xuất demo', exact: true }).click();
+    await page.getByRole('button', { name: 'Đăng xuất', exact: true }).click();
     await commentsReady();
     await page.getByRole('link', { name: /Đăng nhập để bình luận/ }).click();
     await login('Dùng tài khoản có lịch sử mẫu');
@@ -272,7 +272,7 @@ export async function verifyDetail(browser, baseURL) {
     await page
       .getByLabel('Cảm nhận của bạn', { exact: true })
       .fill('Không được giả vờ lưu thành công');
-    await page.getByRole('button', { name: 'Gửi bình luận demo', exact: true }).click();
+    await page.getByRole('button', { name: 'Gửi bình luận', exact: true }).click();
     await page.getByRole('alert').filter({ hasText: 'Không lưu được bình luận.' }).waitFor();
     assert.equal(
       await page

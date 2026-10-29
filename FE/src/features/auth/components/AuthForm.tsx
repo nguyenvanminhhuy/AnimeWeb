@@ -113,7 +113,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
           className="aw-auth-submit tw:w-full tw:flex tw:items-center tw:justify-center tw:mt-0.75"
           type="submit"
           loading={pending}
-          label={pending ? 'Đang xử lý…' : register ? 'Đăng ký demo' : 'Đăng nhập demo'}
+          label={pending ? 'Đang xử lý…' : register ? 'Đăng ký' : 'Đăng nhập'}
           startIcon={pending ? <span className="spinner-border spinner-border-sm" /> : undefined}
           endIcon={!pending ? <Icon name="arrow-right" size="sm" /> : undefined}
         />

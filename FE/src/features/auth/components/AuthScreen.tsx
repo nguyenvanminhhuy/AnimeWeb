@@ -96,7 +96,7 @@ export function AuthScreen({ mode }: { mode: AuthMode }) {
                 variant="unstyled"
                 className="aw-text-link tw:text-body tw:whitespace-nowrap"
                 onClick={logout}
-                label="Đổi tài khoản demo"
+                label="Đổi tài khoản"
               />
             </div>
           ) : (

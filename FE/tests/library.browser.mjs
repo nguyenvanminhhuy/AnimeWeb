@@ -45,7 +45,10 @@ export async function verifyLibrary(browser, baseURL) {
       .waitFor();
     assert.equal(await cards().count(), 0);
     assert.equal(await page.locator('.aw-library-summary').count(), 0);
-    await page.getByRole('link', { name: /Đăng nhập demo/ }).click();
+    await page
+      .locator('.aw-library-guest')
+      .getByRole('link', { name: 'Đăng nhập', exact: true })
+      .click();
     assert.equal(new URL(page.url()).searchParams.get('returnTo'), '/library?tab=history');
     await login('Dùng tài khoản có lịch sử mẫu');
     assert.equal(await cards().count(), 2);
@@ -185,12 +188,15 @@ export async function verifyLibrary(browser, baseURL) {
     assert.equal(await page.locator('.aw-library-summary').count(), 0);
 
     await goto('/library?tab=history');
-    await page.getByRole('button', { name: 'Đăng xuất demo' }).click();
+    await page.getByRole('button', { name: 'Đăng xuất' }).click();
     await page
       .getByRole('heading', { name: 'Thư viện dành cho thành viên', exact: true })
       .waitFor();
     assert.equal(await cards().count(), 0);
-    await page.getByRole('link', { name: /Đăng nhập demo/ }).click();
+    await page
+      .locator('.aw-library-guest')
+      .getByRole('link', { name: 'Đăng nhập', exact: true })
+      .click();
     await login('Dùng tài khoản mới');
     assert.equal(await cards().count(), 0);
     for (const label of ['Yêu thích', 'Đang xem', 'Lịch sử']) {
@@ -200,8 +206,11 @@ export async function verifyLibrary(browser, baseURL) {
     await goto('/library?tab=history&userId=viewer');
     assert.equal(await cards().count(), 0);
 
-    await page.getByRole('button', { name: 'Đăng xuất demo' }).click();
-    await page.getByRole('link', { name: /Đăng nhập demo/ }).click();
+    await page.getByRole('button', { name: 'Đăng xuất' }).click();
+    await page
+      .locator('.aw-library-guest')
+      .getByRole('link', { name: 'Đăng nhập', exact: true })
+      .click();
     await login('Dùng tài khoản có lịch sử mẫu');
     assert.equal(await cards().count(), 3);
     await tab('Yêu thích');

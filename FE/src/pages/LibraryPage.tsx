@@ -53,7 +53,7 @@ export function LibraryPage() {
             as="link"
             variant="primary"
             to={paths.loginTo(returnTo)}
-            label="Đăng nhập demo"
+            label="Đăng nhập"
             endIcon={<Icon name="external-link" size="sm" />}
           />
           <p>
