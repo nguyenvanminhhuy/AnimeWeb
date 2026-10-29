@@ -1,3 +1,5 @@
+import { Input } from '../../../components/ui/Input';
+import { Button } from '../../../components/ui/Button';
 import { useState } from 'react';
 
 interface Props {
@@ -22,10 +24,10 @@ export function PasswordField({
 }: Props) {
   const [visible, setVisible] = useState(false);
   return (
-    <div className="aw-auth-field">
+    <div className="aw-auth-field tw:gap-2 tw:grid tw:min-w-0">
       <label htmlFor={id}>{label}</label>
-      <div className="aw-auth-password">
-        <input
+      <div className="aw-auth-password tw:flex tw:relative">
+        <Input
           id={id}
           name={name}
           type={visible ? 'text' : 'password'}
@@ -40,19 +42,19 @@ export function PasswordField({
           aria-describedby={error ? `${id}-error` : undefined}
           placeholder="Ít nhất 8 ký tự, chỉ dùng dữ liệu giả"
         />
-        <button
+        <Button
+          variant="unstyled"
           type="button"
           onClick={() => setVisible((value) => !value)}
           disabled={disabled}
           aria-controls={id}
           aria-pressed={visible}
           aria-label={`${visible ? 'Ẩn' : 'Hiện'} ${label.toLowerCase()}`}
-        >
-          {visible ? 'Ẩn' : 'Hiện'}
-        </button>
+          label={visible ? 'Ẩn' : 'Hiện'}
+        />
       </div>
       {error && (
-        <p className="aw-auth-field-error" id={`${id}-error`}>
+        <p className="aw-auth-field-error tw:m-0 tw:text-body tw:leading-[1.6]" id={`${id}-error`}>
           {error}
         </p>
       )}

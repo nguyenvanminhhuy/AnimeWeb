@@ -1,0 +1,17 @@
+.aw-icon {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+  vertical-align: -0.125em;
+  color: inherit;
+}
+.aw-icon-sm {
+  font-size: 1rem;
+}
+.aw-icon-md {
+  font-size: 1.125rem;
+}
+.aw-icon-lg {
+  font-size: 1.5rem;
+}

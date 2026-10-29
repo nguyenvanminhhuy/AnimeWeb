@@ -1,4 +1,7 @@
 @import './surfaces.css';
+@import './icon.css';
+@import './button.css';
+@import './form-controls.css';
 @import './layout.css';
 @import './pagination.css';
 @import './catalog.css';

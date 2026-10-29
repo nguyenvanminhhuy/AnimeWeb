@@ -123,7 +123,7 @@ export async function verifyAuth(browser, baseURL) {
       .getByRole('link', { name: 'Trang chủ', exact: true })
       .click();
     await page.locator('.aw-hero h1').waitFor();
-    await page.getByRole('button', { name: '＋ Yêu thích', exact: true }).click();
+    await page.getByRole('button', { name: 'Yêu thích', exact: true }).click();
     await page
       .getByRole('navigation', { name: 'Điều hướng chính' })
       .getByRole('link', { name: 'Thư viện', exact: true })

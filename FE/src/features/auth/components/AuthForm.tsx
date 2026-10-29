@@ -1,3 +1,6 @@
+import { Input } from '../../../components/ui/Input';
+import { Button } from '../../../components/ui/Button';
+import { Icon } from '../../../components/ui/Icon';
 import { Form } from 'react-router-dom';
 import { paths } from '../../../routes/paths';
 import { useAuthForm } from '../hooks/useAuthForm';
@@ -16,19 +19,22 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
         action={register ? paths.register : paths.login}
         onSubmit={submit}
         noValidate
-        className="aw-auth-form"
+        className="aw-auth-form tw:gap-4.25 tw:grid"
         aria-label={register ? 'Đăng ký demo' : 'Đăng nhập bằng email demo'}
         aria-busy={pending}
       >
         {(error || Object.values(errors).some(Boolean)) && (
-          <div className="aw-auth-error" role="alert">
+          <div
+            className="aw-auth-error tw:px-3.25 tw:py-2.75 tw:rounded-[6px] tw:text-body tw:leading-[1.7]"
+            role="alert"
+          >
             {error || 'Vui lòng kiểm tra các trường được đánh dấu bên dưới.'}
           </div>
         )}
         {register && (
-          <div className="aw-auth-field">
+          <div className="aw-auth-field tw:gap-2 tw:grid tw:min-w-0">
             <label htmlFor="register-displayName">Tên hiển thị</label>
-            <input
+            <Input
               id="register-displayName"
               name="displayName"
               value={values.displayName}
@@ -43,15 +49,18 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
               placeholder="Bạn muốn được gọi là gì?"
             />
             {errors.displayName && (
-              <p className="aw-auth-field-error" id="register-displayName-error">
+              <p
+                className="aw-auth-field-error tw:m-0 tw:text-body tw:leading-[1.6]"
+                id="register-displayName-error"
+              >
                 {errors.displayName}
               </p>
             )}
           </div>
         )}
-        <div className="aw-auth-field">
+        <div className="aw-auth-field tw:gap-2 tw:grid tw:min-w-0">
           <label htmlFor={`${mode}-email`}>Email demo</label>
-          <input
+          <Input
             id={`${mode}-email`}
             name="email"
             type="email"
@@ -67,7 +76,10 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
             placeholder={register ? 'ban@vi-du.test' : 'viewer@anime.test'}
           />
           {errors.email && (
-            <p className="aw-auth-field-error" id={`${mode}-email-error`}>
+            <p
+              className="aw-auth-field-error tw:m-0 tw:text-body tw:leading-[1.6]"
+              id={`${mode}-email-error`}
+            >
               {errors.email}
             </p>
           )}
@@ -96,36 +108,40 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
             />
           </>
         )}
-        <button className="btn aw-btn-primary aw-auth-submit" type="submit" disabled={pending}>
-          {pending ? (
-            <>
-              <span className="spinner-border spinner-border-sm" aria-hidden="true" /> Đang xử lý…
-            </>
-          ) : (
-            <>
-              {register ? 'Đăng ký demo' : 'Đăng nhập demo'} <span aria-hidden="true">→</span>
-            </>
-          )}
-        </button>
+        <Button
+          variant="primary"
+          className="aw-auth-submit tw:w-full tw:flex tw:items-center tw:justify-center tw:mt-0.75"
+          type="submit"
+          loading={pending}
+          label={pending ? 'Đang xử lý…' : register ? 'Đăng ký demo' : 'Đăng nhập demo'}
+          startIcon={pending ? <span className="spinner-border spinner-border-sm" /> : undefined}
+          endIcon={!pending ? <Icon name="arrow-right" size="sm" /> : undefined}
+        />
         {pending && (
-          <p className="aw-auth-pending" role="status">
+          <p className="aw-auth-pending tw:m-0 tw:text-body" role="status">
             Đang xử lý hồ sơ demo trên trình duyệt…
           </p>
         )}
       </Form>
       {!register && (
-        <div className="aw-auth-demo-accounts">
+        <div className="aw-auth-demo-accounts tw:gap-2.25 tw:grid tw:mt-5.75">
           <p>
             <span />
             HOẶC TRẢI NGHIỆM NHANH
             <span />
           </p>
-          <button className="btn aw-btn-glass" disabled={pending} onClick={() => login('viewer')}>
-            Dùng tài khoản có lịch sử mẫu
-          </button>
-          <button className="btn aw-btn-glass" disabled={pending} onClick={() => login('newcomer')}>
-            Dùng tài khoản mới
-          </button>
+          <Button
+            variant="glass"
+            disabled={pending}
+            onClick={() => login('viewer')}
+            label="Dùng tài khoản có lịch sử mẫu"
+          />
+          <Button
+            variant="glass"
+            disabled={pending}
+            onClick={() => login('newcomer')}
+            label="Dùng tài khoản mới"
+          />
           <small>
             Email mẫu: viewer@anime.test hoặc newcomer@anime.test. Mật khẩu bất kỳ từ 8 ký tự chỉ để
             thử form.

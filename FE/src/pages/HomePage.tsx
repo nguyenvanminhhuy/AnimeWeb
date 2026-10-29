@@ -1,3 +1,5 @@
+import { Button } from '../components/ui/Button';
+import { Icon } from '../components/ui/Icon';
 import { Link, useSearchParams } from 'react-router-dom';
 import { paths } from '../routes/paths';
 import { useHomeCatalog } from '../features/anime/hooks/useHomeCatalog';
@@ -20,25 +22,29 @@ export function HomePage() {
   }
   if (error)
     return (
-      <div className="aw-shell">
+      <div className="aw-shell tw:mx-auto">
         <ContentState title="Hẹn bạn thử lại một chút" description={error} retry={retry} />
       </div>
     );
   if (!data)
     return (
-      <div className="aw-shell aw-home-loading" role="status" aria-label="Đang tải Trang chủ">
-        <div className="aw-skeleton aw-skeleton-hero" />
+      <div
+        className="aw-shell aw-home-loading tw:mx-auto tw:pt-7"
+        role="status"
+        aria-label="Đang tải Trang chủ"
+      >
+        <div className="aw-skeleton aw-skeleton-hero tw:rounded-[12px] tw:h-133.75 tw:mb-6" />
         <p>Đang mở ra thế giới anime…</p>
-        <div className="aw-anime-grid">
+        <div className="aw-anime-grid tw:gap-5 tw:grid tw:grid-cols-6 tw:max-tablet:grid-cols-3 tw:max-phone:grid-cols-2 tw:max-phone:gap-x-3.5">
           {Array.from({ length: 6 }, (_, i) => (
-            <div className="aw-skeleton aw-skeleton-poster" key={i} />
+            <div className="aw-skeleton aw-skeleton-poster tw:rounded-[12px]" key={i} />
           ))}
         </div>
       </div>
     );
   if (!data.featured.length)
     return (
-      <div className="aw-shell">
+      <div className="aw-shell tw:mx-auto">
         <ContentState
           title="Những câu chuyện đang được chuẩn bị"
           description="Chưa có anime để hiển thị. Hãy quay lại sau hoặc tải lại danh sách demo."
@@ -50,54 +56,74 @@ export function HomePage() {
     (item) => genre === 'Tất cả' || item.genres.includes(genre),
   );
   return (
-    <div className="aw-shell">
+    <div className="aw-shell tw:mx-auto">
       <FeaturedBanner items={data.featured} />
-      <div className="aw-home-intro">
+      <div className="aw-home-intro tw:py-5.75 tw:gap-3.75 tw:flex tw:justify-between tw:text-body">
         <span>
-          <i className="aw-status-dot" /> GÓC NHỎ CHO TÍN ĐỒ ANIME
+          <i className="aw-status-dot tw:inline-block tw:w-1.25 tw:h-1.25 tw:rounded-[50%]" /> GÓC
+          NHỎ CHO TÍN ĐỒ ANIME
         </span>
         <span>
           Nội dung mẫu, cảm hứng không giới hạn <span aria-hidden="true">✧</span>
         </span>
       </div>
       <ContinueWatching items={[...data.updated, ...data.recommended]} />
-      <section className="aw-section" aria-labelledby="updated-title">
-        <div className="aw-section-heading">
+      <section
+        className="aw-section tw:mt-10.5 tw:max-phone:mt-7.5"
+        aria-labelledby="updated-title"
+      >
+        <div className="aw-section-heading tw:gap-4.5 tw:flex tw:items-center tw:justify-between tw:mb-5.5">
           <div>
             <span className="aw-eyebrow">LUÔN CÓ ĐIỀU MỚI ĐỂ XEM</span>
             <h2 id="updated-title">
               Mới cập nhật<span className="aw-heading-dot">.</span>
             </h2>
           </div>
-          <Link className="aw-text-link" to={`${paths.explore}?sort=newest&page=1`}>
-            Xem tất cả <span aria-hidden="true">↗</span>
+          <Link
+            className="aw-text-link tw:text-body tw:whitespace-nowrap"
+            to={`${paths.explore}?sort=newest&page=1`}
+          >
+            Xem tất cả <Icon name="external-link" size="sm" />
           </Link>
         </div>
-        <div className="aw-anime-grid">
+        <div className="aw-anime-grid tw:gap-5 tw:grid tw:grid-cols-6 tw:max-tablet:grid-cols-3 tw:max-phone:grid-cols-2 tw:max-phone:gap-x-3.5">
           {data.updated.map((anime) => (
             <AnimeCard key={anime.id} anime={anime} />
           ))}
         </div>
       </section>
-      <section className="aw-section aw-recommendations" aria-labelledby="recommended-title">
-        <div className="aw-section-heading">
+      <section
+        className="aw-section aw-recommendations tw:mt-10.5 tw:pt-8 tw:max-phone:mt-7.5"
+        aria-labelledby="recommended-title"
+      >
+        <div className="aw-section-heading tw:gap-4.5 tw:flex tw:items-center tw:justify-between tw:mb-5.5">
           <div>
             <span className="aw-eyebrow">CHỌN MỘT THẾ GIỚI ĐỂ ĐẮM CHÌM</span>
             <h2 id="recommended-title">
               Có thể bạn sẽ thích<span className="aw-heading-dot">.</span>
             </h2>
           </div>
-          <span className="aw-curated">✦ Đề xuất biên tập · Mẫu</span>
+          <span className="aw-curated tw:text-body tw:max-phone:hidden">
+            ✦ Đề xuất biên tập · Mẫu
+          </span>
         </div>
-        <div className="aw-filter-chips" role="group" aria-label="Thể loại đề xuất">
+        <div
+          className="aw-filter-chips tw:gap-2.25 tw:flex tw:flex-wrap tw:mb-6"
+          role="group"
+          aria-label="Thể loại đề xuất"
+        >
           {genres.map((item) => (
-            <button key={item} aria-pressed={genre === item} onClick={() => selectGenre(item)}>
-              {item}
-            </button>
+            <Button
+              variant="unstyled"
+              key={item}
+              aria-pressed={genre === item}
+              onClick={() => selectGenre(item)}
+              label={item}
+            />
           ))}
         </div>
         {recommendations.length ? (
-          <div className="aw-anime-grid aw-recommendation-grid">
+          <div className="aw-anime-grid aw-recommendation-grid tw:gap-5 tw:grid tw:grid-cols-4 tw:max-phone:grid-cols-2 tw:max-phone:gap-x-3.5">
             {recommendations.map((anime) => (
               <AnimeCard key={anime.id} anime={anime} />
             ))}
@@ -109,15 +135,19 @@ export function HomePage() {
           />
         )}
       </section>
-      <aside className="aw-discover-strip">
+      <aside className="aw-discover-strip tw:p-7.5 tw:gap-5 tw:rounded-[12px] tw:flex tw:items-center tw:justify-between tw:mt-11.25 tw:max-phone:p-6 tw:max-phone:items-start tw:max-phone:flex-col">
         <div>
           <span className="aw-eyebrow">CÂU CHUYỆN TIẾP THEO ĐANG CHỜ</span>
           <h2>Hôm nay, bạn muốn đi đâu?</h2>
           <p>Tìm một thế giới phù hợp với tâm trạng của bạn.</p>
         </div>
-        <Link className="btn aw-btn-glass" to={paths.explore}>
-          Khám phá anime <span aria-hidden="true">↗</span>
-        </Link>
+        <Button
+          as="link"
+          variant="glass"
+          to={paths.explore}
+          label="Khám phá anime"
+          endIcon={<Icon name="external-link" size="sm" />}
+        />
       </aside>
     </div>
   );

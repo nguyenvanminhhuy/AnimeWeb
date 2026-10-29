@@ -1,20 +1,31 @@
 .aw-pagination {
+  --aw-pagination-min-size: 2.75rem;
+  --aw-pagination-padding: 0.5rem 0.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   flex-wrap: wrap;
   margin-top: 36px;
-  font-size: 12px;
+  font-size: var(--aw-font-size-base);
+}
+.aw-pagination-sm {
+  --aw-pagination-min-size: 2rem;
+  --aw-pagination-padding: 0.25rem 0.5rem;
+}
+.aw-pagination-lg {
+  --aw-pagination-min-size: 3.25rem;
+  --aw-pagination-padding: 0.75rem 1rem;
 }
 .aw-pagination a,
-.aw-pagination > span[aria-disabled] {
+.aw-pagination [aria-disabled] {
   display: inline-flex;
-  min-width: 40px;
-  height: 40px;
+  gap: 6px;
+  min-width: var(--aw-pagination-min-size);
+  min-height: var(--aw-pagination-min-size);
   justify-content: center;
   align-items: center;
-  padding: 8px 12px;
+  padding: var(--aw-pagination-padding);
   border: 1px solid var(--aw-border);
   border-radius: 7px;
 }
@@ -22,13 +33,17 @@
   background: #a697ff16;
   border-color: var(--aw-accent);
 }
-.aw-pagination a[aria-current] {
+.aw-pagination [aria-current='page'] {
   background: #a697ff22;
   border-color: #a697ff88;
   color: #d7ccff;
 }
-.aw-pagination > span[aria-disabled] {
+.aw-pagination [aria-disabled] {
   color: #737b93;
+  cursor: default;
+}
+.aw-pagination [aria-disabled][aria-current='page'] {
+  color: #d7ccff;
 }
 .aw-pagination-item {
   display: inline-flex;

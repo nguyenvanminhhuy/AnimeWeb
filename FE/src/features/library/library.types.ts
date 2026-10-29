@@ -15,9 +15,9 @@ export interface LibraryItem {
 }
 export const libraryPageSize = 8;
 export const libraryTabs = [
-  { value: 'favorites', label: 'Yêu thích', icon: '♡' },
-  { value: 'watching', label: 'Đang xem', icon: '▷' },
-  { value: 'history', label: 'Lịch sử', icon: '◷' },
+  { value: 'favorites', label: 'Yêu thích', icon: 'heart' },
+  { value: 'watching', label: 'Đang xem', icon: 'play' },
+  { value: 'history', label: 'Lịch sử', icon: 'history' },
 ] as const;
 export function isCompleted(progress: Progress) {
   return progress.completed === true || progress.positionSeconds >= progress.durationSeconds;

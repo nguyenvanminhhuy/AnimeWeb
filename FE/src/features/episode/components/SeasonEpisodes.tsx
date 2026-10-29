@@ -1,3 +1,5 @@
+import { Selectbox } from '../../../components/ui/Selectbox';
+import { Icon } from '../../../components/ui/Icon';
 import { useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import type { AnimeDetail } from '../../anime/anime.types';
@@ -27,7 +29,7 @@ export function SeasonEpisodes({ detail }: { detail: AnimeDetail }) {
       aria-labelledby="episodes-title"
       data-season-id={selected?.id ?? ''}
     >
-      <div className="aw-detail-section-heading">
+      <div className="aw-detail-section-heading tw:gap-4.5 tw:flex tw:items-center tw:justify-between tw:mb-4.5 tw:max-mobile:items-start tw:max-mobile:flex-wrap">
         <div>
           <span className="aw-eyebrow">TIẾP THEO TRÊN HÀNH TRÌNH</span>
           <h2 id="episodes-title">
@@ -39,9 +41,8 @@ export function SeasonEpisodes({ detail }: { detail: AnimeDetail }) {
             <label className="visually-hidden" htmlFor="detail-season">
               Chọn mùa
             </label>
-            <select
+            <Selectbox
               id="detail-season"
-              className="form-select"
               value={selected?.id ?? ''}
               onChange={(event) => {
                 const next = new URLSearchParams(params);
@@ -54,19 +55,21 @@ export function SeasonEpisodes({ detail }: { detail: AnimeDetail }) {
                   {season.title}
                 </option>
               ))}
-            </select>
+            </Selectbox>
           </div>
         )}
       </div>
       {!episodes.length ? (
-        <p className="aw-detail-empty">Chưa có tập đã công bố cho phần này.</p>
+        <p className="aw-detail-empty tw:px-5 tw:py-6.25 tw:rounded-[8px] tw:text-body tw:leading-[1.9]">
+          Chưa có tập đã công bố cho phần này.
+        </p>
       ) : (
         <>
-          <p className="aw-detail-playback-note">
+          <p className="aw-detail-playback-note tw:mx-0 tw:text-body tw:leading-[1.8] tw:mt-0 tw:mb-4.5">
             Chưa có video demo. Các tập dưới đây chỉ có thông tin mẫu; mở tập để xem thông báo nguồn
             phát.
           </p>
-          <ol className="aw-detail-episodes">
+          <ol className="aw-detail-episodes tw:p-0 tw:m-0 tw:gap-2.5 tw:grid tw:grid-cols-2 tw:max-tablet:grid-cols-[1fr]">
             {episodes.map((episode) => {
               const saved = progress.find((entry) => entry.episodeId === episode.id);
               return (
@@ -75,7 +78,7 @@ export function SeasonEpisodes({ detail }: { detail: AnimeDetail }) {
                     to={paths.watch(episode.id)}
                     aria-label={`Thông tin tập ${episode.number}: ${episode.title}`}
                   >
-                    <span className="aw-detail-episode-number">
+                    <span className="aw-detail-episode-number tw:shrink-0">
                       {String(episode.number).padStart(2, '0')}
                     </span>
                     <span>
@@ -85,7 +88,7 @@ export function SeasonEpisodes({ detail }: { detail: AnimeDetail }) {
                         {saved ? 'Có tiến độ demo' : 'Chưa có video'}
                       </small>
                     </span>
-                    <span aria-hidden="true">↗</span>
+                    <Icon name="external-link" size="sm" />
                   </Link>
                 </li>
               );

@@ -91,12 +91,12 @@ export async function verifyDetail(browser, baseURL) {
     await page.reload();
     await title();
     assert.equal(await page.getByLabel('Chọn mùa', { exact: true }).inputValue(), 'season-01-side');
-    await page.getByRole('link', { name: '＋ Yêu thích', exact: true }).click();
+    await page.getByRole('link', { name: 'Yêu thích', exact: true }).click();
     assert.ok(new URL(page.url()).searchParams.get('returnTo').includes('season=season-01-side'));
     await login('Dùng tài khoản có lịch sử mẫu');
     await page.getByText(/Tiến độ mẫu của bạn: Tập 3/).waitFor();
-    await page.getByRole('button', { name: '＋ Yêu thích', exact: true }).click();
-    await page.getByRole('button', { name: '✓ Đã yêu thích', exact: true }).waitFor();
+    await page.getByRole('button', { name: 'Yêu thích', exact: true }).click();
+    await page.getByRole('button', { name: 'Đã yêu thích', exact: true }).waitFor();
     await page
       .getByRole('navigation', { name: 'Điều hướng chính' })
       .getByRole('link', { name: 'Thư viện', exact: true })
@@ -212,7 +212,7 @@ export async function verifyDetail(browser, baseURL) {
     assert.equal(await page.locator('.aw-comment').count(), 5);
     await page
       .getByRole('navigation', { name: 'Phân trang bình luận' })
-      .getByRole('link', { name: 'Sau →', exact: true })
+      .getByRole('link', { name: 'Sau', exact: true })
       .click();
     await commentsReady();
     assert.equal(await page.locator('.aw-comment').count(), 3);

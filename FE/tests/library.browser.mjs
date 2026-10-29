@@ -53,10 +53,10 @@ export async function verifyLibrary(browser, baseURL) {
     await tab('Đang xem');
     assert.equal(await cards().count(), 2);
     assert.equal(
-      await cards().first().getByRole('link', { name: '▷ Xem tiếp' }).getAttribute('href'),
+      await cards().first().getByRole('link', { name: 'Xem tiếp' }).getAttribute('href'),
       '/watch/episode-01-03',
     );
-    await cards().first().getByRole('link', { name: '▷ Xem tiếp' }).click();
+    await cards().first().getByRole('link', { name: 'Xem tiếp' }).click();
     await page.getByRole('heading', { name: 'Xem anime', exact: true }).waitFor();
     await page.goBack();
     await ready();
@@ -64,7 +64,7 @@ export async function verifyLibrary(browser, baseURL) {
     await page.getByRole('heading', { name: 'Chưa có anime yêu thích' }).waitFor();
     await page.getByRole('link', { name: 'Về Trang chủ để thêm yêu thích' }).click();
     await page.locator('.aw-hero h1').waitFor();
-    await page.getByRole('button', { name: '＋ Yêu thích', exact: true }).click();
+    await page.getByRole('button', { name: 'Yêu thích', exact: true }).click();
     await page
       .getByRole('navigation', { name: 'Điều hướng chính' })
       .getByRole('link', { name: 'Thư viện' })
@@ -120,7 +120,7 @@ export async function verifyLibrary(browser, baseURL) {
         fullPage: true,
       });
     }
-    await page.getByRole('link', { name: 'Sau →', exact: true }).click();
+    await page.getByRole('link', { name: 'Sau', exact: true }).click();
     await ready();
     assert.equal(await cards().count(), 4);
     await page.reload();
@@ -137,7 +137,7 @@ export async function verifyLibrary(browser, baseURL) {
     assert.equal(await cards().count(), 8);
     await tab('Lịch sử');
     assert.equal(await cards().count(), 3);
-    assert.equal(await page.getByRole('link', { name: '↻ Xem lại', exact: true }).count(), 1);
+    assert.equal(await page.getByRole('link', { name: 'Xem lại', exact: true }).count(), 1);
     await tab('Đang xem');
     assert.equal(await cards().count(), 2);
     await page

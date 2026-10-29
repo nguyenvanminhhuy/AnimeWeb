@@ -1,25 +1,12 @@
 @layer components {
-  .aw-library {
-    padding-top: 28px;
-  }
   .aw-library-breadcrumb {
-    display: flex;
-    gap: 12px;
-    font-size: 11px;
     color: var(--aw-muted);
   }
   .aw-library-breadcrumb [aria-current] {
     color: #ded9ef;
   }
-  .aw-library-heading {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-    padding-block: 40px 32px;
-  }
   .aw-library-heading .aw-eyebrow {
-    font-size: 9px;
+    font-size: var(--aw-font-size-base);
     margin-bottom: 12px;
   }
   .aw-library-heading h1 {
@@ -29,7 +16,7 @@
     margin: 0 0 16px;
   }
   .aw-library-heading p:last-child {
-    font-size: 13px;
+    font-size: var(--aw-font-size-base);
     line-height: 1.9;
     color: var(--aw-muted);
     margin: 0;
@@ -39,12 +26,6 @@
   }
   .aw-library-heading > a span {
     margin-left: 20px;
-  }
-  .aw-library-summary {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 16px;
-    margin-bottom: 34px;
   }
   .aw-library-summary > a {
     display: flex;
@@ -59,15 +40,9 @@
     border-color: #a697ff88;
   }
   .aw-library-summary-icon {
-    display: grid;
-    place-items: center;
-    width: 44px;
-    height: 44px;
     background: #b4a0fc10;
-    border-radius: 10px;
     font-size: 25px;
     color: #bba7fa;
-    flex-shrink: 0;
   }
   .aw-library-summary > a > div {
     display: flex;
@@ -75,7 +50,7 @@
     gap: 5px;
   }
   .aw-library-summary > a > div > span {
-    font-size: 11px;
+    font-size: var(--aw-font-size-base);
     color: var(--aw-muted);
   }
   .aw-library-summary strong {
@@ -85,14 +60,9 @@
     color: var(--aw-text);
   }
   .aw-library-summary-unit {
-    margin-left: auto;
-    align-self: flex-end;
     color: #8e95ae;
-    font-size: 10px;
   }
   .aw-library-tabs {
-    display: flex;
-    gap: 30px;
     border-bottom: 1px solid var(--aw-border);
   }
   .aw-library-tabs > a {
@@ -100,7 +70,7 @@
     align-items: center;
     gap: 10px;
     padding: 16px 0;
-    font-size: 13px;
+    font-size: var(--aw-font-size-base);
     color: var(--aw-muted);
     border-bottom: 2px solid transparent;
     margin-bottom: -1px;
@@ -115,16 +85,6 @@
   }
   .aw-library-tab-count {
     background: #ffffff09;
-    border-radius: 4px;
-    padding: 1px 6px;
-    font-size: 10px;
-  }
-  .aw-library-toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    padding-block: 28px;
   }
   .aw-library-toolbar h2 {
     font-size: 23px;
@@ -133,15 +93,9 @@
     margin: 0 0 8px;
   }
   .aw-library-toolbar p {
-    font-size: 11px;
+    font-size: var(--aw-font-size-base);
     color: var(--aw-muted);
     margin: 0;
-  }
-  .aw-library-search {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    min-width: 0;
   }
   .aw-library-search input[type='search'] {
     min-width: 0;
@@ -151,46 +105,35 @@
     color: var(--aw-text);
     border: 1px solid var(--aw-border);
     border-radius: 6px;
-    font-size: 12px;
+    font-size: var(--aw-font-size-base);
   }
   .aw-library-search input::placeholder {
     color: #9b9eb3;
   }
   .aw-library-search .btn {
     padding: 8px 12px;
-    font-size: 16px;
+    font-size: var(--aw-font-size-base);
   }
   .aw-library-search .form-select {
     background-color: #111622;
     color: #d8d6e5;
     border-color: var(--aw-border);
-    font-size: 11px;
+    font-size: var(--aw-font-size-base);
     width: 145px;
     padding-block: 10px;
     margin-left: 8px;
-  }
-  .aw-library-grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 30px 22px;
-  }
-  .aw-library-card {
-    min-width: 0;
   }
   .aw-library-card .aw-poster {
     aspect-ratio: 0.85;
   }
   .aw-library-card .aw-anime-card h3 {
-    font-size: 15px;
+    font-size: var(--aw-font-size-base);
     margin-top: 14px;
-  }
-  .aw-library-progress {
-    margin-top: 18px;
   }
   .aw-library-progress > div {
     display: flex;
     justify-content: space-between;
-    font-size: 11px;
+    font-size: var(--aw-font-size-base);
     color: #d4cee4;
   }
   .aw-library-progress progress {
@@ -203,22 +146,15 @@
   }
   .aw-library-progress p,
   .aw-library-not-started {
-    font-size: 10px;
+    font-size: var(--aw-font-size-base);
     color: var(--aw-muted);
     margin: 8px 0 0;
   }
   .aw-library-not-started {
     margin-top: 18px;
   }
-  .aw-library-card-actions {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    margin-top: 15px;
-    flex-wrap: wrap;
-  }
   .aw-library-card-actions .btn {
-    font-size: 11px;
+    font-size: var(--aw-font-size-base);
     padding: 9px 13px;
     flex: 1;
   }
@@ -226,24 +162,13 @@
     background: transparent;
     color: #c5b6fb;
     border: 1px solid var(--aw-border);
-    border-radius: 6px;
-    min-height: 36px;
-    padding: 7px 10px;
-    font-size: 14px;
-  }
-  .aw-library-favorite > span {
-    font-size: 10px;
-    margin-left: 6px;
   }
   .aw-library-favorite:hover {
     background: #a697ff15;
     border-color: var(--aw-accent);
   }
   .aw-library-empty {
-    text-align: center;
-    padding: 54px 20px;
     border: 1px dashed var(--aw-border);
-    border-radius: 12px;
     background: radial-gradient(ellipse at top, #a697ff08, transparent 70%);
   }
   .aw-library-empty > span {
@@ -259,7 +184,7 @@
   .aw-library-empty p {
     max-width: 480px;
     margin: 16px auto 24px;
-    font-size: 12px;
+    font-size: var(--aw-font-size-base);
     line-height: 1.9;
     color: var(--aw-muted);
     overflow-wrap: anywhere;
@@ -269,15 +194,8 @@
     margin-top: 20px;
   }
   .aw-library-note {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    margin-top: 40px;
     border-top: 1px solid #ffffff0c;
-    padding-top: 22px;
     color: var(--aw-muted);
-    font-size: 11px;
-    line-height: 1.8;
   }
   .aw-library-note > span {
     color: var(--aw-accent);
@@ -287,47 +205,22 @@
     margin: 0;
   }
   .aw-library-guest-symbol {
-    display: block;
     color: var(--aw-accent);
     font-size: 60px;
-    line-height: 1;
-    margin-bottom: 24px;
-  }
-  .aw-library-return {
-    text-align: center;
   }
   @media (max-width: 1000px) {
-    .aw-library-grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
     .aw-library-summary > a {
       padding: 18px;
       gap: 12px;
     }
-    .aw-library-summary-unit {
-      display: none;
-    }
-    .aw-library-toolbar {
-      align-items: flex-start;
-      flex-direction: column;
-    }
   }
   @media (max-width: 600px) {
-    .aw-library-heading {
-      align-items: flex-start;
-      flex-direction: column;
-      padding-block: 30px 25px;
-    }
     .aw-library-heading .aw-eyebrow {
-      font-size: 8px;
+      font-size: var(--aw-font-size-base);
       letter-spacing: 1px;
     }
     .aw-library-heading h1 {
       font-size: 36px;
-    }
-    .aw-library-summary {
-      gap: 8px;
-      margin-bottom: 20px;
     }
     .aw-library-summary > a {
       flex-direction: column;
@@ -336,31 +229,20 @@
       gap: 12px;
     }
     .aw-library-summary-icon {
-      width: 32px;
-      height: 32px;
       font-size: 22px;
-      border-radius: 6px;
     }
     .aw-library-summary strong {
       font-size: 23px;
     }
     .aw-library-summary > a > div > span {
-      font-size: 10px;
-    }
-    .aw-library-tabs {
-      justify-content: space-between;
-      gap: 8px;
+      font-size: var(--aw-font-size-base);
     }
     .aw-library-tabs > a {
       gap: 6px;
-      font-size: 11px;
+      font-size: var(--aw-font-size-base);
     }
     .aw-library-tabs > a > span:first-child {
       font-size: 17px;
-    }
-    .aw-library-search {
-      width: 100%;
-      flex-wrap: wrap;
     }
     .aw-library-search input[type='search'] {
       width: auto;
@@ -370,21 +252,11 @@
       margin-left: 0;
       width: 100%;
     }
-    .aw-library-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 26px 14px;
-    }
     .aw-library-card .aw-anime-card h3 {
-      font-size: 13px;
-    }
-    .aw-library-card-actions {
-      align-items: stretch;
+      font-size: var(--aw-font-size-base);
     }
     .aw-library-card-actions .btn {
       flex-basis: 100%;
-    }
-    .aw-library-favorite {
-      width: 100%;
     }
     .aw-library-empty h3 {
       font-size: 21px;
