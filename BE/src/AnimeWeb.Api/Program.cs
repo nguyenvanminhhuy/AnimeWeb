@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using AnimeWeb.Api.Features.Anime;
+using AnimeWeb.Api.Features.Episodes;
 using AnimeWeb.Api.Infrastructure.Persistence;
 using AnimeWeb.Api.Infrastructure.Persistence.Seeding;
 using AnimeWeb.Api.Shared.Configuration;
@@ -39,6 +40,7 @@ builder.Services.AddControllers()
     });
 builder.Services.AddCors();
 builder.Services.AddScoped<AnimeService>();
+builder.Services.AddScoped<EpisodeService>();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
@@ -53,6 +55,9 @@ if (args.Contains("--seed-demo"))
     var database = scope.ServiceProvider.GetRequiredService<AnimeWebDbContext>();
     var inserted = await CatalogDemoSeeder.SeedAsync(database);
     app.Logger.LogInformation(inserted ? "Demo catalog inserted." : "Catalog already contains data; no changes.");
+    var episodesInserted = await EpisodeDemoSeeder.SeedAsync(database);
+    app.Logger.LogInformation(episodesInserted ? "Demo seasons and episodes inserted."
+        : "Seasons/episodes exist or demo parents are unavailable; no changes.");
     return;
 }
 

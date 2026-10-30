@@ -1,8 +1,9 @@
 using System.ComponentModel.DataAnnotations;
+using AnimeWeb.Api.Shared.Pagination;
 
 namespace AnimeWeb.Api.Features.Anime.Dtos;
 
-public sealed class AnimeQuery
+public sealed class AnimeQuery : PageQuery
 {
     [StringLength(200)]
     public string? Q { get; set; }
@@ -24,9 +25,4 @@ public sealed class AnimeQuery
     [RegularExpression("^(newest|title)$")]
     public string Sort { get; set; } = "newest";
 
-    [Range(1, int.MaxValue)]
-    public int Page { get; set; } = 1;
-
-    [Range(1, 50)]
-    public int PageSize { get; set; } = 20;
 }
