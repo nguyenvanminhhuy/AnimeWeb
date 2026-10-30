@@ -13,6 +13,7 @@ Chỉ triển khai màn hình được gọi tên và nền/component cần thi�
 - Đọc AGENTS.md áp dụng cho SRC và các thư mục dự án trước khi sửa.
 - Đọc DOC/readme.md, DOC/decisions.md, DOC/entities.md, DOC/api-contract.md, DOC/docs-FE/design/wireframes.md và [mục lục rules](../rules/readme.md). Áp dụng đầy đủ [kiến trúc](../rules/architecture.md), [cấu trúc FE](../rules/fe-structure.md), [style](../rules/styling.md) và [role/permission](../rules/roles-permissions.md).
 - Đọc thêm [route và navigation](../rules/routes.md); đây là rule bắt buộc cho mọi màn hình được generate.
+- Với Dashboard hoặc trang quản lý, bắt buộc đọc thêm [quy tắc trang quản trị](../rules/admin-screens.md). Có thể dùng điểm vào riêng [admin-screen-generation.md](admin-screen-generation.md); hai prompt dùng cùng router/kiến trúc và quy trình kiểm chứng.
 - Đọc [component dùng chung](../rules/common/readme.md), áp dụng [Button](../rules/common/button.md) cho nút hành động và CTA; tái sử dụng component thay vì lặp thẻ button/class btn ở page/feature.
 - Button có icon dùng label/startIcon/endIcon theo hướng đọc; không chèn whitespace/margin riêng để căn icon. Chỉ truyền label hoặc children, giữ aria-label cho nút icon-only.
 - Ô nhập dùng [Input](../rules/common/input.md), nhập có gợi ý tự do dùng [Combobox](../rules/common/combobox.md), lựa chọn giới hạn dùng [Selectbox](../rules/common/selectbox.md). Giữ label/validation và Form/query theo nghiệp vụ; không tự xây lại control tương đương.
@@ -34,10 +35,20 @@ Không phân biệt hoa/thường. Chấp nhận các tên tiếng Việt hoặc
 | Chi tiết phim / Chi tiết anime / Anime Detail | AnimeDetailPage | /anime/:slug | Poster/banner, mô tả, mùa/tập, yêu thích, bình luận |
 | Xem phim / Player / Watch | WatchPage | /watch/:episodeId | Player demo, chọn tập, trước/sau, chế độ rạp, tiến độ |
 | Thư viện / Bộ sưu tập / Library | LibraryPage | /library | Yêu thích, đang xem, lịch sử; chỉ member |
+| Profile / Hồ sơ / Trang cá nhân | ProfilePage | /profile | Avatar, tên/email, thống kê thư viện và nội dung cá nhân chỉ đọc; xem profile-screen.md |
 | Đăng nhập / Login | LoginPage | /login | Đăng nhập mock có nhãn rõ, quay về route nội bộ đã yêu cầu |
 | Đăng ký / Register / Sign up | RegisterPage | /register | Form tạo hồ sơ demo riêng, không lưu mật khẩu; giữ returnTo giữa hai trang auth |
+| Dashboard / Dashboard quản trị | AdminDashboardPage | /admin | Tổng quan dữ liệu mẫu; layout/quyền theo admin-screens.md |
+| Quản lý phim / Quản lý anime | AdminAnimePage | /admin/anime | Danh sách/tìm/lọc/phân trang, hành động theo quyền |
+| Thêm phim / Sửa phim | AdminAnimeFormPage | /admin/anime/new hoặc /admin/anime/:animeId/edit | Form metadata, validation, lưu/hủy |
+| Quản lý tập phim / Thêm tập phim / Sửa tập phim | AdminEpisodesPage / AdminEpisodeFormPage | /admin/episodes và route form | Chọn anime/mùa, metadata tập; xem bảng admin-screens.md |
+| Quản lý thể loại | AdminGenresPage | /admin/genres | Danh sách và form ngắn tên/slug |
+| Quản lý bình luận / Kiểm duyệt bình luận | AdminCommentsPage | /admin/comments | Danh sách/trạng thái và hành động kiểm duyệt theo quyền |
+| Quản lý người dùng | AdminUsersPage | /admin/users | Danh sách/tìm/lọc/hồ sơ tối thiểu, không tự cấp role |
 
-Tên chưa có trong bảng: ưu tiên tìm đặc tả trong DOC và source. Nếu đủ rõ, tự chọn route/page phù hợp, nêu giả định trong bàn giao. Chỉ hỏi khi tên thực sự mơ hồ hoặc liên quan quyết định nghiệp vụ chưa thể suy ra; không tự dựng trang quản trị và cấp thêm quyền.
+Các route quản trị là mặc định khi được gọi; hiện Dashboard /admin đã có UI mock, các trang CRUD chưa triển khai. Xem [Dashboard hiện tại](../admin-dashboard-screen.md) trước khi sửa. Chỉ tạo màn hình được yêu cầu và nền cần thiết theo admin-screens.md; không sinh toàn bộ CRUD từ tên Dashboard hoặc danh sách.
+
+Tên chưa có trong bảng: ưu tiên tìm đặc tả trong DOC và source. Nếu đủ rõ, tự chọn route/page phù hợp, nêu giả định trong bàn giao. Chỉ hỏi khi tên thực sự mơ hồ hoặc liên quan quyết định nghiệp vụ chưa thể suy ra; không tự dựng chức năng quản trị ngoài màn hình được gọi hoặc cấp quyền thật.
 
 Nếu màn hình đã tồn tại, cập nhật màn hình đó theo yêu cầu và đặc tả; không tạo bản trùng hoặc xóa chức năng hiện có. Khi thiếu slug/episodeId, tự chọn item mock hợp lệ và đưa URL cụ thể để mở sau khi hoàn thành.
 
@@ -88,7 +99,8 @@ FE/src/styles/                     Entry CSS, tokens, global và common
 - `/api/v1/me/...` dành cho thư viện, tiến độ cá nhân và ghi bình luận; yêu cầu đăng nhập và permission theo roles-permissions.md.
 - Guest chọn thư viện, yêu thích hoặc gửi bình luận: yêu cầu đăng nhập; dùng luồng sẵn có hoặc LoginPage mock tối thiểu nếu cần. Giữ returnTo chỉ trong ứng dụng; không tự gửi lại bình luận sau đăng nhập.
 - Guest không bị chặn xem phim chỉ vì chưa có tài khoản. Không dựng đăng nhập thật hoặc BE auth trong nhiệm vụ màn hình.
-- Demo session phải có nhãn rõ, đủ để kiểm tra guest/member và đăng xuất; không giả vờ là xác thực an toàn. Không tự cấp quyền admin/moderator.
+- Trang quản trị theo [admin-screens.md](../rules/admin-screens.md): guard quyền đọc/ghi riêng, member không tự trở thành admin. Khi thiếu API/quyền thật, chỉ dùng phiên mẫu riêng bật chủ động ở dev/test, production mặc định từ chối; không coi quyền mock/localStorage là quyền server.
+- Demo session phải có nhãn rõ, đủ để kiểm tra guest/member và đăng xuất; không giả vờ là xác thực an toàn. Không tự cấp quyền admin/moderator thật hoặc nâng quyền member; phiên quản trị mẫu riêng chỉ theo admin-screens.md khi được gọi màn hình quản trị.
 - Bình luận công khai chỉ visible theo đề xuất hiện tại; sửa/xóa kiểm tra permission own và tác giả. Không cho sửa bình luận người khác. Giữ chính sách đã xác nhận mới nhất nếu khác đề xuất.
 - Khi đổi tài khoản/đăng xuất, xóa cache cá nhân của phiên trước. FE guard không thay kiểm tra quyền BE trong tương lai.
 

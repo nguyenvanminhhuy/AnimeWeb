@@ -1,3 +1,4 @@
+import { logoutFromMenu } from './helpers/account-menu.mjs';
 import assert from 'node:assert/strict';
 
 export async function verifyLibrary(browser, baseURL) {
@@ -188,7 +189,7 @@ export async function verifyLibrary(browser, baseURL) {
     assert.equal(await page.locator('.aw-library-summary').count(), 0);
 
     await goto('/library?tab=history');
-    await page.getByRole('button', { name: 'Đăng xuất' }).click();
+    await logoutFromMenu(page);
     await page
       .getByRole('heading', { name: 'Thư viện dành cho thành viên', exact: true })
       .waitFor();
@@ -206,7 +207,7 @@ export async function verifyLibrary(browser, baseURL) {
     await goto('/library?tab=history&userId=viewer');
     assert.equal(await cards().count(), 0);
 
-    await page.getByRole('button', { name: 'Đăng xuất' }).click();
+    await logoutFromMenu(page);
     await page
       .locator('.aw-library-guest')
       .getByRole('link', { name: 'Đăng nhập', exact: true })

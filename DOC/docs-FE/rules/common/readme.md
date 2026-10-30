@@ -10,6 +10,9 @@ Thư mục `DOC/docs-FE/rules/common/` là nơi lưu tài liệu và quy tắc s
 | Selectbox | `FE/src/components/ui/selectbox.tsx` | [selectbox.md](selectbox.md) |
 | Icon (Font Awesome Free) | `FE/src/components/ui/icon.tsx` | [icon.md](icon.md) |
 | Pagination | `FE/src/components/common/pagination.tsx` | [pagination.md](pagination.md) |
+| AdminLayout | `FE/src/components/layouts/admin-layout.tsx` | [admin-layout.md](admin-layout.md) |
+| AccountMenu | `FE/src/components/navigation/account-menu.tsx` | [account-menu.md](account-menu.md) |
+| Avatar | `FE/src/components/ui/avatar.tsx` | [avatar.md](avatar.md) |
 
 Button, Input, Combobox và Selectbox hỗ trợ `size="sm" | "md" | "lg"`; xem [quy tắc size](sizes.md) cho kích thước mặc định, variant unstyled và htmlSize native. Không đổi font 14px theo size. Icon có kích thước đồ họa 16/18/24px theo tài liệu riêng.
 

@@ -74,3 +74,7 @@ Không lấy role/permission từ request body, localStorage hoặc tùy ý tin 
 7. Đăng xuất hoặc đổi tài khoản không để lộ dữ liệu cá nhân trong cache.
 
 Các mục trên là kế hoạch kiểm thử, chưa phải kết quả đã chạy.
+
+## Generate giao diện quản trị — 2026-10-30
+
+Khi được gọi Dashboard/trang quản lý, áp dụng [admin-screens.md](admin-screens.md). Tài liệu này bổ sung quy ước layout/route, ma trận permission mẫu và phiên quản trị mock riêng cho dev/test, không mở quyền quản trị cho member hoặc xác nhận API/role thật. Các mã admin:* ở đó là đề xuất cho FE mock, chưa thay ma trận quyền BE đã chốt. Guard quyền đọc/ghi và trạng thái thiếu quyền phải được kiểm tra cả khi mở URL trực tiếp; sau khi có auth BE, lấy quyền từ nguồn server được duyệt.

@@ -40,4 +40,6 @@ API/entity, roadmap và quyết định chung giữ một bản tại DOC để 
 
 Từ SRC chạy `pnpm --filter anime-web-fe run dev`, hoặc chạy `pnpm dev` trong `Anime-Web/FE`. Route: `/`, `/anime`, `/anime/:slug`, `/watch/:episodeId`, `/library`, `/login`, `/register`; thư viện yêu cầu phiên demo.
 
+[Dashboard quản trị](docs-FE/admin-dashboard-screen.md) tại `/admin` đã có UI đọc dữ liệu mẫu; mở phiên quản trị riêng qua Login trong dev. Production từ chối khi chưa có auth/quyền thật; chưa triển khai CRUD hoặc API quản trị.
+
 [Kiểm chứng FE](docs-FE/verification.md) được chuyển nguyên trạng. Các đường dẫn trong bằng chứng cũ phản ánh thời điểm chạy, không sửa lại lịch sử khi đổi vị trí tài liệu.

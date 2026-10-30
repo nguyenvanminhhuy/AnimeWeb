@@ -10,7 +10,10 @@ import { AuthForm } from '@/features/auth/components/auth-form';
 export function AuthScreen({ mode }: { mode: AuthMode }) {
   const [params] = useSearchParams();
   const returnTo = safeReturnTo(params.get('returnTo'));
-  const { user, displayName, logout } = useSession();
+  const { user, displayName, logout, adminPreview, openAdminPreview } = useSession();
+  const requestedPath = returnTo.split(/[?#]/, 1)[0];
+  const adminRequested =
+    requestedPath === paths.admin || requestedPath.startsWith(paths.admin + '/');
   const register = mode === 'register';
   return (
     <div className="aw-shell aw-auth tw:mx-auto tw:pt-6.25 tw:max-mobile:pt-5">
@@ -76,7 +79,7 @@ export function AuthScreen({ mode }: { mode: AuthMode }) {
               gửi đi.
             </p>
           </div>
-          {user ? (
+          {user || (adminPreview && adminRequested) ? (
             <div className="aw-auth-success tw:px-5 tw:py-7 tw:my-6 tw:rounded-[10px] tw:text-center">
               <span aria-hidden="true">
                 <Icon name="check" size="lg" />
@@ -100,7 +103,22 @@ export function AuthScreen({ mode }: { mode: AuthMode }) {
               />
             </div>
           ) : (
-            <AuthForm key={mode} mode={mode} />
+            <>
+              <AuthForm key={mode} mode={mode} />
+              {import.meta.env.DEV && !register && adminRequested && (
+                <div className="tw:mt-6 tw:border-t tw:border-[var(--aw-border)] tw:pt-5">
+                  <p className="tw:text-[var(--aw-muted)]">
+                    Phiên quản trị mẫu chỉ để xem giao diện trong dev; không lưu sau khi tải lại.
+                  </p>
+                  <Button
+                    variant="glass"
+                    className="tw:w-full"
+                    onClick={openAdminPreview}
+                    label="Dùng phiên quản trị mẫu"
+                  />
+                </div>
+              )}
+            </>
           )}
           <p className="aw-auth-switch tw:mx-0 tw:text-body tw:text-center tw:mt-6 tw:mb-0 tw:leading-[1.8]">
             {register ? 'Đã có hồ sơ demo?' : 'Chưa có hồ sơ demo?'}{' '}

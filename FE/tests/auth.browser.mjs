@@ -1,3 +1,4 @@
+import { logoutFromMenu } from './helpers/account-menu.mjs';
 import assert from 'node:assert/strict';
 
 export async function verifyAuth(browser, baseURL) {
@@ -18,7 +19,7 @@ export async function verifyAuth(browser, baseURL) {
     page.on('pageerror', (error) => errors.push(error.message));
     const success = () =>
       page.getByRole('heading', { name: 'Phiên demo đã sẵn sàng', exact: true }).waitFor();
-    const logout = () => page.getByRole('button', { name: 'Đăng xuất', exact: true }).click();
+    const logout = () => logoutFromMenu(page);
     const password = 'OnlyDemo!234';
     const fillRegistration = async (email, name = 'Người xem thử') => {
       await page.getByLabel('Tên hiển thị', { exact: true }).fill(name);

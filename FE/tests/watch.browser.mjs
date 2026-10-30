@@ -1,3 +1,4 @@
+import { logoutFromMenu } from './helpers/account-menu.mjs';
 import assert from 'node:assert/strict';
 
 export async function verifyWatch(browser, baseURL) {
@@ -117,7 +118,7 @@ export async function verifyWatch(browser, baseURL) {
     await page.getByRole('link', { name: 'Tập sau', exact: true }).click();
     await ready('episode-01-04');
     assert.equal(await page.evaluate(() => localStorage.getItem('aw:account:v1:viewer')), null);
-    await page.getByRole('button', { name: 'Đăng xuất', exact: true }).click();
+    await logoutFromMenu(page);
     assert.equal(await page.getByText(/Tiến độ đã lưu:/).count(), 0);
     assert.deepEqual(errors, []);
     assert.deepEqual(external, []);

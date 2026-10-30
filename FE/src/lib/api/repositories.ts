@@ -6,3 +6,5 @@ import { localCommentRepository } from '@/lib/storage/local-comment-repository';
 export const commentRepository = localCommentRepository;
 import { mockPlaybackRepository } from '@/lib/api/mock/mock-playback-repository';
 export const playbackRepository = mockPlaybackRepository;
+import { mockAdminDashboardRepository } from '@/lib/api/mock/mock-admin-dashboard-repository';
+export const adminDashboardRepository = mockAdminDashboardRepository;
