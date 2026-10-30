@@ -1,14 +1,14 @@
 # Entity và quan hệ dữ liệu
 
-Anime, Genre và AnimeGenre đã có model/configuration/migration BE trong feature Anime. Các entity còn lại vẫn là đề xuất để trao đổi FE/BE. Mô hình một anime chứa nhiều mùa/phần vẫn chờ duyệt khi triển khai mùa/tập.
+Anime, Genre, AnimeGenre, Season và Episode đã có model/configuration/migration BE. Người dùng đã xác nhận mô hình một anime nhiều mùa/phần và movie một mùa/một tập. Các entity còn lại vẫn là đề xuất.
 
 ## Danh mục nội dung
 
 | Entity | Trường chính | Ý nghĩa |
 | --- | --- | --- |
 | Anime | id, slug, title, alternativeTitles, synopsis, posterUrl, bannerUrl, status, format, releaseYear, publicationStatus | Danh mục đã có model BE; publicationStatus nội bộ độc lập trạng thái phát hành |
-| Season | id, animeId, number, title, sortOrder | Mùa/phần của anime |
-| Episode | id, seasonId, number, title, thumbnailUrl, durationSeconds, publishedAt, status, sortOrder | Tập phim trong một mùa |
+| Season | id, animeId, number, title, sortOrder | Đã có model BE; quyền đọc theo publication của anime cha |
+| Episode | id, seasonId, number, title, thumbnailUrl, durationSeconds, publishedAt, status, sortOrder | Đã có model BE; chỉ trả published thuộc anime public |
 | Genre | id, slug, name | Thể loại |
 | AnimeGenre | animeId, genreId | Bảng liên kết nhiều anime với nhiều thể loại |
 | PlaybackSource | id, episodeId, providerKey, type, label, language, enabled | Nguồn video của một tập |
@@ -22,6 +22,7 @@ Giá trị đề xuất:
 - Anime.format: `tv`, `movie`, `ova`, `ona`, `special`.
 - Anime.publicationStatus: `draft` (mặc định), `published`; chỉ published được đọc qua common. Đây là mặc định triển khai Anime; không trả trường này trong DTO công khai.
 - Episode.status: `draft`, `published`.
+- Episode.durationSeconds nullable khi chưa biết; giá trị đã biết không âm. publishedAt UTC bắt buộc với published, nullable ở draft. number lưu decimal(8,2); sortOrder là thứ tự chính. hasPlayback là trường DTO, hiện false, không phải cột nhận từ FE.
 - PlaybackSource.type: `mp4`, `hls` trong phạm vi đầu; việc hỗ trợ định dạng cụ thể phải kiểm chứng khi triển khai.
 
 Tập đã xuất bản có thể chưa có nguồn phát khả dụng. FE cần hiển thị rõ, không tự coi trạng thái published là phát được.
@@ -82,4 +83,4 @@ erDiagram
 
 Rating/Review, ReleaseSchedule, PlaybackReport và quan hệ franchise có thể thêm khi có yêu cầu. Không hiển thị điểm đánh giá hoặc lượt xem như dữ liệu thật khi chưa có nguồn và cách tính.
 
-Với phim điện ảnh, tạm đề xuất một Season và một Episode để tái sử dụng trình phát. Đây là lựa chọn cần duyệt, không phải yêu cầu bắt buộc.
+Với phim điện ảnh, dùng một Season và một Episode theo mô hình đã được người dùng xác nhận. Feature đọc này chưa có API quản trị; các thao tác ghi tương lai phải giữ mô hình nghiệp vụ đã chốt.

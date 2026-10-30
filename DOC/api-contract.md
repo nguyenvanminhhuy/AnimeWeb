@@ -1,6 +1,6 @@
 # API contract sơ bộ
 
-**v0.2: đã triển khai nền ASP.NET Core và ba API đọc Anime** (list/detail/genres) ngày 2026-10-30. API mùa/tập, auth, library, progress, comments và playback còn là bản nháp chưa triển khai. Chi tiết xác thực và lựa chọn được đánh dấu đề xuất cần chốt trước module tương ứng.
+**v0.2: đã triển khai nền ASP.NET Core, Anime và Mùa/tập** ngày 2026-10-30. Các API đọc catalog, seasons, episodes có code và kiểm thử; auth, library, progress, comments và playback còn là bản nháp chưa triển khai. Các lựa chọn được đánh dấu đề xuất cần chốt trước module tương ứng.
 
 ## Endpoint nền BE
 
@@ -79,7 +79,20 @@ Người dùng đã xác nhận các mặc định: chỉ đọc published, tìm
 
 Ảnh trong ví dụ chỉ là đường dẫn minh họa, chưa có file. Chi tiết anime bổ sung synopsis, alternativeTitles và bannerUrl. Season có id, animeId, number, title, sortOrder; Episode có các trường như entities.md. Các danh sách Season/Genre trả `data` là mảng; danh sách Episode dùng `meta` phân trang như anime.
 
-### Ví dụ thông tin phát
+### Quy tắc Mùa và tập (2026-10-30)
+
+Người dùng đã xác nhận: mỗi anime có nhiều mùa, phim điện ảnh một mùa/một tập; chỉ đọc mùa thuộc anime published và tập published. Phần dưới là chi tiết triển khai:
+
+- GET common/anime/:id/seasons dùng anime ID (không dùng slug); anime không tồn tại/draft trả 404 ANIME_NOT_FOUND. Anime published chưa có mùa trả 200 với data=[].
+- Season không có trạng thái publication riêng trong phạm vi này; quyền đọc theo anime cha. Sort theo sortOrder tăng dần rồi id tăng dần. Danh sách mùa không phân trang như contract hiện tại.
+- GET common/seasons/:id/episodes trả 404 SEASON_NOT_FOUND khi mùa không có hoặc anime cha không public. Mùa hợp lệ chưa có tập public trả data=[] và meta. Chỉ tập status=published được tính vào total; sort sortOrder/id tăng dần. page/pageSize mặc định 1/20, giới hạn pageSize 1–50, trang vượt cuối giữ nguyên page và trả rỗng như Anime.
+- GET common/episodes/:id chỉ trả tập published thuộc anime published; các trường hợp không có/draft/cha bị ẩn cùng trả 404 EPISODE_NOT_FOUND. DTO detail thêm animeId và animeSlug cùng seasonId để FE liên kết; không trả entity/navigation EF hoặc URL phát.
+- ID là chuỗi opaque tối đa 100 ký tự; input quá dài và query pagination sai trả 400 VALIDATION_ERROR. Season.number là số nguyên không âm (0 dành cho phần đặc biệt); Episode.number cho phép số thập phân tối đa hai chữ số sau dấu chấm. Không suy ra thứ tự từ number hoặc ID.
+- durationSeconds có thể null khi chưa biết, giá trị đã biết không âm. publishedAt dùng UTC và bắt buộc có khi status=published; null được phép cho draft. thumbnailUrl là string, rỗng khi chưa có ảnh. DTO public giữ status=published, sortOrder và hasPlayback=false; trạng thái published không chứng minh có video.
+- Chưa có entity nguồn phát trong feature này. hasPlayback=false là khả năng hiện tại của server, không phải cờ do FE gửi hoặc cột tự gán. Feature Playback sẽ xác định nguồn khi được triển khai.
+- Migration không tự seed. Lệnh Development --seed-demo có thể bổ sung demo mùa/tập khi hai bảng đang rỗng và catalog chứa đúng các ID/slug demo cần thiết; không sửa mùa/tập hoặc catalog đã có.
+
+### Ví dụ thông tin phát (đề xuất cho feature Playback)
 
 ```json
 {

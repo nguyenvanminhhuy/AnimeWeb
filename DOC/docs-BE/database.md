@@ -12,9 +12,9 @@ Mô hình chuẩn tại [entities.md](../entities.md). PostgreSQL 18.6-bookworm,
 | Tiến độ | WatchProgress | Duy nhất userId/episodeId; positionSeconds không âm |
 | Bình luận | Comment | Tác giả lấy từ phiên; visible/hidden/deleted; xóa mềm |
 
-Anime.status là trạng thái phát hành upcoming/airing/completed; publicationStatus là draft/published, mặc định draft và chỉ published được đọc qua common. Quy tắc đã được xác nhận và kiểm tra; episode publication sẽ áp dụng khi có module mùa/tập.
+Anime.status là trạng thái phát hành upcoming/airing/completed; publicationStatus là draft/published, mặc định draft. Season đọc theo anime cha; Episode mặc định draft và chỉ published dưới anime public được trả qua common. InitialEpisodes thêm Seasons/Episodes với FK restrict, check number/sortOrder/duration/status và publishedAt bắt buộc khi published. Migration không chèn demo.
 
-ID là string ổn định; thời gian trả UTC ISO 8601. Không suy luận tập trước/sau bằng cộng số tập; dùng thứ tự mùa/tập và chỉ lấy tập công khai. Mô hình một anime nhiều mùa và movie một mùa/một tập vẫn cần duyệt.
+ID là string ổn định; thời gian trả UTC ISO 8601. Không suy luận tập trước/sau bằng cộng số tập; dùng sortOrder/id và chỉ lấy tập công khai. Mô hình một anime nhiều mùa, movie một mùa/một tập đã được người dùng xác nhận. number của episode có thể là số thập phân cho tập đặc biệt, không là khóa định danh hoặc thứ tự chính.
 
 ## Ghi và truy vấn
 

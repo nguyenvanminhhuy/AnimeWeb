@@ -33,12 +33,14 @@ Baseline kỹ thuật triển khai theo quyền lựa chọn đã giao: .NET 10 
 
 Người dùng xác nhận dùng các mặc định khi generate feature Anime: chỉ công khai anime published; tìm không phân biệt hoa/thường theo title và alternativeTitles; mặc định mới nhất trước; trang vượt cuối trả danh sách rỗng. publicationStatus được tách khỏi status phát hành, mặc định draft. Các chi tiết kỹ thuật (newest theo releaseYear, khóa phụ id, giới hạn query, collation, lọc genres) được ghi tại [API contract](api-contract.md); không suy diễn thành quyết định cho module chưa triển khai.
 
-## Đề xuất nghiệp vụ khác đang chờ duyệt
+## Quy tắc Mùa và tập xác nhận ngày 2026-10-30
+
+Người dùng xác nhận mỗi anime có nhiều mùa; phim điện ảnh dùng một mùa/một tập; chỉ trả mùa thuộc anime published và tập published. Thứ tự đọc dùng sortOrder rồi id; không suy ra từ số tập. Các chi tiết DTO/validation/duration/timestamp và hasPlayback được ghi tại [API contract](api-contract.md). Đây là feature metadata, chưa triển khai nguồn phát.
+
+## Các đề xuất nghiệp vụ còn mở
 
 | Vấn đề | Đề xuất ban đầu | Ảnh hưởng |
 | --- | --- | --- |
-| Mùa/phần | Một anime chứa nhiều mùa | URL, entity và danh sách tập |
-| Phim điện ảnh | Một mùa, một tập | Cách tái sử dụng trình phát |
 | Giao diện | Nền tối; màu nhấn chờ chọn | Tokens, thiết kế màn hình |
 | Thời điểm có đăng nhập thật | FE mô phỏng guest/member trước; BE xác thực thật sau | Thư viện và gửi bình luận chỉ mở cho trạng thái member |
 | Phân quyền chi tiết | RBAC với UserRole/RolePermission, quyền own kiểm tra ownership | Chi tiết role moderator/admin và cách xác thực chưa chốt |

@@ -20,6 +20,8 @@ Cập nhật feature Anime 2026-10-30: API list/detail/genres đã có, FE vẫn
 
 ## Trình tự đề xuất
 
+Cập nhật Mùa và tập 2026-10-30: đã có API danh sách mùa, danh sách tập phân trang và chi tiết tập với animeId/animeSlug. Adapter FE cần tải hết các trang cần thiết khi ghép AnimeDetail; không tự coi một page là toàn bộ tập. durationSeconds nullable khi chưa biết trong BE, khác number bắt buộc ở type FE hiện tại; cần mapper/hiển thị thời lượng chưa biết khi tích hợp. hasPlayback hiện false, chưa có nguồn phát. Chưa sửa source FE trong lượt generate BE.
+
 1. Chốt phần thiếu trong contract; giữ mock/local adapter để phát triển độc lập.
 2. Khi triển khai, tạo HTTP client/DTO/mapper ở `FE/src/lib/api`; gom lỗi, 204, timeout và AbortSignal. Component không gọi fetch trực tiếp.
 3. Nối common trước; sau đó nối phiên thật và cache theo tài khoản.

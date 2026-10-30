@@ -36,3 +36,22 @@ Giới hạn: chưa có endpoint nghiệp vụ, authentication scheme, entity/sc
 - Kiểm tra cú pháp PowerShell start-local.ps1 sau khi thêm tham số: PASS. Không cần formatter/build FE vì không sửa code FE.
 
 Giới hạn hiện tại: FE chưa nối API; chưa có CRUD quản trị, mùa/tập, auth, library, comments, progress hoặc playback. Tìm kiếm chưa bỏ dấu và sắp title chưa phải từ điển tiếng Việt. Seed chỉ là nội dung hư cấu/ảnh minh họa, chưa có video thật. Chưa apply migration vào database dev hoặc dữ liệu thật trong lượt này.
+
+## 2026-10-30 — Feature Mùa và tập
+
+- Thực thi module-generation.md trong repo New folder/AnimeWeb, dùng nền/Anime hiện có, không sửa FE hoặc ghi sang SRC/Anime-Web. Theo yêu cầu người dùng, không lặp kiểm tra branch/Git status.
+- Người dùng xác nhận mô hình anime nhiều mùa, movie một mùa/một tập, chỉ đọc mùa thuộc anime published và tập published. Bổ sung contract về sortOrder/id, pagination, null duration, UTC publishedAt, ID/validation, lỗi 404 và hasPlayback=false trong feature metadata.
+- Thêm Season/Episode, EF configurations và InitialEpisodes; FK restrict từ Anime tới Season tới Episode, check number/sortOrder/status/duration và publishedAt bắt buộc cho published. Không sửa SQL migration cũ hoặc chèn demo qua migration.
+- Có GET common/anime/:id/seasons, common/seasons/:id/episodes và common/episodes/:id. DTO detail kèm animeId/animeSlug/seasonId, không trả navigation/entity hoặc URL nguồn phát. Dùng chung PageQuery với Anime; kiểm tra hồi quy Anime vẫn đạt.
+- Seed Development explicit bổ sung 5 mùa/8 tập khi hai bảng còn rỗng và tìm thấy đúng demo parents. Có nhiều mùa, tập đặc biệt số 1.5/ID không liên tiếp, hai tập cùng sortOrder, mùa trống, draft và tập published dưới anime draft. Gọi lại không thay đổi dữ liệu đã có. Không seed vào database dev trong lượt kiểm tra.
+- `dotnet ef migrations add InitialEpisodes --project src/AnimeWeb.Api --startup-project src/AnimeWeb.Api --output-dir Infrastructure/Persistence/Migrations`: PASS với connection string fixture. Đã review migration chỉ tạo Seasons/Episodes và index/constraint.
+- Lượt PostgreSQL đầu không kết nối được vì Docker Engine đang tắt; đã khởi động Docker Desktop và đợi đúng Compose test container healthy rồi chạy lại. 43 test không cần PostgreSQL chạy đạt độc lập. Fixture chỉ dọn schema khi schema đã tạo thành công để tránh lỗi cleanup phụ khi database không khả dụng.
+- Sau khi Docker sẵn sàng, phát hiện một assertion test đòi foreign_key_violation (23503) khi xóa parent bị RESTRICT; PostgreSQL 18 trả restrict_violation (23001). Đã đối chiếu tài liệu PostgreSQL và sửa assertion, không thay constraint.
+- `dotnet test AnimeWeb.slnx` với ANIMEWEB_TEST_DATABASE fixture: PASS 65/65, skipped 0. Gồm 43 test nền/validation và 22 PostgreSQL cases; kiểm tra season/episode API, private ancestors, empty resources, pagination lớn, thứ tự, UTC, null duration, movie convention, DB constraints và regression Anime.
+- Catalog fixture nâng từ InitialCatalog đã chứa 7 anime lên InitialEpisodes và xác nhận số anime giữ nguyên. Migration test từ database rỗng xác nhận đủ ba migration và apply lại idempotent. Episode seed chạy hai lần, giữ đúng 5 mùa/8 tập.
+- `dotnet format AnimeWeb.slnx --no-restore`, `dotnet format AnimeWeb.slnx --verify-no-changes --no-restore`: PASS. `dotnet build AnimeWeb.slnx --no-restore`: PASS, 0 warning/0 error. `dotnet restore AnimeWeb.slnx --locked-mode`: PASS.
+- `dotnet ef migrations has-pending-model-changes --project src/AnimeWeb.Api --startup-project src/AnimeWeb.Api --no-build`: PASS, model khớp migration.
+- `scripts/test-database.ps1`: PASS 22 PostgreSQL cases; script dừng đúng test container sau kiểm tra, không chạm volume/dev hoặc container khác.
+- CLI Development --seed-demo hai lần trên fixture: lần đầu chèn catalog và mùa/tập; lần sau báo có dữ liệu và không thay đổi. Kestrel smoke trên 127.0.0.1:5209 xác nhận seasonCount=3, main episodeTotal=4, pageSize=2 trả 2 item, special number=1.50, hasPlayback=false; truy cập tập dưới anime hidden trả 404. Đã dừng smoke host sau kiểm tra.
+
+Giới hạn: feature này cung cấp metadata, chưa có Playback/provider/video, CRUD quản trị, auth hoặc tích hợp FE. Thời lượng chưa biết trả null, cần mapper khi FE tích hợp. Movie một mùa/một tập hiện là quy ước mô hình/seed; chưa có API ghi để thực thi workflow quản trị. Không apply migration hoặc seed lên dữ liệu thật/dev trong lượt kiểm tra.

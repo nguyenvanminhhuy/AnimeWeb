@@ -1,6 +1,6 @@
 # API backend và hợp đồng FE/BE
 
-[api-contract.md](../api-contract.md) chứa endpoint, payload và ví dụ. Đã có health/readiness/OpenAPI và ba API đọc Anime (danh sách, chi tiết, genres). Các module còn lại của v0.2 vẫn là bản nháp chưa triển khai. Tài liệu này không tạo hợp đồng thứ hai.
+[api-contract.md](../api-contract.md) chứa endpoint, payload và ví dụ. Đã có health/readiness/OpenAPI, API Anime và ba API metadata Mùa/tập. Auth/Library/Progress/Comments/Playback của v0.2 vẫn là bản nháp chưa triển khai. Tài liệu này không tạo hợp đồng thứ hai.
 
 ## Quy ước
 

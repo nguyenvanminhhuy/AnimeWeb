@@ -8,7 +8,7 @@ Tất cả endpoint bên dưới thuộc prefix `/api/v1`. Method/payload/status
 | --- | --- | --- | --- |
 | Nền BE | Program/Shared/Infrastructure | Stack C# đã chốt | [setup.md](setup.md) |
 | Anime / Danh mục anime / catalog | anime | Nền, publication đã xác nhận | Đã có GET common/anime, common/anime/:slug, common/genres |
-| Mùa và tập / episode | episode | Anime | GET common/anime/:id/seasons, common/seasons/:id/episodes, common/episodes/:id |
+| Mùa và tập / episode | episode | Anime | Đã có GET common/anime/:id/seasons, common/seasons/:id/episodes, common/episodes/:id |
 | Xác thực / auth | auth/authorization | User, hợp đồng auth đã bổ sung | Phiên thật, GET me; login/register/logout theo contract được chốt |
 | Thư viện / library | library | Anime, auth/authorization | GET me/library, PUT/DELETE me/library/:animeId |
 | Tiến độ / progress | progress | Episode, auth, chính sách đồng bộ | GET me/progress, PUT me/progress/:episodeId |
@@ -23,7 +23,7 @@ Tất cả endpoint bên dưới thuộc prefix `/api/v1`. Method/payload/status
 
 ### Mùa và tập
 
-Kiểm tra publication của cha và tập. Season sắp theo sortOrder; episode phân trang và không trả draft. Phân biệt tập tồn tại với khả năng phát. Test tập đặc biệt có số/ID không liên tiếp và parent bị ẩn.
+Đã triển khai model/migration/seed và ba API metadata theo contract. Season theo anime published; tập chỉ published với cha public. Sắp sortOrder/id, pagination dùng chung, draft/cha bị ẩn trả 404; có test tập đặc biệt/ID không liên tiếp. durationSeconds nullable khi chưa biết; hasPlayback=false cho đến feature Playback, không tự suy ra từ status published.
 
 ### Xác thực và authorization
 
