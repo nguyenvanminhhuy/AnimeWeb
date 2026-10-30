@@ -52,4 +52,4 @@ Test host cung cấp cấu hình giả, database PostgreSQL test riêng và fake
 3. DbContext, migration/seed theo đúng phạm vi, local tool manifest, cấu hình test và hướng dẫn chạy không chứa bí mật.
 4. Format/build và smoke/integration test chạy thật; ghi lệnh, kết quả và giới hạn vào verification BE.
 
-Cơ chế auth cookie/token, endpoint auth, publication anime và xung đột progress vẫn cần đặc tả khi tới module liên quan. Không chặn phần nền độc lập vì các lựa chọn nghiệp vụ chưa ảnh hưởng nó.
+Cơ chế auth cookie/token, endpoint auth và xung đột progress vẫn cần đặc tả khi tới module liên quan. Publication anime và ba API đọc đã được triển khai trong feature Anime theo contract; InitialCatalog bổ sung schema, seed demo được gọi explicit bằng start-local.ps1 -InitializeCatalog trên dev.

@@ -16,6 +16,8 @@
 
 DTO genres đề xuất là object id/slug/name, còn Anime FE dùng string[]. FE có subtitle và episodeLabel phục vụ hiển thị. Mapper quy định cách chuyển/derive, không ép BE trả tên trường trình bày. Format, hasPlayback, related và danh sách tập cần rà soát cùng [api.md](api.md).
 
+Cập nhật feature Anime 2026-10-30: API list/detail/genres đã có, FE vẫn dùng mock. API tìm không phân biệt hoa thường nhưng chưa bỏ dấu; page vượt cuối giữ nguyên page và data rỗng, khác mock tự clamp page. DTO detail chưa có seasons/episodes/related; không tự coi màn hình chi tiết FE đã tích hợp chỉ vì có endpoint theo slug. Xem quy tắc chính xác trong API contract trước khi viết mapper.
+
 ## Trình tự đề xuất
 
 1. Chốt phần thiếu trong contract; giữ mock/local adapter để phát triển độc lập.

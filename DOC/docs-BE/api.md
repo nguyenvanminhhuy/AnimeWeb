@@ -1,6 +1,6 @@
 # API backend và hợp đồng FE/BE
 
-[api-contract.md](../api-contract.md) chứa endpoint, payload và ví dụ. Nền BE đã có health/readiness/OpenAPI; nghiệp vụ v0.2 vẫn là bản nháp chưa triển khai. Tài liệu này bổ sung hướng triển khai, không tạo hợp đồng thứ hai.
+[api-contract.md](../api-contract.md) chứa endpoint, payload và ví dụ. Đã có health/readiness/OpenAPI và ba API đọc Anime (danh sách, chi tiết, genres). Các module còn lại của v0.2 vẫn là bản nháp chưa triển khai. Tài liệu này không tạo hợp đồng thứ hai.
 
 ## Quy ước
 
@@ -24,7 +24,7 @@
 ## Phần phải hoàn thiện trước khi code
 
 1. Auth: endpoint đăng ký/đăng nhập/đăng xuất, cơ chế phiên, hết hạn/thu hồi và DTO lỗi; chưa có trong v0.2.
-2. Danh mục: publication anime, sort mặc định, page vượt cuối, ngữ nghĩa tìm kiếm và filter kết hợp. Không thêm sort rating/popular khi chưa có nguồn.
+2. Danh mục: đã chốt/triển khai publication, sort mặc định, page vượt cuối, tìm kiếm và filter kết hợp theo mục Anime trong contract; khi nối FE cần xử lý khác biệt normalizeSearch và clamp page. Không thêm sort rating/popular khi chưa có nguồn.
 3. DTO: FE hiện hỗ trợ format tv/movie; API đề xuất thêm ova/ona/special. Chốt mapper trước khi mở rộng dữ liệu.
 4. Tiến độ: hoàn thành, xem lại, xung đột nhiều thiết bị và thời lượng chưa biết. Không tự lấy timestamp client làm chuẩn.
 5. Bình luận: duyệt trước hay hiện ngay, sửa nội dung hidden/deleted; giới hạn đề xuất 1–2000 ký tự sau trim.

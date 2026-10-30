@@ -1,8 +1,8 @@
 # Anime Web — Tổng quan tài liệu
 
-Trạng thái: **FE có Trang chủ, Khám phá, Chi tiết anime, Xem phim, Thư viện và Đăng nhập/Đăng ký demo. BE đã có nền ASP.NET Core và health/readiness; chưa có API nghiệp vụ hoặc nguồn phim thật.**
+Trạng thái: **FE có các màn hình demo; BE đã có nền ASP.NET Core và API đọc danh mục Anime (list/detail/genres). Chưa nối FE với BE hoặc có nguồn phim thật.**
 
-Mục tiêu là web xem anime hoạt động thực tế. FE dùng mock và dữ liệu cục bộ; auth demo không lưu/xác thực mật khẩu. Trang xem đã có giao diện, chuyển tập và nhánh video native; xem [Xem phim](docs-FE/watch-screen.md), chưa có video để kiểm chứng playback. BE dùng C#/ASP.NET Core Web API Controller, PostgreSQL và EF Core; xem [hướng dẫn chạy nền BE](../BE/README.md). Các module nghiệp vụ chưa triển khai.
+Mục tiêu là web xem anime hoạt động thực tế. FE dùng mock và dữ liệu cục bộ; auth demo không lưu/xác thực mật khẩu. Trang xem đã có giao diện và native video, chưa có video để kiểm chứng playback. BE dùng C#/ASP.NET Core Controller, PostgreSQL và EF Core; feature Anime có migration, seed demo và API công khai. Xem [hướng dẫn chạy](../BE/README.md); các feature nghiệp vụ còn lại chưa triển khai.
 
 ## Cấu trúc
 
