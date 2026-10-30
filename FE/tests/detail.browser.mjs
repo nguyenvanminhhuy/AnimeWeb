@@ -1,3 +1,4 @@
+import { logoutFromMenu } from './helpers/account-menu.mjs';
 import assert from 'node:assert/strict';
 
 export async function verifyDetail(browser, baseURL) {
@@ -156,7 +157,7 @@ export async function verifyDetail(browser, baseURL) {
     await page
       .getByLabel('Cảm nhận của bạn', { exact: true })
       .fill('Bản nháp phải được xóa khi đổi tài khoản');
-    await page.getByRole('button', { name: 'Đăng xuất', exact: true }).click();
+    await logoutFromMenu(page);
     await commentsReady();
     assert.equal(await page.locator('#comment-body').count(), 0);
     await page.getByText('Bình luận đã sửa', { exact: true }).waitFor();
@@ -169,7 +170,7 @@ export async function verifyDetail(browser, baseURL) {
       await page.getByText('Bản nháp phải được xóa khi đổi tài khoản', { exact: true }).count(),
       0,
     );
-    await page.getByRole('button', { name: 'Đăng xuất', exact: true }).click();
+    await logoutFromMenu(page);
     await commentsReady();
     await page.getByRole('link', { name: /Đăng nhập để bình luận/ }).click();
     await login('Dùng tài khoản có lịch sử mẫu');
@@ -192,9 +193,10 @@ export async function verifyDetail(browser, baseURL) {
       'deleted',
     );
     await page.getByLabel('Cảm nhận của bạn', { exact: true }).fill('Không được lưu sau đăng xuất');
+    await page.getByRole('button', { name: /^Tài khoản của / }).click();
     await page.evaluate(() => {
       document.querySelector('form.aw-comment-form').requestSubmit();
-      document.querySelector('.aw-header .aw-account').click();
+      document.querySelector('.aw-header nav[aria-label="Tài khoản"] button').click();
     });
     await commentsReady();
     await page.waitForTimeout(250);

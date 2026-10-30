@@ -1,3 +1,4 @@
+import { logoutFromMenu } from './helpers/account-menu.mjs';
 import assert from 'node:assert/strict';
 
 // Run with Chromium supplied by the workspace's existing @playwright/test.
@@ -85,7 +86,7 @@ export async function verifyHome(browser, baseURL) {
     .getByRole('link', { name: 'Trang chủ', exact: true })
     .click();
   await homeReady();
-  await page.getByRole('button', { name: 'Đăng xuất' }).click();
+  await logoutFromMenu(page);
   assert.equal(await page.locator('progress').count(), 0);
   await page.goto(`${baseURL}/login`);
   await page.getByRole('button', { name: 'Dùng tài khoản mới' }).click();
@@ -96,7 +97,7 @@ export async function verifyHome(browser, baseURL) {
     await page.getByRole('button', { name: 'Yêu thích', exact: true }).getAttribute('aria-pressed'),
     'false',
   );
-  await page.getByRole('button', { name: 'Đăng xuất' }).click();
+  await logoutFromMenu(page);
   await page.goto(`${baseURL}/library`);
   await page.getByRole('heading', { name: 'Thư viện dành cho thành viên' }).waitFor();
   await page.goto(`${baseURL}/`);

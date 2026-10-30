@@ -1,3 +1,4 @@
+import { logoutFromMenu } from './helpers/account-menu.mjs';
 import assert from 'node:assert/strict';
 
 export async function verifyExplore(browser, baseURL) {
@@ -187,7 +188,7 @@ export async function verifyExplore(browser, baseURL) {
     await ready();
     assert.deepEqual(await hrefs(), publicResults);
     assert.equal(new URL(page.url()).searchParams.get('genre'), 'fantasy');
-    await page.getByRole('button', { name: 'Đăng xuất' }).click();
+    await logoutFromMenu(page);
     assert.deepEqual(await hrefs(), publicResults);
 
     await page.route('**/images/starlight.svg', (route) => route.abort());

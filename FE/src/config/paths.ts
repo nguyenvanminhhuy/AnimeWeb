@@ -8,6 +8,8 @@ export const routePatterns = {
   library: '/library',
   login: '/login',
   register: '/register',
+  admin: '/admin',
+  profile: '/profile',
 } as const;
 
 export const paths = {
@@ -16,6 +18,8 @@ export const paths = {
   library: routePatterns.library,
   login: routePatterns.login,
   register: routePatterns.register,
+  admin: routePatterns.admin,
+  profile: routePatterns.profile,
   animeDetail: (slug: string) =>
     generatePath(routePatterns.animeDetail, { slug: encodeURIComponent(slug) }),
   watch: (episodeId: string) =>

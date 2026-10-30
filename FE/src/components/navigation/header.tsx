@@ -4,8 +4,11 @@ import { Button } from '@/components/ui/button';
 import { useSession } from '@/stores/session';
 import { Form, Link, NavLink, useLocation, useMatch } from 'react-router-dom';
 import { paths, routePatterns, safeReturnTo } from '@/config/paths';
+import { AccountMenu } from '@/components/navigation/account-menu';
 export function Header() {
-  const { user, logout } = useSession();
+  const { user, displayName, adminPreview, permissions, logout } = useSession();
+  const canReadAdmin =
+    import.meta.env.DEV && adminPreview && permissions.includes('admin:dashboard:read');
   const { pathname, search } = useLocation();
   const loginMatch = useMatch(routePatterns.login);
   const registerMatch = useMatch(routePatterns.register);
@@ -58,13 +61,28 @@ export function Header() {
             maxLength={100}
           />
         </Form>
-        {user ? (
-          <Button
-            variant="quiet"
-            className="aw-account tw:max-desktop:ml-auto tw:max-phone:p-2.25 tw:max-phone:text-body"
-            onClick={logout}
-            label="Đăng xuất"
-          />
+        {user || adminPreview ? (
+          <div className="tw:max-desktop:ml-auto">
+            <AccountMenu
+              identity={user ?? 'admin-preview'}
+              displayName={displayName}
+              onLogout={logout}
+              links={[
+                ...(user
+                  ? [
+                      { label: 'Trang cá nhân', to: paths.profile },
+                      { label: 'Thư viện của tôi', to: paths.library },
+                    ]
+                  : []),
+                ...(canReadAdmin
+                  ? [
+                      { label: 'Dashboard quản trị', to: paths.admin },
+                      { label: 'Đổi tài khoản', to: paths.login },
+                    ]
+                  : []),
+              ]}
+            />
+          </div>
         ) : (
           <Button
             as="link"

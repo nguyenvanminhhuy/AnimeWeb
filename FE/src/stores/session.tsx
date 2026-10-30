@@ -4,13 +4,18 @@ import { demoAccount } from '@/lib/storage/demo-account';
 import type { DemoUser } from '@/types/auth';
 import type { Progress } from '@/types/progress';
 import { authRepository } from '@/lib/api/repositories';
+import type { AdminPreviewSession } from '@/types/admin';
+import { adminPreviewSession } from '@/testing/mocks/fixtures/admin-session';
 interface Session {
   user: DemoUser | null;
   displayName: string;
+  email: string;
   favorites: string[];
   progress: Progress[];
   permissions: readonly string[];
   notice: string;
+  adminPreview: AdminPreviewSession | null;
+  openAdminPreview: () => void;
   login: (user: DemoUser) => boolean;
   logout: () => void;
   toggleFavorite: (id: string) => void;
@@ -25,25 +30,42 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const user = profile?.id ?? null;
   const [account, setAccount] = useState(() => (user ? demoAccount.read(user) : null));
   const [notice, setNotice] = useState('');
+  const [adminPreview, setAdminPreview] = useState<AdminPreviewSession | null>(null);
   const current = useRef({ user, account });
   current.current = { user, account };
   const session: Session = {
     user,
-    displayName: profile?.displayName ?? '',
+    displayName: adminPreview?.displayName ?? profile?.displayName ?? '',
+    email: profile?.email ?? '',
     favorites: account?.favorites ?? [],
     progress: account?.progress ?? [],
-    permissions: user
-      ? [
-          'library:read:own',
-          'library:write:own',
-          'progress:read:own',
-          'progress:write:own',
-          'comment:create',
-          'comment:update:own',
-          'comment:delete:own',
-        ]
-      : [],
+    permissions:
+      import.meta.env.DEV && adminPreview
+        ? adminPreview.permissions
+        : user
+          ? [
+              'library:read:own',
+              'library:write:own',
+              'progress:read:own',
+              'progress:write:own',
+              'comment:create',
+              'comment:update:own',
+              'comment:delete:own',
+            ]
+          : [],
     notice,
+    adminPreview,
+    openAdminPreview() {
+      if (!import.meta.env.DEV) return;
+      current.current = { user: null, account: null };
+      setProfile(null);
+      setAccount(null);
+      setAdminPreview(adminPreviewSession);
+      const cleared = demoAccount.saveSession(null);
+      setNotice(
+        cleared ? '' : 'Không thể xóa phiên đã lưu; tải lại có thể khôi phục tài khoản cũ.',
+      );
+    },
     login(next) {
       const nextProfile = authRepository.getProfile(next);
       if (!nextProfile) {
@@ -51,6 +73,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         return false;
       }
       const nextAccount = demoAccount.read(next);
+      setAdminPreview(null);
       current.current = { user: next, account: nextAccount };
       setAccount(nextAccount);
       setProfile(nextProfile);
@@ -62,6 +85,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       return true;
     },
     logout() {
+      setAdminPreview(null);
       current.current = { user: null, account: null };
       setProfile(null);
       setAccount(null);
