@@ -7,7 +7,7 @@ Tất cả endpoint bên dưới thuộc prefix `/api/v1`. Method/payload/status
 | Tên gọi trong prompt | Module | Phụ thuộc | Phạm vi |
 | --- | --- | --- | --- |
 | Nền BE | Program/Shared/Infrastructure | Stack C# đã chốt | [setup.md](setup.md) |
-| Danh mục anime / catalog | anime | Nền, publication | GET common/anime, common/anime/:slug, common/genres |
+| Anime / Danh mục anime / catalog | anime | Nền, publication đã xác nhận | Đã có GET common/anime, common/anime/:slug, common/genres |
 | Mùa và tập / episode | episode | Anime | GET common/anime/:id/seasons, common/seasons/:id/episodes, common/episodes/:id |
 | Xác thực / auth | auth/authorization | User, hợp đồng auth đã bổ sung | Phiên thật, GET me; login/register/logout theo contract được chốt |
 | Thư viện / library | library | Anime, auth/authorization | GET me/library, PUT/DELETE me/library/:animeId |
@@ -19,7 +19,7 @@ Tất cả endpoint bên dưới thuộc prefix `/api/v1`. Method/payload/status
 
 ### Danh mục anime
 
-Tìm theo q, genre slug, status, year, format; sort newest/title và pagination theo contract đã chốt. Chỉ đọc anime public, chi tiết không có trả 404. Chốt publication, ngữ nghĩa tìm kiếm, sort mặc định và page vượt cuối trước phần code phụ thuộc. Test filter kết hợp, input sai, empty, draft và thứ tự ổn định.
+Đã triển khai tìm q theo title/alternativeTitles, genre slug, status, year, format, sort newest/title và pagination theo [contract](../api-contract.md). Chỉ published được đọc; draft/không tồn tại cùng trả 404. Người dùng đã xác nhận publication, tìm không phân biệt hoa/thường, mới nhất trước và trang vượt cuối rỗng. Có migration, seed demo explicit và kiểm thử PostgreSQL; chưa nối FE.
 
 ### Mùa và tập
 

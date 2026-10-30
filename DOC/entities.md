@@ -1,12 +1,12 @@
 # Entity và quan hệ dữ liệu
 
-Đây là mô hình đề xuất để xây dựng giao diện và trao đổi với BE; chưa phải database đã triển khai. Tạm dùng mô hình một anime chứa nhiều mùa/phần, chờ người dùng duyệt.
+Anime, Genre và AnimeGenre đã có model/configuration/migration BE trong feature Anime. Các entity còn lại vẫn là đề xuất để trao đổi FE/BE. Mô hình một anime chứa nhiều mùa/phần vẫn chờ duyệt khi triển khai mùa/tập.
 
 ## Danh mục nội dung
 
 | Entity | Trường chính | Ý nghĩa |
 | --- | --- | --- |
-| Anime | id, slug, title, alternativeTitles, synopsis, posterUrl, bannerUrl, status, format, releaseYear | Trang thông tin chung của anime |
+| Anime | id, slug, title, alternativeTitles, synopsis, posterUrl, bannerUrl, status, format, releaseYear, publicationStatus | Danh mục đã có model BE; publicationStatus nội bộ độc lập trạng thái phát hành |
 | Season | id, animeId, number, title, sortOrder | Mùa/phần của anime |
 | Episode | id, seasonId, number, title, thumbnailUrl, durationSeconds, publishedAt, status, sortOrder | Tập phim trong một mùa |
 | Genre | id, slug, name | Thể loại |
@@ -20,6 +20,7 @@ Giá trị đề xuất:
 
 - Anime.status: `upcoming`, `airing`, `completed`.
 - Anime.format: `tv`, `movie`, `ova`, `ona`, `special`.
+- Anime.publicationStatus: `draft` (mặc định), `published`; chỉ published được đọc qua common. Đây là mặc định triển khai Anime; không trả trường này trong DTO công khai.
 - Episode.status: `draft`, `published`.
 - PlaybackSource.type: `mp4`, `hls` trong phạm vi đầu; việc hỗ trợ định dạng cụ thể phải kiểm chứng khi triển khai.
 

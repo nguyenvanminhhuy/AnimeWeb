@@ -1,6 +1,6 @@
 # Dữ liệu và lưu trữ BE
 
-Mô hình chuẩn nằm tại [entities.md](../entities.md), gồm sơ đồ quan hệ và enum đề xuất. PostgreSQL 18.6-bookworm, EF Core 10.0.14 và Npgsql provider 10.0.3 đã cấu hình. Có DbContext và migration InitialInfrastructure không chứa bảng nghiệp vụ; schema/seed domain chưa triển khai. Baseline đã kiểm tra trên database PostgreSQL test riêng, xem [verification](verification.md).
+Mô hình chuẩn tại [entities.md](../entities.md). PostgreSQL 18.6-bookworm, EF Core 10.0.14 và Npgsql provider 10.0.3 đã cấu hình. InitialInfrastructure là baseline; InitialCatalog tạo Anime/Genres/AnimeGenres, khóa duy nhất, check và foreign key. Seed demo chạy explicit, không nằm trong migration. Đã kiểm tra database PostgreSQL riêng, xem [verification](verification.md).
 
 | Nhóm | Entity | Ràng buộc chính |
 | --- | --- | --- |
@@ -12,7 +12,7 @@ Mô hình chuẩn nằm tại [entities.md](../entities.md), gồm sơ đồ qua
 | Tiến độ | WatchProgress | Duy nhất userId/episodeId; positionSeconds không âm |
 | Bình luận | Comment | Tác giả lấy từ phiên; visible/hidden/deleted; xóa mềm |
 
-Anime.status là trạng thái phát hành `upcoming/airing/completed`, không phải trạng thái công khai. Cần bổ sung cách lưu publication/visibility của anime vào mô hình và contract trước khi triển khai; episode đã có `draft/published`. Không dùng trạng thái phát hành để suy ra quyền đọc.
+Anime.status là trạng thái phát hành upcoming/airing/completed; publicationStatus là draft/published, mặc định draft và chỉ published được đọc qua common. Quy tắc đã được xác nhận và kiểm tra; episode publication sẽ áp dụng khi có module mùa/tập.
 
 ID là string ổn định; thời gian trả UTC ISO 8601. Không suy luận tập trước/sau bằng cộng số tập; dùng thứ tự mùa/tập và chỉ lấy tập công khai. Mô hình một anime nhiều mùa và movie một mùa/một tập vẫn cần duyệt.
 

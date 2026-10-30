@@ -1,6 +1,6 @@
 # API contract sơ bộ
 
-**Bản nháp v0.2 cho nghiệp vụ.** Nền ASP.NET Core được thiết lập ngày 2026-10-30 với health endpoints bên dưới; API anime/auth/library/progress/comments/playback vẫn chưa triển khai. Chi tiết xác thực và các lựa chọn được đánh dấu đề xuất cần chốt trước khi triển khai.
+**v0.2: đã triển khai nền ASP.NET Core và ba API đọc Anime** (list/detail/genres) ngày 2026-10-30. API mùa/tập, auth, library, progress, comments và playback còn là bản nháp chưa triển khai. Chi tiết xác thực và lựa chọn được đánh dấu đề xuất cần chốt trước module tương ứng.
 
 ## Endpoint nền BE
 
@@ -45,6 +45,19 @@ GET /api/v1/common/anime?q=hanh%20trinh&genre=adventure&status=airing&year=2026&
 ```
 
 `genre` dùng slug; `sort` dự kiến có `newest`, `title`. Chỉ thêm `rating` hoặc `popular` khi có nguồn điểm/lượt xem và cách tính rõ ràng. Mock phải áp dụng các tham số có cùng ý nghĩa với API sau này.
+
+### Mặc định triển khai feature Anime (2026-10-30)
+
+Người dùng đã xác nhận các mặc định: chỉ đọc published, tìm tên/tên khác không phân biệt hoa thường, mới nhất trước và trang vượt cuối trả rỗng. Chi tiết kỹ thuật dưới đây áp dụng cho feature Anime; các quy tắc tích hợp khác vẫn cần đối chiếu khi nối FE:
+
+- API danh sách, chi tiết và genres chỉ trả nội dung liên quan anime có publicationStatus=published. Trạng thái phát hành status (upcoming/airing/completed) độc lập publicationStatus (draft/published). Publication không được trả qua DTO công khai.
+- q được trim, tối đa 200 ký tự; tìm chuỗi con không phân biệt hoa/thường trong title hoặc alternativeTitles. Dấu %, _ và ~ được xử lý như ký tự thường, không phải wildcard. Chưa bỏ dấu tiếng Việt như normalizeSearch ở mock FE.
+- Các filter kết hợp bằng AND; genre dùng slug tối đa 100 ký tự, slug hợp lệ nhưng không tồn tại trả danh sách rỗng. status nhận upcoming/airing/completed; format nhận tv/movie/ova/ona/special; year là số 1–9999.
+- sort mặc định newest: releaseYear giảm dần rồi id tăng dần, khớp ý nghĩa “Năm phát hành mới nhất” trên FE. title: tên viết thường theo collation C của PostgreSQL rồi id tăng dần; không cam kết sắp xếp từ điển tiếng Việt.
+- page mặc định 1, pageSize mặc định 20 (1–50). Trang vượt cuối giữ nguyên page đã yêu cầu và trả data rỗng; totalPages=0 khi không có kết quả. Khác mock FE hiện tự đưa page về trang cuối; xử lý qua adapter khi tích hợp, chưa sửa FE trong lượt này.
+- Query sai định dạng/enum/giới hạn trả 400 VALIDATION_ERROR với fields. Slug chi tiết chỉ gồm chữ thường ASCII, số, dấu nối, tối đa 200 ký tự; slug sai định dạng trả 400, slug hợp lệ không tồn tại hoặc draft trả cùng 404 ANIME_NOT_FOUND.
+- Genres chỉ gồm thể loại có ít nhất một anime published, sắp slug tăng dần. Genre trong DTO anime cũng sắp theo slug; chi tiết bổ sung synopsis, alternativeTitles và bannerUrl (có thể null), chưa bao gồm mùa/tập/related.
+- Không có API ghi/quản trị trong feature này. Seed demo là thao tác explicit trên môi trường Development; migration không tự chèn dữ liệu demo.
 
 ```json
 {

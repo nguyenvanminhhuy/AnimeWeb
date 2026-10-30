@@ -29,7 +29,11 @@ Người dùng chọn C# và đồng ý phương án được đề xuất: ASP.
 
 Baseline kỹ thuật triển khai theo quyền lựa chọn đã giao: .NET 10 LTS, EF Core 10 với Npgsql tương thích, xUnit và dotnet format. Pin patch/SDK cụ thể khi setup; không coi đây là phiên bản đã cài. Cơ chế phiên và các nghiệp vụ còn mở vẫn cần đặc tả riêng. Chi tiết tại [setup BE](docs-BE/setup.md) và [kiến trúc BE](docs-BE/architecture.md).
 
-## Đề xuất nghiệp vụ đang chờ duyệt
+## Quy tắc Anime xác nhận ngày 2026-10-30
+
+Người dùng xác nhận dùng các mặc định khi generate feature Anime: chỉ công khai anime published; tìm không phân biệt hoa/thường theo title và alternativeTitles; mặc định mới nhất trước; trang vượt cuối trả danh sách rỗng. publicationStatus được tách khỏi status phát hành, mặc định draft. Các chi tiết kỹ thuật (newest theo releaseYear, khóa phụ id, giới hạn query, collation, lọc genres) được ghi tại [API contract](api-contract.md); không suy diễn thành quyết định cho module chưa triển khai.
+
+## Đề xuất nghiệp vụ khác đang chờ duyệt
 
 | Vấn đề | Đề xuất ban đầu | Ảnh hưởng |
 | --- | --- | --- |

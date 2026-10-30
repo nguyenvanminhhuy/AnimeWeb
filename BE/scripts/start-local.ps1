@@ -1,3 +1,5 @@
+param([switch]$InitializeCatalog)
+
 $ErrorActionPreference = 'Stop'
 if ([string]::IsNullOrWhiteSpace($env:ANIMEWEB_DB_PASSWORD)) {
     throw 'Set ANIMEWEB_DB_PASSWORD before starting the local database.'
@@ -15,6 +17,14 @@ try {
     $connection['Username'] = 'animeweb_dev'
     $connection['Password'] = $env:ANIMEWEB_DB_PASSWORD
     $env:ConnectionStrings__AnimeWeb = $connection.ConnectionString
+    if ($InitializeCatalog) {
+        dotnet tool restore
+        if ($LASTEXITCODE -ne 0) { throw 'Could not restore local EF tools.' }
+        dotnet ef database update --project src/AnimeWeb.Api --startup-project src/AnimeWeb.Api
+        if ($LASTEXITCODE -ne 0) { throw 'Could not apply migrations to the local development database.' }
+        dotnet run --project src/AnimeWeb.Api/AnimeWeb.Api.csproj --launch-profile http -- --seed-demo
+        if ($LASTEXITCODE -ne 0) { throw 'Could not initialize the demo catalog.' }
+    }
     dotnet run --project src/AnimeWeb.Api/AnimeWeb.Api.csproj --launch-profile http
     if ($LASTEXITCODE -ne 0) { throw 'The API exited with an error.' }
 }

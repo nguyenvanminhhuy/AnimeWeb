@@ -1,6 +1,6 @@
 # Kế hoạch kiểm thử BE
 
-**Đã kiểm tra phần nền:** cấu hình, health/readiness, lỗi, CORS, OpenAPI và migration baseline trên PostgreSQL. Chi tiết lệnh/kết quả tại [verification.md](verification.md). Các tình huống nghiệp vụ bên dưới vẫn là kế hoạch, chưa phải kết quả đạt.
+**Đã kiểm tra nền và Anime:** cấu hình, health/readiness, lỗi, CORS, OpenAPI, filter/search/pagination/detail/genres, draft, seed và migration/constraint PostgreSQL. Chi tiết tại [verification.md](verification.md). Các tình huống Auth/Library/Progress/Comments/Playback bên dưới vẫn là kế hoạch.
 
 Unit test cho validation, permission và nghiệp vụ đã chốt. Integration test dùng database kiểm thử/migration thật để kiểm tra constraint, transaction và truy vấn theo user. Contract test xác nhận HTTP status, DTO, phân trang và lỗi. Luồng FE/BE dùng server cục bộ, fixture và fake playback provider.
 
