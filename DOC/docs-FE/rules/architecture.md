@@ -22,7 +22,7 @@ FE giữ React + TypeScript + Vite, React Router, Tailwind/Bootstrap và native 
 ## Luồng xử lý BE
 
 ```text
-HTTP route → Kiểm tra dữ liệu / xác thực → Service → Repository → Database
+ASP.NET Core Controller → Validation / authorization → Feature service → EF Core DbContext → PostgreSQL
 ```
 
 Module playback lấy nguồn từ nhà cung cấp hoặc kho nội dung đã cấu hình, trả URL truy cập phù hợp. Quyền quản trị do BE kiểm tra; ẩn nút ở FE không đủ để bảo vệ thao tác.
@@ -49,10 +49,10 @@ BE kiểm tra phiên, trạng thái tài khoản, permission, ownership và tr�
 
 `SRC` nhận package con trực tiếp bằng `*` và đã thêm `Anime-Web/FE`. Đã có package điều phối tại `Anime-Web/package.json`; chưa có package BE.
 
-Nếu FE và BE là hai package JavaScript riêng, cần bổ sung chính xác `Anime-Web/FE` và `Anime-Web/BE` vào `SRC/pnpm-workspace.yaml`; chỉ thêm package điều phối chưa đủ nhận hai package lồng nhau. Nếu BE dùng công nghệ khác thì không ép BE thành package JavaScript.
+BE đã chọn C#/ASP.NET Core, dùng .NET SDK/NuGet; không thêm `Anime-Web/BE` vào pnpm workspace hoặc tạo package.json cho BE. FE tiếp tục là package pnpm trong workspace SRC.
 
 Giữ `packageManager: pnpm@11.10.0`, một `pnpm-lock.yaml` tại `SRC`, không tạo workspace hoặc lockfile riêng trong Anime-Web. Cài từ SRC bằng `pnpm install`, kiểm tra bằng `pnpm install --frozen-lockfile`. Xem styling.md cho thứ tự import/layer và cách dùng style common.
 
 ## Tài liệu backend
 
-Thiết kế BE chi tiết tập trung tại [docs-BE/readme.md](../../docs-BE/readme.md). Cây BE ở trên vẫn là đề xuất trách nhiệm; chưa có code backend.
+Thiết kế BE chi tiết tập trung tại [docs-BE/readme.md](../../docs-BE/readme.md), cấu trúc C# tại [architecture.md](../../docs-BE/architecture.md). Stack đã chốt, chưa có code backend.

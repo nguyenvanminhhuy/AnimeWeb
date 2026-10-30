@@ -2,7 +2,7 @@
 
 Trạng thái: **FE có Trang chủ, Khám phá, Chi tiết anime, Xem phim, Thư viện và Đăng nhập/Đăng ký demo; BE chưa triển khai, chưa có API hoặc nguồn phim thật.**
 
-Mục tiêu là web xem anime hoạt động thực tế. FE dùng mock và dữ liệu cục bộ; auth demo không lưu/xác thực mật khẩu. Trang xem đã có giao diện, chuyển tập và nhánh video native; xem [Xem phim](docs-FE/watch-screen.md), chưa có video để kiểm chứng playback. Framework BE và database chưa chọn.
+Mục tiêu là web xem anime hoạt động thực tế. FE dùng mock và dữ liệu cục bộ; auth demo không lưu/xác thực mật khẩu. Trang xem đã có giao diện, chuyển tập và nhánh video native; xem [Xem phim](docs-FE/watch-screen.md), chưa có video để kiểm chứng playback. BE đã chọn C#/ASP.NET Core Web API Controller, PostgreSQL và EF Core theo quyết định ngày 2026-10-30; chưa triển khai code.
 
 ## Cấu trúc
 
@@ -20,7 +20,7 @@ Anime-Web/
     └── docs-BE/            # Kiến trúc, dữ liệu, xác thực, tích hợp, kiểm thử BE
 ```
 
-`AGENTS.md` giữ tại phạm vi áp dụng. Dự án dùng pnpm@11.10.0 và lockfile chung tại SRC; không tạo lockfile riêng FE/BE.
+`AGENTS.md` giữ tại phạm vi áp dụng. FE/công cụ JavaScript dùng pnpm@11.10.0 và lockfile chung tại SRC. BE C# dùng .NET SDK/NuGet, không tạo package pnpm hoặc lockfile pnpm riêng cho BE.
 
 ## Thứ tự đọc
 

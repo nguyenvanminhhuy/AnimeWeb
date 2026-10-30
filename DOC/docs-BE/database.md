@@ -1,6 +1,6 @@
 # Dữ liệu và lưu trữ BE
 
-Mô hình chuẩn nằm tại [entities.md](../entities.md), gồm sơ đồ quan hệ và enum đề xuất. Database/ORM chưa chọn; các ràng buộc dưới đây là thiết kế logic, chưa có migration.
+Mô hình chuẩn nằm tại [entities.md](../entities.md), gồm sơ đồ quan hệ và enum đề xuất. Database là PostgreSQL; ORM là EF Core với provider Npgsql. Schema và migration chưa triển khai.
 
 | Nhóm | Entity | Ràng buộc chính |
 | --- | --- | --- |
@@ -20,7 +20,22 @@ ID là string ổn định; thời gian trả UTC ISO 8601. Không suy luận t�
 
 Upsert thư viện/tiến độ dựa trên khóa duy nhất từng user. Transaction bảo vệ thao tác nhiều bản ghi; không chỉ kiểm tra trùng ở ứng dụng. Chưa xóa cứng anime/tập có lịch sử khi chưa có chính sách lưu trữ.
 
-Index đề xuất theo truy vấn: anime slug; genre/anime; season theo animeId/sortOrder; episode theo seasonId/status/sortOrder; library và progress theo userId/updatedAt; comment theo animeId/status/createdAt. Chốt index sau khi chọn database và xem kế hoạch truy vấn; chưa có số đo hiệu năng.
+Index đề xuất theo truy vấn: anime slug; genre/anime; season theo animeId/sortOrder; episode theo seasonId/status/sortOrder; library và progress theo userId/updatedAt; comment theo animeId/status/createdAt. Chốt index sau khi xem kế hoạch truy vấn PostgreSQL; chưa có số đo hiệu năng.
+
+## Quy ước EF Core/Npgsql
+
+DbContext scoped, mapping bằng IEntityTypeConfiguration và Fluent API; migration ở `src/AnimeWeb.Api/Infrastructure/Persistence/Migrations`. Không dùng EnsureCreated thay migration trong luồng vận hành. Query đọc dùng projection DTO/AsNoTracking khi phù hợp; phân trang ở database, không ToList trước rồi mới lọc. Async và CancellationToken xuyên tới SaveChangesAsync/query.
+
+Thời gian dùng DateTimeOffset UTC hoặc DateTime UTC nhất quán với Npgsql/timestamptz. DTO ID vẫn là string; kiểu lưu trữ phải được chốt trong model, không tự đổi wire contract sang số. Unique/foreign key và kiểm tra tiến độ được map tại database; bắt lỗi constraint để trả lỗi theo contract, không lộ SQL/connection string.
+
+Lệnh thiết kế, chỉ chạy từ `BE` sau khi solution và local tool được tạo:
+
+```powershell
+dotnet tool restore
+dotnet ef migrations add InitialCatalog --project src/AnimeWeb.Api --startup-project src/AnimeWeb.Api --output-dir Infrastructure/Persistence/Migrations
+```
+
+Tên migration phản ánh thay đổi thực tế. Việc apply migration chỉ thực hiện với database local/test đã xác định; không chạy update/drop/reset vào môi trường chưa được xác minh. Xem [provider Npgsql](https://www.npgsql.org/efcore/) và [EF Core migrations](https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/).
 
 ## Migration và seed
 

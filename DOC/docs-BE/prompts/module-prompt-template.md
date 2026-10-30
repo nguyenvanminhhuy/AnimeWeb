@@ -8,7 +8,7 @@ Dùng khi muốn ghi yêu cầu chi tiết. Quy trình chung vẫn theo [module-
 MODULE: <tên theo DOC/docs-BE/modules.md>
 MỤC TIÊU: <hành vi đầu vào/đầu ra người dùng cần>
 PHẠM VI: <endpoint/nghiệp vụ cần làm, phần loại trừ nếu có>
-CÔNG NGHỆ: <tham chiếu quyết định đã chốt hoặc quyền tự chọn nếu muốn giao>
+CÔNG NGHỆ: C# / ASP.NET Core Web API Controller / PostgreSQL / EF Core theo setup.md
 CONTRACT: <mục trong DOC/api-contract.md; thay đổi đã được xác nhận nếu có>
 DỮ LIỆU: <entity, migration, constraint và fixture cần thiết>
 QUYỀN: <guest/member, permission, ownership và trạng thái tài nguyên>

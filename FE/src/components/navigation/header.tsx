@@ -27,7 +27,7 @@ export function Header() {
           anime<span>web</span>
         </Link>
         <nav
-          className="aw-nav tw:gap-6.5 tw:flex tw:self-stretch tw:items-stretch tw:text-body tw:whitespace-nowrap tw:max-desktop:self-center tw:max-phone:order-2 tw:max-phone:w-full tw:max-phone:justify-between"
+          className="aw-nav tw:gap-6.5 tw:flex tw:self-center tw:items-center tw:[&>a]:py-1.5 tw:text-body tw:whitespace-nowrap tw:max-phone:order-2 tw:max-phone:w-full tw:max-phone:justify-between"
           aria-label="Điều hướng chính"
         >
           <NavLink to={paths.home} end>

@@ -10,14 +10,14 @@ Chỉ cần tên module, dùng [module-generation.md](module-generation.md):
 Đọc DOC/docs-BE/prompts/module-generation.md và tạo module danh mục anime.
 ```
 
-Prompt nhận các tên trong [modules.md](../modules.md), tự đọc tài liệu liên quan và kiểm tra phụ thuộc. Khi BE chưa có nền, công nghệ phải được xác định theo [setup.md](../setup.md); hiện chưa có lựa chọn được xác nhận.
+Prompt nhận tên trong [modules.md](../modules.md), đọc đặc tả và kiểm tra phụ thuộc. Stack C#/ASP.NET Core Controller/PostgreSQL/EF Core đã chốt; khi BE chưa có nền, thiết lập theo [setup.md](../setup.md), không hỏi lại lựa chọn công nghệ này.
 
 ## Thiết lập nền
 
 ```text
 Đọc DOC/docs-BE/prompts/module-generation.md và thiết lập nền BE.
-Kiểm tra công nghệ đã được xác nhận trong DOC/decisions.md và code hiện có.
-Nếu chưa có, hỏi các lựa chọn cần thiết theo DOC/docs-BE/setup.md.
+Dùng C#, ASP.NET Core Web API Controller, PostgreSQL và EF Core theo quyết định đã chốt.
+Thiết lập solution theo DOC/docs-BE/setup.md và kiểm tra code hiện có trước khi tạo file.
 Chỉ triển khai cục bộ, cập nhật tài liệu và ghi bằng chứng kiểm tra thực tế.
 ```
 

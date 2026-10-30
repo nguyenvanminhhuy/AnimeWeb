@@ -19,20 +19,6 @@
 .aw-anime-card a:hover img {
   transform: scale(1.04);
 }
-.aw-poster-tag {
-  background: #0b101dc9;
-  border: 1px solid #ffffff20;
-  color: #edeafa;
-  backdrop-filter: blur(10px);
-}
-.aw-poster-play {
-  color: white;
-  opacity: 0;
-}
-.aw-anime-card a:hover .aw-poster-play,
-.aw-anime-card a:focus-visible .aw-poster-play {
-  opacity: 1;
-}
 .aw-anime-card h3 {
   font-size: var(--aw-font-size-base);
   line-height: 1.5;

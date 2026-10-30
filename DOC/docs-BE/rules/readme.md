@@ -17,10 +17,10 @@
 
 ## Cấu trúc và phạm vi
 
-- Source BE nằm trong `BE/`; dùng module theo nghiệp vụ, controller/service/repository và DTO theo [architecture.md](../architecture.md). Theo convention của framework đã chọn, không tạo abstraction không được sử dụng.
+- Source BE nằm trong `BE/`; C#/ASP.NET Core Controller, feature service, EF Core DbContext và DTO theo [architecture.md](../architecture.md). Không thêm generic repository/UnitOfWork bọc lại EF Core nếu chưa có nhu cầu thực tế.
 - Tái sử dụng code sẵn có. Không ghi đè thay đổi chưa commit hoặc tự thay stack đã triển khai. Không generate tất cả module khi chỉ được yêu cầu một module.
 - Tách model lưu trữ khỏi DTO công khai. Không đưa cấu trúc riêng của provider/ORM vào hợp đồng FE.
-- Chỉ thêm dependency cần dùng. Với Node, dùng pnpm@11.10.0 và lockfile tại SRC; không tạo workspace/lockfile riêng hoặc dùng npm/npx/yarn. CLI đã cài chạy bằng pnpm exec.
+- BE dùng .NET SDK/NuGet và local tool dotnet-ef; pin phiên bản tương thích theo [setup](../setup.md). Không tạo package.json hoặc package pnpm cho BE C#. pnpm@11.10.0/lockfile SRC tiếp tục áp dụng cho FE và công cụ JavaScript.
 - Không tự thêm API quản trị, thanh toán, rating, upload hay nguồn phim ngoài phạm vi.
 
 ## HTTP và dữ liệu
@@ -37,6 +37,6 @@
 - Không đọc `.env`/credentials. File cấu hình mẫu chỉ chứa placeholder; cấu hình test dùng giá trị giả và tài nguyên cục bộ được kiểm soát.
 - Provider bên ngoài được bọc adapter và thay bằng fake khi kiểm tra; không gọi API/model thật.
 - Không log mật khẩu, hash, token, cookie hoặc URL ký có bí mật; không trả stack trace cho FE. Timeout và lỗi provider được ánh xạ rõ.
-- Dùng formatter/test runner của stack đã chọn. Chạy format, kiểm tra định dạng, typecheck/build nếu áp dụng và test có ý nghĩa cho thay đổi. Không ghi PASS khi chưa chạy.
+- Dùng dotnet format, dotnet format --verify-no-changes, dotnet build và dotnet test trên solution theo setup. Build C# kiểm tra kiểu; không tạo script typecheck giả. Kiểm thử bằng xUnit và WebApplicationFactory, PostgreSQL riêng cho integration database. Không ghi PASS khi chưa chạy.
 - Nếu sửa code FE để tích hợp, áp dụng rules FE và chạy format/format:check từ SRC theo AGENTS.md.
 - Thêm bằng chứng vào `DOC/docs-BE/verification.md` khi thực sự kiểm tra BE; giữ nguyên lịch sử. Ghi lệnh, kết quả, fixture và giới hạn. Tài liệu kế hoạch không phải bằng chứng triển khai.

@@ -28,3 +28,11 @@ Chọn cookie hoặc token, mô tả login/logout, hết hạn, thu hồi và c�
 Nếu đăng nhập bằng mật khẩu, chọn cơ chế hash và chống dò tài khoản trước khi triển khai; không lưu mật khẩu plain text hoặc log bí mật. DTO bình luận công khai không trả email/hash/thông tin phiên. `/me` chỉ trả dữ liệu cần cho chính tài khoản đó.
 
 FE phải xóa cache cá nhân khi logout/đổi tài khoản, xử lý 401/403 và chỉ nhận đường dẫn quay lại nội bộ. Ẩn nút phục vụ trải nghiệm; server vẫn kiểm tra đầy đủ.
+
+## Áp dụng ASP.NET Core
+
+Đăng ký authentication scheme theo cơ chế phiên sẽ chọn, policy authorization và handler cho permission; thứ tự middleware authentication trước authorization. Controller common cho phép guest; controller/action me yêu cầu policy tương ứng. Claims userId phải xuất phát từ phiên/token đã xác thực; kiểm tra active/quyền có hiệu lực khi tài khoản bị khóa hoặc quyền bị thu hồi.
+
+Ownership được ràng buộc trong truy vấn/ghi theo userId, không chỉ qua attribute hoặc role. Chuẩn hóa challenge/forbid thành JSON error 401/403 theo contract, không redirect trang login. Test handler chỉ dùng trong WebApplicationFactory test host, không đăng ký ở runtime.
+
+Nếu chọn mật khẩu, ưu tiên thành phần xác thực/hash được framework hỗ trợ, không tự viết thuật toán hash. Việc dùng ASP.NET Core Identity, cookie hay JWT chưa được chốt trong lượt chọn stack; cần mô tả endpoint/vòng đời phiên trước module Auth.

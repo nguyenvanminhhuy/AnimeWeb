@@ -4,6 +4,14 @@
 
 Unit test cho validation, permission và nghiệp vụ đã chốt. Integration test dùng database kiểm thử/migration thật để kiểm tra constraint, transaction và truy vấn theo user. Contract test xác nhận HTTP status, DTO, phân trang và lỗi. Luồng FE/BE dùng server cục bộ, fixture và fake playback provider.
 
+## Công cụ C#
+
+Dùng xUnit và Microsoft.AspNetCore.Mvc.Testing/WebApplicationFactory theo [hướng dẫn Microsoft](https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests?view=aspnetcore-10.0). Test project tham chiếu API; test host thay provider bên ngoài bằng fake và chỉ cài test authentication handler trong môi trường test.
+
+Test ràng buộc, migration và truy vấn đặc thù phải dùng PostgreSQL riêng, không dùng EF InMemory/SQLite để kết luận tương thích PostgreSQL. Có thể cấp database cục bộ hoặc container test khi môi trường hỗ trợ; không mặc định Docker đã cài. Cô lập dữ liệu giữa test, chỉ reset database test được xác định rõ. Pin version công cụ khi triển khai.
+
+Chạy format/build/test theo [setup.md](setup.md). Đây là lệnh kế hoạch cho solution tương lai, chưa được chạy trong lượt viết tài liệu.
+
 | Nhóm | Tình huống nghiệm thu |
 | --- | --- |
 | Common | Guest/member đọc cùng public; không lộ draft, kể cả ID tập thuộc cha bị ẩn |
