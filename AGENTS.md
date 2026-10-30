@@ -1,6 +1,7 @@
 # Quy tắc cho Anime-Web
 
 - Tuân thủ AGENTS.md tại SRC; tiếp tục dùng pnpm và lockfile chung.
+- BE đã chọn C#/ASP.NET Core Web API Controller, PostgreSQL và EF Core, tổ chức theo feature. Dùng .NET SDK/NuGet cho BE theo quyết định người dùng; pnpm/lockfile SRC áp dụng cho FE và công cụ JavaScript. Không tạo package.json cho BE C#.
 - Source FE theo [Bulletproof React đã áp dụng](DOC/docs-FE/rules/fe-structure.md): app/routes ghép feature, app/router.tsx đăng ký route, config/paths.ts giữ URL builders; dùng alias @/ và file kebab-case. Không import chéo feature hoặc để shared import feature/app; build phải qua check:architecture. Không tạo lại pages/routes/data ở gốc src hoặc barrel export toàn feature.
 - Khi tạo/sửa code BE, đọc [mục lục BE](DOC/docs-BE/readme.md) và áp dụng [quy tắc generate BE](DOC/docs-BE/rules/readme.md). Quy trình thực thi tại [module-generation.md](DOC/docs-BE/prompts/module-generation.md); không coi stack hoặc nghiệp vụ còn đề xuất là quyết định đã chốt.
 - Chữ nội dung và control tối thiểu 14px ở thiết lập mặc định (`0.875rem`, token `--aw-font-size-base`); áp dụng [quy tắc font](DOC/docs-FE/rules/styling.md#font-chữ), không thu nhỏ chữ trên mobile để ép bố cục.

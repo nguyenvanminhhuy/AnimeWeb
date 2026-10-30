@@ -1,6 +1,6 @@
 # Tài liệu backend
 
-Trạng thái ngày 2026-10-29: **`BE/` còn trống, chưa có server, database, migration hoặc lệnh chạy BE**. Bộ tài liệu này là đề xuất dựa trên [tổng quan](../readme.md), [quyết định](../decisions.md) và luồng FE hiện có. Framework, database và cơ chế xác thực chưa chọn.
+Trạng thái ngày 2026-10-30: **`BE/` chưa có code**. Người dùng đã chọn **C# + ASP.NET Core Web API dùng Controller, PostgreSQL và Entity Framework Core**, tổ chức theo feature. Baseline triển khai là .NET 10 LTS/EF Core 10; patch cụ thể được pin khi setup. Cơ chế xác thực và các điểm nghiệp vụ còn mở chưa chốt. Xem [quyết định](../decisions.md) và [setup](setup.md).
 
 ## Phạm vi
 

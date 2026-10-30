@@ -4,7 +4,7 @@
 
 | Bước | Công việc | Điều kiện hoàn thành |
 | --- | --- | --- |
-| 1. Thiết kế | Stack, database, mùa/phần, publication, phiên, API thiếu | Ghi quyết định và cập nhật contract đủ cho module đầu tiên |
+| 1. Thiết kế | Stack C#/ASP.NET Core/PostgreSQL/EF Core đã chốt; còn mùa/phần, publication, phiên, API thiếu | Cập nhật contract đủ cho module đầu tiên |
 | 2. Nền BE | Cấu hình, validation, lỗi, database, migration/seed, test runner | Khởi động cục bộ, migration và smoke test bằng fixture |
 | 3. Common | Anime, genre, mùa/tập, tìm/lọc/phân trang | Public/draft và DTO đạt; adapter FE chạy cục bộ |
 | 4. Auth/quyền | Phiên thật, me, trạng thái tài khoản, permission/ownership | Guest/member/blocked, thu hồi phiên, hai user cách ly |
@@ -14,7 +14,7 @@
 
 ## Cần quyết định
 
-- Framework/runtime, database/ORM, test runner và nhận package BE trong workspace nếu dùng Node.
+- Pin SDK .NET 10, NuGet EF Core/Npgsql và PostgreSQL version cụ thể khi setup; stack C#/Controller/EF Core/PostgreSQL và bộ công cụ đã được xác định tại setup.md. BE không tham gia pnpm workspace.
 - Cơ chế phiên, endpoint auth, thu hồi và chính sách mật khẩu nếu có.
 - Nhiều mùa, movie, publication anime, thứ tự và pagination.
 - DTO trang chủ/chi tiết/related, tìm kiếm library và format mở rộng.

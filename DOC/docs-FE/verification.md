@@ -436,3 +436,15 @@ Kết quả kiểm tra file/liên kết tài liệu được bổ sung sau khi c
 - Production preview 4175: verifyNavigation PASS một document; smoke tám route /, /anime, /anime/hanh-trinh-anh-sao, /watch/episode-01-side-a, /library, /login, /register, /missing tại 375/1440px đều mở trực tiếp, không tràn ngang, external request hoặc pageerror. Browser suites còn kiểm tra 768px và các trạng thái mock/guest/member/storage/ownership/media events. Chưa có video thật nên vẫn chưa xác nhận playback/phụ đề/autoplay thực tế.
 - Cập nhật AGENTS, prompt sinh màn hình, rules cấu trúc/kiến trúc/routes/common, đường dẫn các tài liệu màn hình và integration BE; ghi quyết định ngày 2026-10-29. Kiểm tra 194 liên kết Markdown hiện tại trong DOC (trừ lịch sử verification): PASS. Giữ nguyên nội dung bằng chứng cũ, chỉ thêm mục này.
 - Không đọc .env/credentials, không gọi API/model/video thật hoặc deploy. Chỉ browser/fixture cục bộ; đọc GitHub công khai theo yêu cầu người dùng. Không thay đổi code BE hoặc các project khác trong SRC. Script chuyển đổi/map cục bộ nằm trong FE/test-results được ignore; không rerun chúng trên source đã chuyển đổi.
+
+## 2026-10-30 — Làm gọn poster trên thẻ phim
+
+- AnimeCard dùng chung chuyển episodeLabel xuống dưới tên phim, không đè thông tin tập lên poster. Bỏ icon external-link khi hover/focus và import Icon không còn dùng; xóa CSS aw-poster-tag/aw-poster-play. Giữ điều hướng Link và focus của liên kết.
+- pnpm --filter anime-web-fe run format và build (format:check/check:architecture/typecheck/typecheck:tests/Vite): PASS.
+- Chromium smoke PASS trên Home/Explore/Detail ở 375/1440px: thông tin tập nằm ngoài poster, không có badge/icon trên poster khi hover, không tràn ngang và click thẻ vẫn đến chi tiết. Không request ngoài origin hoặc pageerror. Không thêm file test cho thay đổi hiển thị nhỏ này.
+
+## 2026-10-30 — Gạch dưới Header gần chữ
+
+- Navigation tự căn giữa thay vì kéo link giãn theo toàn chiều cao Header; dùng utility Tailwind đặt padding dọc 6px cho link. Đường active 2px giữ màu/chiều ngang hiện có nhưng nằm gần chữ. Bỏ CSS padding responsive cũ đã được utility thay thế.
+- pnpm --filter anime-web-fe run format và build (format:check/check:architecture/typecheck/typecheck:tests/Vite): PASS.
+- Chromium tại 375/768/1440px: active link cao 34.39px, line-height 22.4px, padding-bottom 6px và underline 2px; không tràn ngang. Không thêm file test cho chỉnh spacing nhỏ.

@@ -6,7 +6,7 @@ Tất cả endpoint bên dưới thuộc prefix `/api/v1`. Method/payload/status
 
 | Tên gọi trong prompt | Module | Phụ thuộc | Phạm vi |
 | --- | --- | --- | --- |
-| Nền BE | config/shared/database | Stack đã xác định | [setup.md](setup.md) |
+| Nền BE | Program/Shared/Infrastructure | Stack C# đã chốt | [setup.md](setup.md) |
 | Danh mục anime / catalog | anime | Nền, publication | GET common/anime, common/anime/:slug, common/genres |
 | Mùa và tập / episode | episode | Anime | GET common/anime/:id/seasons, common/seasons/:id/episodes, common/episodes/:id |
 | Xác thực / auth | auth/authorization | User, hợp đồng auth đã bổ sung | Phiên thật, GET me; login/register/logout theo contract được chốt |

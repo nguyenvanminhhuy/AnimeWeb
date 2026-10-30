@@ -30,4 +30,4 @@
 5. Bình luận: duyệt trước hay hiện ngay, sửa nội dung hidden/deleted; giới hạn đề xuất 1–2000 ký tự sau trim.
 6. Playback: định dạng, URL hết hạn, phụ đề, timeout và lấy lại nguồn; không hứa có nguồn phim thật.
 
-Ghi lựa chọn được xác nhận vào [decisions.md](../decisions.md), cập nhật contract và mapper FE cùng thay đổi. OpenAPI/schema máy đọc được có thể bổ sung khi chọn stack; hiện chưa có.
+Ghi lựa chọn được xác nhận vào [decisions.md](../decisions.md), cập nhật contract và mapper FE cùng thay đổi. Khi triển khai ASP.NET Core Controller, đăng ký tài liệu OpenAPI phù hợp stack đã chốt; hiện chưa có schema máy đọc được hoặc endpoint hoạt động. Lỗi ApiController, authorization và exception phải cùng envelope error trong contract, không mặc định trả ProblemDetails khác cấu trúc.

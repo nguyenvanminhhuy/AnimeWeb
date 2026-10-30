@@ -23,7 +23,13 @@
 
 Theo yêu cầu người dùng: tài liệu FE chuyển vào `DOC/docs-FE`, bổ sung tài liệu BE tại `DOC/docs-BE`. `DOC/readme.md` là mục lục chung; API/entity, roadmap và quyết định dùng chung giữ tại `DOC`. Lịch sử kiểm chứng FE được giữ nguyên nội dung. Chưa lựa chọn framework/database hoặc triển khai BE.
 
-## Đề xuất đang chờ duyệt
+## Quyết định BE ngày 2026-10-30
+
+Người dùng chọn C# và đồng ý phương án được đề xuất: ASP.NET Core Web API dùng Controller, PostgreSQL, Entity Framework Core; một backend chia theo feature. Dùng .NET SDK/NuGet cho BE; pnpm và lockfile chung tại SRC giữ cho FE/công cụ JavaScript. Chưa yêu cầu triển khai code trong lượt viết tài liệu này.
+
+Baseline kỹ thuật triển khai theo quyền lựa chọn đã giao: .NET 10 LTS, EF Core 10 với Npgsql tương thích, xUnit và dotnet format. Pin patch/SDK cụ thể khi setup; không coi đây là phiên bản đã cài. Cơ chế phiên và các nghiệp vụ còn mở vẫn cần đặc tả riêng. Chi tiết tại [setup BE](docs-BE/setup.md) và [kiến trúc BE](docs-BE/architecture.md).
+
+## Đề xuất nghiệp vụ đang chờ duyệt
 
 | Vấn đề | Đề xuất ban đầu | Ảnh hưởng |
 | --- | --- | --- |
@@ -34,7 +40,7 @@ Theo yêu cầu người dùng: tài liệu FE chuyển vào `DOC/docs-FE`, bổ
 | Phân quyền chi tiết | RBAC với UserRole/RolePermission, quyền own kiểm tra ownership | Chi tiết role moderator/admin và cách xác thực chưa chốt |
 | Bình luận | Guest đọc; member tạo và sửa/xóa của mình | Đọc công khai, sửa/xóa và chính sách duyệt là đề xuất |
 | Trang quản trị | Bổ sung khi triển khai BE | Phạm vi và thời gian |
-| Backend/database | Chưa chọn | Hạ tầng, triển khai, xác thực |
+| Xác thực BE và hạ tầng | Stack C#/ASP.NET Core/PostgreSQL/EF Core đã chốt; cookie/token và hosting chưa chọn | Vòng đời phiên, triển khai và vận hành |
 | Thương hiệu | Chưa chọn tên/logo chính thức | Không mặc định dùng tên Kaze từ bản nháp cũ |
 | Phát hành | Chưa chọn hosting và audience | Chỉ bàn sau khi có bản chạy và yêu cầu triển khai |
 

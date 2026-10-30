@@ -1,38 +1,69 @@
-# Kiến trúc backend đề xuất
+# Kiến trúc BE C# theo feature
 
-Công nghệ BE/database chưa chọn. Cấu trúc dưới đây mô tả trách nhiệm, không yêu cầu tạo sẵn thư mục rỗng hoặc cài framework. FE tiếp tục theo [kiến trúc frontend](../docs-FE/rules/architecture.md).
+Stack đã chốt ngày 2026-10-30: ASP.NET Core Web API dùng Controller, PostgreSQL, EF Core. Dùng một ứng dụng BE chia feature; chưa cần microservices, MediatR/CQRS hoặc nhiều project phân lớp. Cây dưới là thiết kế, chỉ tạo thành phần được sử dụng khi triển khai.
 
 ```text
 BE/
-├── src/
-│   ├── modules/
-│   │   ├── anime/           # Anime, genre, lọc và tìm kiếm
-│   │   ├── episode/         # Season, episode, thứ tự phát
-│   │   ├── playback/        # Adapter nguồn video/phụ đề
-│   │   ├── auth/            # Xác thực, vòng đời phiên
-│   │   ├── authorization/   # Permission và policy ownership
-│   │   ├── library/         # Theo dõi, yêu thích
-│   │   ├── progress/        # Tiến độ theo user/episode
-│   │   └── comments/        # Bình luận và trạng thái hiển thị
-│   ├── shared/              # Validation, lỗi, request ID
-│   └── config/              # Kiểm tra cấu hình khởi động
-├── database/                # Schema, migration, seed demo
-└── tests/                   # Unit, integration, contract
+├── AnimeWeb.slnx
+├── global.json
+├── .editorconfig
+├── .config/dotnet-tools.json
+├── src/AnimeWeb.Api/
+│   ├── AnimeWeb.Api.csproj
+│   ├── Program.cs
+│   ├── Features/
+│   │   ├── Anime/
+│   │   │   ├── AnimeController.cs
+│   │   │   ├── AnimeService.cs
+│   │   │   ├── Anime.cs
+│   │   │   └── Dtos/
+│   │   ├── Episodes/
+│   │   ├── Auth/
+│   │   ├── Authorization/
+│   │   ├── Library/
+│   │   ├── Progress/
+│   │   ├── Comments/
+│   │   └── Playback/           # Provider interface + adapter
+│   ├── Infrastructure/
+│   │   └── Persistence/
+│   │       ├── AnimeWebDbContext.cs
+│   │       ├── Configurations/ # IEntityTypeConfiguration
+│   │       ├── Migrations/
+│   │       └── Seeding/
+│   └── Shared/
+│       ├── Configuration/
+│       ├── Errors/
+│       └── Pagination/
+└── tests/AnimeWeb.Api.Tests/
+    ├── AnimeWeb.Api.Tests.csproj
+    ├── Unit/
+    ├── Integration/
+    └── Fixtures/
 ```
 
-## Luồng xử lý
+## Luồng và phụ thuộc
 
 ```text
-Route → Validation → Xác thực/quyền khi cần → Service/policy
-      → Repository/database hoặc provider adapter → DTO response
+HTTP → Controller/DTO validation → Authorization policy
+     → Feature service → EF Core DbContext/PostgreSQL → Response DTO
+                       → Playback provider adapter
 ```
 
-Controller xử lý HTTP; service giữ nghiệp vụ; repository xử lý lưu trữ. Kiểm tra ownership phải gắn với truy vấn/thao tác ghi để tránh ghi nhầm giữa tài khoản. DTO chỉ trả dữ liệu được phép; không serialize nguyên bản ghi database.
+Controller mỏng: binding, gọi service, trả HTTP. Service giữ nghiệp vụ và kiểm tra ownership gắn với truy vấn/thao tác ghi. DbContext scoped qua DI; service có thể dùng trực tiếp DbContext. Chỉ tách repository chuyên biệt khi có nhu cầu thực tế, không thêm generic repository/UnitOfWork chỉ bọc lại EF Core.
 
-Common không bắt buộc phiên, chỉ trả tài nguyên công khai. Me lấy userId từ phiên server, kiểm tra tài khoản hoạt động, permission và ownership. Prefix URL không thay thế kiểm tra quyền.
+Shared chứa lỗi, cấu hình và kiểu phân trang; không giữ nghiệp vụ riêng của feature. Controller không gọi controller khác. Khi cần tương tác feature, dùng service/interface có trách nhiệm rõ; không tạo vòng phụ thuộc. Không serialize EF entity/navigation ra ngoài; project DTO từ query.
+
+## Convention C# và HTTP
+
+- File/type/namespace PascalCase; tham số/biến camelCase; interface có tiền tố I, method async có hậu tố Async. Không áp dụng kebab-case/alias @ của FE vào C#.
+- Dùng async/await, CancellationToken xuyên từ request tới EF/HTTP provider. Không dùng .Result/.Wait() hoặc DbContext singleton.
+- ControllerBase có ApiController và route rõ `/api/v1/common/...` hoặc `/api/v1/me/...`; dùng AddControllers/MapControllers. Xem [Microsoft Web API](https://learn.microsoft.com/en-us/aspnet/core/web-api/?view=aspnetcore-10.0).
+- JSON camelCase; enum theo chuỗi đã định nghĩa trong API, không mặc định trả số/PascalCase. DTO thời gian UTC và ID string theo contract.
+- Tùy biến lỗi validation tự động, lỗi auth và exception để trả cùng envelope `error` của dự án; không để ProblemDetails mặc định làm lệch contract. 204 không có body.
+- Policy/authorization handler kiểm tra permission; lấy userId từ phiên/claims đã xác thực và kiểm tra trạng thái tài khoản. Common không bắt buộc đăng nhập nhưng phải lọc publication của cả cha/con.
 
 ## Playback và vận hành
 
-API trả thông tin phát; video có thể được phân phối trực tiếp qua storage/CDN. Tách provider adapter để dùng fake trong kiểm thử. Không mặc định proxy toàn bộ video qua BE hoặc lưu URL tạm vào danh mục/lịch sử.
+Backend cấp thông tin phát, storage/CDN phân phối video. Interface provider và fake trong test; không mặc định proxy video. Không lưu URL phát tạm vào danh mục hoặc lịch sử.
 
-Kiểm tra cấu hình bắt buộc khi khởi động; chỉ ghi tên biến thiếu, không ghi giá trị bí mật. Log request ID, thời gian xử lý và lỗi đã lọc thông tin nhạy cảm; response không chứa stack trace. Health/readiness, CORS, timeout và giới hạn request cần đặc tả khi chọn stack, chưa phải chức năng hiện có.
+Validate cấu hình khởi động, pipeline exception và request ID; log không chứa token, cookie, mật khẩu hoặc URL ký có bí mật. Dùng HttpClient qua IHttpClientFactory với timeout và CancellationToken cho adapter provider khi triển khai. CORS, health và giới hạn request phải có cấu hình/đặc tả cụ thể trong phạm vi được giao.
