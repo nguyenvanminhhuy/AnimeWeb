@@ -1,6 +1,6 @@
 # API backend và hợp đồng FE/BE
 
-[api-contract.md](../api-contract.md) chứa đầy đủ endpoint, payload và ví dụ. Đây là **bản nháp v0.2**, chưa có server hoạt động. Tài liệu này bổ sung hướng triển khai, không tạo hợp đồng thứ hai.
+[api-contract.md](../api-contract.md) chứa endpoint, payload và ví dụ. Nền BE đã có health/readiness/OpenAPI; nghiệp vụ v0.2 vẫn là bản nháp chưa triển khai. Tài liệu này bổ sung hướng triển khai, không tạo hợp đồng thứ hai.
 
 ## Quy ước
 
@@ -30,4 +30,4 @@
 5. Bình luận: duyệt trước hay hiện ngay, sửa nội dung hidden/deleted; giới hạn đề xuất 1–2000 ký tự sau trim.
 6. Playback: định dạng, URL hết hạn, phụ đề, timeout và lấy lại nguồn; không hứa có nguồn phim thật.
 
-Ghi lựa chọn được xác nhận vào [decisions.md](../decisions.md), cập nhật contract và mapper FE cùng thay đổi. Khi triển khai ASP.NET Core Controller, đăng ký tài liệu OpenAPI phù hợp stack đã chốt; hiện chưa có schema máy đọc được hoặc endpoint hoạt động. Lỗi ApiController, authorization và exception phải cùng envelope error trong contract, không mặc định trả ProblemDetails khác cấu trúc.
+Ghi lựa chọn được xác nhận vào [decisions.md](../decisions.md), cập nhật contract và mapper FE cùng thay đổi. Nền ASP.NET Core đã có OpenAPI tại `/openapi/v1.json` trong Development. Validation/exception/404/405/503 dùng envelope error; các lỗi auth 401/403 sẽ được nối khi triển khai authentication/authorization. Không mặc định trả ProblemDetails khác contract.

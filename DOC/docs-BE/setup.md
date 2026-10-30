@@ -1,6 +1,6 @@
 # Thiết lập nền BE bằng C#
 
-Ngày 2026-10-30, người dùng chọn phương án **C# + ASP.NET Core Web API dùng Controller, PostgreSQL và Entity Framework Core**, một backend tổ chức theo feature. Chỉ cập nhật tài liệu trong lượt này; `BE/` chưa có code. Không hỏi lại việc chọn C#/database/ORM khi thực thi generate.
+Ngày 2026-10-30, người dùng chọn **C# + ASP.NET Core Web API dùng Controller, PostgreSQL và Entity Framework Core**, một backend tổ chức theo feature. Đã tạo nền BE trong repo `New folder/AnimeWeb` branch Be-Dev; xem [README chạy local](../../BE/README.md) và [kiểm chứng](verification.md). Không hỏi lại việc chọn C#/database/ORM khi generate module tiếp theo.
 
 ## Baseline triển khai
 
@@ -18,13 +18,13 @@ Ngày 2026-10-30, người dùng chọn phương án **C# + ASP.NET Core Web API
 
 ## Cấu trúc và công cụ
 
-Theo [architecture.md](architecture.md), solution dự kiến `AnimeWeb.slnx`, API tại `src/AnimeWeb.Api`, test tại `tests/AnimeWeb.Api.Tests`. Đường dẫn bên dưới là đích thiết kế, **chưa có file để chạy**. Nếu repo đã có tên khác khi thực thi, dùng tên thực tế và cập nhật lệnh.
+Solution thực tế: `BE/AnimeWeb.slnx`, API tại `BE/src/AnimeWeb.Api`, test tại `BE/tests/AnimeWeb.Api.Tests`. Đã pin SDK 10.0.403, EF Core/Design/Relational và ASP.NET OpenAPI/Mvc.Testing 10.0.14, Npgsql provider 10.0.3, dotnet-ef 10.0.14. NuGet lockfile ở từng project, restore tái lập bằng --locked-mode. PostgreSQL image pin `postgres:18.6-bookworm`.
 
-Chạy từ `Anime-Web/BE` sau khi solution đã được tạo:
+Chạy từ folder `BE` trong repo `New folder/AnimeWeb` (đúng branch Be-Dev):
 
 ```powershell
 dotnet --info
-dotnet restore AnimeWeb.slnx
+dotnet restore AnimeWeb.slnx --locked-mode
 dotnet tool restore
 dotnet format AnimeWeb.slnx
 dotnet format AnimeWeb.slnx --verify-no-changes --no-restore
@@ -32,6 +32,8 @@ dotnet build AnimeWeb.slnx --no-restore
 dotnet test AnimeWeb.slnx --no-build --no-restore
 dotnet run --project src/AnimeWeb.Api/AnimeWeb.Api.csproj
 ```
+
+Lệnh run cần ConnectionStrings__AnimeWeb hợp lệ. Cách chạy dev PostgreSQL/API và test database riêng nằm trong BE/README.md; scripts/start-local.ps1 và scripts/test-database.ps1 đã được tạo. Health/readiness và OpenAPI được đặc tả tại [API contract](../api-contract.md). Migration InitialInfrastructure hiện không có bảng nghiệp vụ hoặc seed; chỉ thiết lập baseline lịch sử migration.
 
 Khởi tạo API bằng template có `--use-controllers --framework net10.0`; không để template mặc định tạo Minimal API thay cho cấu trúc đã chọn. Đăng ký AddControllers/MapControllers, DI, DbContext và pipeline lỗi. Đăng ký local tool dotnet-ef tương thích EF Core, có Microsoft.EntityFrameworkCore.Design trong API để chạy migration.
 

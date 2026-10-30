@@ -1,6 +1,6 @@
 # Kế hoạch kiểm thử BE
 
-**Chưa thực thi:** chưa có code/lệnh test BE. Chỉ ghi lệnh và bằng chứng sau khi test runner được cài và chạy thật. Các tình huống dưới đây chưa phải kết quả đạt.
+**Đã kiểm tra phần nền:** cấu hình, health/readiness, lỗi, CORS, OpenAPI và migration baseline trên PostgreSQL. Chi tiết lệnh/kết quả tại [verification.md](verification.md). Các tình huống nghiệp vụ bên dưới vẫn là kế hoạch, chưa phải kết quả đạt.
 
 Unit test cho validation, permission và nghiệp vụ đã chốt. Integration test dùng database kiểm thử/migration thật để kiểm tra constraint, transaction và truy vấn theo user. Contract test xác nhận HTTP status, DTO, phân trang và lỗi. Luồng FE/BE dùng server cục bộ, fixture và fake playback provider.
 
@@ -10,7 +10,7 @@ Dùng xUnit và Microsoft.AspNetCore.Mvc.Testing/WebApplicationFactory theo [hư
 
 Test ràng buộc, migration và truy vấn đặc thù phải dùng PostgreSQL riêng, không dùng EF InMemory/SQLite để kết luận tương thích PostgreSQL. Có thể cấp database cục bộ hoặc container test khi môi trường hỗ trợ; không mặc định Docker đã cài. Cô lập dữ liệu giữa test, chỉ reset database test được xác định rõ. Pin version công cụ khi triển khai.
 
-Chạy format/build/test theo [setup.md](setup.md). Đây là lệnh kế hoạch cho solution tương lai, chưa được chạy trong lượt viết tài liệu.
+Chạy format/build/test theo [setup.md](setup.md). Test thường ghi rõ PostgreSQL case skipped nếu chưa cấp fixture; chạy `BE/scripts/test-database.ps1` để khởi động PostgreSQL riêng, kiểm tra baseline/readiness rồi dừng container test. Không dùng database dev cho script này.
 
 | Nhóm | Tình huống nghiệm thu |
 | --- | --- |
