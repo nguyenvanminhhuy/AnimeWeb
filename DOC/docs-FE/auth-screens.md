@@ -12,6 +12,8 @@ Tại SRC: `pnpm --filter anime-web-fe run dev --port 4174 --strictPort`. Đã x
 
 Hai trang dùng cùng MainLayout và AuthScreen, artwork SVG cục bộ. Mobile tập trung vào form; desktop có phần minh họa cạnh form. Hai nút Dùng tài khoản có lịch sử mẫu/Dùng tài khoản mới vẫn giữ nguyên để các luồng cũ hoạt động.
 
+Từ 2026-10-30, Login có thêm nút Dùng phiên quản trị mẫu chỉ trong dev và khi returnTo thuộc /admin. Phiên adminPreview chỉ ở bộ nhớ, chỉ đọc Dashboard, tách riêng user member và không persist; production không có activation này. AuthScreen hiển thị xác nhận/tiếp tục cho preview chỉ khi quay về admin; tại login công khai vẫn cho chọn member để đổi phiên. Xem [Dashboard](admin-dashboard-screen.md).
+
 ## Quy tắc demo
 
 - Email dùng để chọn hồ sơ demo; có thể dùng viewer@anime.test hoặc newcomer@anime.test. Tên và email đăng ký mới chỉ lưu trên trình duyệt này. Không dùng dữ liệu thật.

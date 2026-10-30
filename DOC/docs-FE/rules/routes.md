@@ -28,17 +28,22 @@ Không tạo BrowserRouter/RouterProvider mới trong page/feature/layout con. K
 | `/anime/:slug` | AnimeDetailPage | Công khai; favorite/ghi bình luận yêu cầu member |
 | `/watch/:episodeId` | WatchPage | Công khai; xem watch-screen.md, chưa có asset video |
 | `/library` | LibraryPage, query tab/q/sort/page | Member; guest thấy lời mời đăng nhập giữ returnTo |
+| `/profile` | ProfilePage | Member; guest thấy lời mời đăng nhập giữ returnTo |
 | `/login` | LoginPage | Phiên demo; xem auth-screens.md |
 | `/register` | RegisterPage | Tạo hồ sơ demo cục bộ, chưa có auth BE |
+| `/admin` | AdminRoot + AdminDashboardPage, AdminLayout riêng | Quyền admin:dashboard:read trong phiên mẫu dev; production từ chối khi chưa có auth thật |
+| `/admin/*` chưa triển khai | AdminNotFoundPage qua guard | Trang không tìm thấy có đường về Dashboard |
 | `*` | DestinationPage | Không tìm thấy |
 
 Watch dùng query `season` cho danh sách tập, có nhánh nguồn MP4/WebM native và lưu tiến độ member; hiện repository chưa có asset video. Xem [màn hình Xem phim](../watch-screen.md). Browser bổ sung: `tests/watch.browser.mjs` export verifyWatch và `tests/player.browser.mjs` export verifyPlayer (sự kiện media mô phỏng, không chứng minh playback thực tế).
+
+Dashboard đã triển khai theo [admin-dashboard-screen.md](../admin-dashboard-screen.md). Phiên mẫu được mở chủ động tại Login khi returnTo thuộc admin; không persist sau reload, không nâng quyền member và không dùng trong production. Chưa đăng ký các trang quản lý CRUD từ bảng mặc định của admin-screens.md.
 
 ## Khi generate màn hình
 
 1. Đọc config/paths.ts và app/router.tsx, tái sử dụng pattern đã có.
 2. Thêm/cập nhật pattern và builder tại paths.ts nếu cần. Dùng generatePath và encode giá trị slug/episodeId khi xây URL.
-3. Đăng ký page dưới MainLayout trong router.tsx. Nếu có placeholder, thay element của route đó; không tạo route trùng.
+3. Đăng ký page công khai dưới MainLayout trong app/router.tsx; trang quản trị được gọi dùng nhánh AdminLayout riêng theo [admin-screens.md](admin-screens.md). Nếu có placeholder, thay element của route đó; không tạo route trùng hoặc router thứ hai.
 4. Đọc URL bằng useParams/useSearchParams/useLocation. Không quyết định màn hình bằng cách phân tích pathname thủ công trong page.
 5. Giữ route `*`, đường quay lại, chính sách quyền và các màn hình đã triển khai. Không tự triển khai thêm màn hình đích hoặc BE.
 

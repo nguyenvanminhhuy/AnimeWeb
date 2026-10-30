@@ -10,6 +10,14 @@ Quy định kiến trúc, cấu trúc FE, style và quyền nằm trong [DOC/doc
 
 Dùng [screen-prompt-template.md](screen-prompt-template.md) nếu muốn điền đặc tả chi tiết hoặc có thiết kế riêng. Đây là lựa chọn nâng cao, không bắt buộc khi dùng screen-generation.md.
 
+## Generate trang quản trị
+
+Dùng [admin-screen-generation.md](admin-screen-generation.md), hoặc tiếp tục gọi screen-generation.md với tên Dashboard quản trị, Quản lý phim, Thêm/Sửa phim, Quản lý tập phim, Quản lý thể loại, Quản lý bình luận hay Quản lý người dùng. Cả hai áp dụng [admin-screens.md](../rules/admin-screens.md) và chỉ tạo màn hình được gọi.
+
+Ví dụ: “Đọc Anime-Web/DOC/docs-FE/prompts/admin-screen-generation.md và tạo màn hình Quản lý phim”. Layout sidebar/header riêng, route dưới /admin, common controls và Tailwind hiện có; chưa có API phù hợp thì dùng repository/phiên mock riêng, không nâng quyền cho tài khoản member. Dashboard đã có UI mock theo [tài liệu màn hình](../admin-dashboard-screen.md); các route CRUD còn là mặc định cho lần generate sau.
+
+## Đặc tả chi tiết
+
 Mỗi lượt điền tên màn hình, route, UI tham chiếu, hành vi và quyền truy cập. Prompt sẽ yêu cầu tích hợp vào FE hiện có, tái sử dụng common/ui, mock qua repository và chạy cục bộ. Nếu chưa có nền FE, cần chọn rõ có cho phép thiết lập React + TypeScript + Vite hay không.
 
 Các prompt theo giai đoạn bên dưới dành cho công việc tổng thể; không chạy đồng thời với mọi màn hình nếu không có yêu cầu riêng.

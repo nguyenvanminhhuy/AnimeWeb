@@ -1,6 +1,6 @@
 # Tài liệu frontend
 
-FE dùng React + TypeScript + Vite, Tailwind CSS và Bootstrap 5. Trang chủ, Khám phá, Chi tiết anime, Thư viện và Đăng nhập/Đăng ký đã có bản demo; Xem phim đã có giao diện/chuyển tập, chưa có asset video hoặc kết nối backend.
+FE dùng React + TypeScript + Vite, Tailwind CSS và Bootstrap 5. Trang chủ, Khám phá, Chi tiết anime, Thư viện và Đăng nhập/Đăng ký đã có bản demo; Xem phim đã có giao diện/chuyển tập, chưa có asset video hoặc kết nối backend. Dashboard quản trị đã có FE đọc dữ liệu mẫu với phiên dev riêng, chưa có auth/API quản trị thật.
 
 ## Thứ tự đọc
 
@@ -17,6 +17,7 @@ FE dùng React + TypeScript + Vite, Tailwind CSS và Bootstrap 5. Trang chủ, K
 | [Role/permission](rules/roles-permissions.md) | Guest/member, ownership và cache |
 | [Wireframes](design/wireframes.md) | Luồng sử dụng và bố cục |
 | [Prompt](prompts/readme.md) | Quy trình sinh màn hình |
+| [Generate quản trị](prompts/admin-screen-generation.md) | Dashboard/trang quản lý; Dashboard đã có UI mock, CRUD/API chưa triển khai |
 | [Kiểm chứng](verification.md) | Bằng chứng thực tế, chỉ bổ sung lịch sử |
 
 ## Màn hình
@@ -24,7 +25,10 @@ FE dùng React + TypeScript + Vite, Tailwind CSS và Bootstrap 5. Trang chủ, K
 - [Trang chủ](home-screen.md): `/`.
 - [Khám phá](explore-screen.md): `/anime`.
 - [Chi tiết anime](anime-detail-screen.md): `/anime/:slug`.
-- [Xem phim](watch-screen.md): `/watch/:episodeId`, công khai; chưa có nguồn video.: `/library`, yêu cầu phiên demo.
+- [Xem phim](watch-screen.md): `/watch/:episodeId`, công khai; chưa có nguồn video.
+- [Thư viện](library-screen.md): `/library`, yêu cầu phiên demo.
+- [Trang cá nhân](profile-screen.md): `/profile`, avatar/thông tin tài khoản/thống kê, yêu thích và tiếp tục xem; mở qua avatar Header sau đăng nhập.
+- [Dashboard quản trị](admin-dashboard-screen.md): `/admin`, phiên mẫu riêng chỉ bật chủ động trong dev.
 - [Đăng nhập/Đăng ký](auth-screens.md): `/login`, `/register`; chưa xác thực thật.
 
 API và entity dùng bản chung [api-contract.md](../api-contract.md), [entities.md](../entities.md). Khi nối BE, đọc [kế hoạch tích hợp](../docs-BE/integration.md); không dùng localStorage làm bằng chứng xác thực server.
