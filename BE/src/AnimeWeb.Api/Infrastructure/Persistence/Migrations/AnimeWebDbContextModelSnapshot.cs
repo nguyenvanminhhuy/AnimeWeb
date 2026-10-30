@@ -20,6 +20,144 @@ namespace AnimeWeb.Api.Infrastructure.Persistence.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("AnimeWeb.Api.Features.Anime.Anime", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.PrimitiveCollection<string[]>("AlternativeTitles")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
+                    b.Property<string>("BannerUrl")
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)");
+
+                    b.Property<string>("Format")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("PosterUrl")
+                        .IsRequired()
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)");
+
+                    b.Property<string>("PublicationStatus")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("draft");
+
+                    b.Property<int>("ReleaseYear")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("Synopsis")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
+                    b.HasIndex("PublicationStatus", "ReleaseYear", "Id")
+                        .IsDescending(false, true, false);
+
+                    b.ToTable("Anime", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_Anime_Format", "\"Format\" IN ('tv', 'movie', 'ova', 'ona', 'special')");
+
+                            t.HasCheckConstraint("CK_Anime_Publication", "\"PublicationStatus\" IN ('draft', 'published')");
+
+                            t.HasCheckConstraint("CK_Anime_ReleaseYear", "\"ReleaseYear\" BETWEEN 1 AND 9999");
+
+                            t.HasCheckConstraint("CK_Anime_Slug", "\"Slug\" ~ '^[a-z0-9]+(-[a-z0-9]+)*$'");
+
+                            t.HasCheckConstraint("CK_Anime_Status", "\"Status\" IN ('upcoming', 'airing', 'completed')");
+
+                            t.HasCheckConstraint("CK_Anime_Title", "length(btrim(\"Title\")) > 0");
+                        });
+                });
+
+            modelBuilder.Entity("AnimeWeb.Api.Features.Anime.AnimeGenre", b =>
+                {
+                    b.Property<string>("AnimeId")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("GenreId")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("AnimeId", "GenreId");
+
+                    b.HasIndex("GenreId");
+
+                    b.ToTable("AnimeGenres", (string)null);
+                });
+
+            modelBuilder.Entity("AnimeWeb.Api.Features.Anime.Genre", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
+                    b.ToTable("Genres", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_Genres_Name", "length(btrim(\"Name\")) > 0");
+
+                            t.HasCheckConstraint("CK_Genres_Slug", "\"Slug\" ~ '^[a-z0-9]+(-[a-z0-9]+)*$'");
+                        });
+                });
+
+            modelBuilder.Entity("AnimeWeb.Api.Features.Anime.AnimeGenre", b =>
+                {
+                    b.HasOne("AnimeWeb.Api.Features.Anime.Anime", null)
+                        .WithMany()
+                        .HasForeignKey("AnimeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("AnimeWeb.Api.Features.Anime.Genre", null)
+                        .WithMany()
+                        .HasForeignKey("GenreId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
 #pragma warning restore 612, 618
         }
     }

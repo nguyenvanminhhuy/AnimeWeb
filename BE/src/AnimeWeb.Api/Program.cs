@@ -1,5 +1,7 @@
 using System.Text.Json.Serialization;
+using AnimeWeb.Api.Features.Anime;
 using AnimeWeb.Api.Infrastructure.Persistence;
+using AnimeWeb.Api.Infrastructure.Persistence.Seeding;
 using AnimeWeb.Api.Shared.Configuration;
 using AnimeWeb.Api.Shared.Errors;
 using Microsoft.EntityFrameworkCore;
@@ -36,9 +38,23 @@ builder.Services.AddControllers()
         };
     });
 builder.Services.AddCors();
+builder.Services.AddScoped<AnimeService>();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+
+if (args.Contains("--seed-demo"))
+{
+    if (!app.Environment.IsDevelopment())
+    {
+        throw new InvalidOperationException("Demo seeding is only available in Development.");
+    }
+    await using var scope = app.Services.CreateAsyncScope();
+    var database = scope.ServiceProvider.GetRequiredService<AnimeWebDbContext>();
+    var inserted = await CatalogDemoSeeder.SeedAsync(database);
+    app.Logger.LogInformation(inserted ? "Demo catalog inserted." : "Catalog already contains data; no changes.");
+    return;
+}
 
 app.UseMiddleware<ApiExceptionMiddleware>();
 app.UseStatusCodePages(async context =>
