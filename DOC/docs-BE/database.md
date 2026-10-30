@@ -1,6 +1,6 @@
 # Dữ liệu và lưu trữ BE
 
-Mô hình chuẩn nằm tại [entities.md](../entities.md), gồm sơ đồ quan hệ và enum đề xuất. Database là PostgreSQL; ORM là EF Core với provider Npgsql. Schema và migration chưa triển khai.
+Mô hình chuẩn nằm tại [entities.md](../entities.md), gồm sơ đồ quan hệ và enum đề xuất. PostgreSQL 18.6-bookworm, EF Core 10.0.14 và Npgsql provider 10.0.3 đã cấu hình. Có DbContext và migration InitialInfrastructure không chứa bảng nghiệp vụ; schema/seed domain chưa triển khai. Baseline đã kiểm tra trên database PostgreSQL test riêng, xem [verification](verification.md).
 
 | Nhóm | Entity | Ràng buộc chính |
 | --- | --- | --- |

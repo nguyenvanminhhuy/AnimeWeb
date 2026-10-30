@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/AnimeWeb.Api/AnimeWeb.Api.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/AnimeWeb.Api.Tests/AnimeWeb.Api.Tests.csproj" />
+  </Folder>
+</Solution>

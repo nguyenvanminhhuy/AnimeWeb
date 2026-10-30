@@ -1,6 +1,16 @@
 # API contract sơ bộ
 
-**Bản nháp v0.2 — chưa có server hoặc endpoint hoạt động.** Cập nhật 2026-10-24: chia API công khai `/common` và API cá nhân `/me`, bổ sung role/permission và bình luận. Ví dụ dùng dữ liệu giả. Chi tiết xác thực và các lựa chọn được đánh dấu đề xuất cần chốt trước khi triển khai.
+**Bản nháp v0.2 cho nghiệp vụ.** Nền ASP.NET Core được thiết lập ngày 2026-10-30 với health endpoints bên dưới; API anime/auth/library/progress/comments/playback vẫn chưa triển khai. Chi tiết xác thực và các lựa chọn được đánh dấu đề xuất cần chốt trước khi triển khai.
+
+## Endpoint nền BE
+
+| Method | Path đầy đủ | Hành vi |
+| --- | --- | --- |
+| GET | /api/v1/health | Liveness, không kết nối database; 200 với `{"data":{"status":"ok"}}` |
+| GET | /api/v1/health/ready | Kiểm tra kết nối PostgreSQL; 200 với `{"data":{"status":"ready"}}`, hoặc 503 theo envelope error khi không kết nối được |
+| GET | /openapi/v1.json | Tài liệu máy đọc được, chỉ bật trong Development |
+
+Health là endpoint vận hành công khai, không chứa thông tin cấu hình/phiên bản/credentials. Readiness chỉ chứng minh kết nối được database, chưa xác nhận migration/schema nghiệp vụ. Cấu hình bắt buộc sai hoặc thiếu làm host thất bại khi startup. Route không tồn tại, HTTP method sai, validation và exception dùng cùng envelope error; requestId do server cấp. Chưa có authentication scheme hoặc route cá nhân hoạt động trong bước nền.
 
 ## Quy ước chung
 

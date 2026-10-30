@@ -1,0 +1,19 @@
+name: animeweb-be
+services:
+  postgres:
+    image: postgres:18.6-bookworm
+    environment:
+      POSTGRES_DB: animeweb_dev
+      POSTGRES_USER: animeweb_dev
+      POSTGRES_PASSWORD: ${ANIMEWEB_DB_PASSWORD:?Set ANIMEWEB_DB_PASSWORD for the local database}
+    ports:
+      - "127.0.0.1:54329:5432"
+    volumes:
+      - postgres-dev:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U animeweb_dev -d animeweb_dev"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+volumes:
+  postgres-dev:
