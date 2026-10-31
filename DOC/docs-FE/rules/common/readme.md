@@ -13,6 +13,7 @@ Thư mục `DOC/docs-FE/rules/common/` là nơi lưu tài liệu và quy tắc s
 | AdminLayout | `FE/src/components/layouts/admin-layout.tsx` | [admin-layout.md](admin-layout.md) |
 | AccountMenu | `FE/src/components/navigation/account-menu.tsx` | [account-menu.md](account-menu.md) |
 | Avatar | `FE/src/components/ui/avatar.tsx` | [avatar.md](avatar.md) |
+| TopViewedAnime | `FE/src/components/anime/top-viewed-anime.tsx` | [top-viewed-anime.md](top-viewed-anime.md) |
 
 Button, Input, Combobox và Selectbox hỗ trợ `size="sm" | "md" | "lg"`; xem [quy tắc size](sizes.md) cho kích thước mặc định, variant unstyled và htmlSize native. Không đổi font 14px theo size. Icon có kích thước đồ họa 16/18/24px theo tài liệu riêng.
 

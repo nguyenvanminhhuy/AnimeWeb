@@ -13,7 +13,7 @@ Luôn đọc AGENTS.md tại các cấp áp dụng trước. Yêu cầu hiện t
 | [styling.md](styling.md) | Tailwind, Bootstrap, style common và CSS riêng khi cần |
 | [common/readme.md](common/readme.md) | Tài liệu component dùng chung; [Button](common/button.md) cho nút hành động/CTA |
 | [routes.md](routes.md) | React Router, route tập trung, navigation, query và returnTo |
-| [roles-permissions.md](roles-permissions.md) | API common/me, guest/member, permission và ownership |
+| [roles-permissions.md](roles-permissions.md) | Ba role user/manage/admin, ma trận permission, guest, common/me và ownership |
 | [admin-screens.md](admin-screens.md) | Generate Dashboard/trang quản lý: layout, route, mock, quyền và kiểm chứng |
 
 ## Cách dùng

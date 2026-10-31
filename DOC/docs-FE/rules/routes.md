@@ -29,15 +29,31 @@ Không tạo BrowserRouter/RouterProvider mới trong page/feature/layout con. K
 | `/watch/:episodeId` | WatchPage | Công khai; xem watch-screen.md, chưa có asset video |
 | `/library` | LibraryPage, query tab/q/sort/page | Member; guest thấy lời mời đăng nhập giữ returnTo |
 | `/profile` | ProfilePage | Member; guest thấy lời mời đăng nhập giữ returnTo |
+| `/profile/change-password` | ChangePasswordPage, private form/preview | Member; guest giữ returnTo, adminPreview không thay user; chưa đổi mật khẩu thật |
 | `/login` | LoginPage | Phiên demo; xem auth-screens.md |
 | `/register` | RegisterPage | Tạo hồ sơ demo cục bộ, chưa có auth BE |
 | `/admin` | AdminRoot + AdminDashboardPage, AdminLayout riêng | Quyền admin:dashboard:read trong phiên mẫu dev; production từ chối khi chưa có auth thật |
+| `/admin/anime` | AdminAnimePage, danh sách và xoá theo quyền | Quyền admin:anime:read; xoá thêm admin:anime:write; chỉ dev |
+| `/admin/anime/new` | AdminAnimeFormPage, thêm phim | admin:anime:read + admin:anime:write; chỉ dev |
+| `/admin/anime/:animeId/edit` | AdminAnimeFormPage, sửa theo ID | admin:anime:read + admin:anime:write; chỉ dev |
+| `/admin/genres` | AdminGenresPage, form inline và xác nhận xoá | admin:genre:read; ghi thêm admin:genre:write; chỉ dev |
+| `/admin/episodes` | AdminEpisodesPage, CRUD mùa inline và danh sách tập | admin:episode:read; ghi thêm admin:episode:write; chỉ dev |
+| `/admin/episodes/new`, `/admin/episodes/:episodeId/edit` | AdminEpisodeFormPage, metadata tập | admin:episode:read và admin:episode:write; chỉ dev |
+| `/admin/users` | AdminUsersPage, danh sách và panel hồ sơ query userId | admin:user:read; chỉ đọc trong dev |
+| `/admin/playback` | AdminPlaybackPage, CRUD inline nguồn phát và phụ đề | admin:playback:read; ghi thêm admin:playback:write; chỉ dev |
+| `/admin/comments` | AdminCommentsPage, filter/page và panel commentId, kiểm duyệt | admin:comment:read; ẩn/hiện lại thêm admin:comment:moderate; chỉ dev |
 | `/admin/*` chưa triển khai | AdminNotFoundPage qua guard | Trang không tìm thấy có đường về Dashboard |
 | `*` | DestinationPage | Không tìm thấy |
 
 Watch dùng query `season` cho danh sách tập, có nhánh nguồn MP4/WebM native và lưu tiến độ member; hiện repository chưa có asset video. Xem [màn hình Xem phim](../watch-screen.md). Browser bổ sung: `tests/watch.browser.mjs` export verifyWatch và `tests/player.browser.mjs` export verifyPlayer (sự kiện media mô phỏng, không chứng minh playback thực tế).
 
-Dashboard đã triển khai theo [admin-dashboard-screen.md](../admin-dashboard-screen.md). Phiên mẫu được mở chủ động tại Login khi returnTo thuộc admin; không persist sau reload, không nâng quyền member và không dùng trong production. Chưa đăng ký các trang quản lý CRUD từ bảng mặc định của admin-screens.md.
+Dashboard đã triển khai theo [admin-dashboard-screen.md](../admin-dashboard-screen.md). Phiên mẫu mở chủ động tại Login khi returnTo thuộc admin; cả hai lựa chọn đọc các module đã có, lựa chọn chỉnh sửa thêm quyền ghi Anime/Thể loại/Mùa và tập/Nguồn và phụ đề cùng quyền kiểm duyệt Bình luận. Không persist sau reload, không nâng quyền member hoặc dùng trong production. [Mùa và tập](../admin-episodes-screen.md), [Nguồn và phụ đề](../admin-playback-screen.md) và [Bình luận](../admin-comments-screen.md) dùng lazy trong router chung.
+
+[Người dùng](../admin-users-screen.md) dùng q/status/sort/page/pageSize và query userId cho panel hồ sơ, không thêm route sửa. Link Xem hồ sơ/đóng/phân trang giữ query phù hợp; Back/Forward và direct URL khôi phục lựa chọn, thay bộ lọc đóng panel. tests/admin-users.browser.mjs kiểm chứng guest/member/preview/production, tìm/lọc/history và hồ sơ.
+
+[Thể loại](../admin-genres-screen.md) dùng một route danh sách với form tên/slug inline, không thêm route new/edit. Query q/usage/sort/page/pageSize là nguồn trạng thái tìm/lọc/phân trang; editor/draft nằm trong phiên. Link số phim giữ genre slug tới danh sách quản trị Anime. tests/admin-genres.browser.mjs kiểm chứng CRUD, query/history và guard dev/production.
+
+[Quản lý anime](../admin-anime-screen.md) đã có danh sách/thêm/sửa/xoá trong workspace mẫu theo phiên; sidebar lọc quyền đọc, CTA/form/mutation kiểm tra quyền ghi riêng. URL builder adminAnimeNew/adminAnimeEdit giữ returnTo giới hạn ở danh sách để Huỷ/Lưu quay lại đúng query. tests/admin-anime.browser.mjs kiểm chứng danh sách/production guard; tests/admin-anime-crud.browser.mjs kiểm chứng CRUD và cô lập dữ liệu.
 
 ## Khi generate màn hình
 

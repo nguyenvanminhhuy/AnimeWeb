@@ -1,6 +1,6 @@
 # Icon — Font Awesome Free
 
-Source: `FE/src/components/ui/icon.tsx`; registry tên icon tại `iconDefinitions.ts`. FE dùng component React chính thức để render SVG inline, đóng gói cùng ứng dụng; không dùng CDN, Kit script, icon font hoặc API key.
+Source: `FE/src/components/ui/icon.tsx`; registry tại `icon-definitions.ts`. FE dùng component React chính thức để render SVG inline, đóng gói cùng ứng dụng; không dùng CDN, Kit script, icon font hoặc API key. Registry hiện có 15 definition, gồm `tags` (faTags) và `users` (faUsers) cho menu quản trị bằng named import.
 
 ## Dependencies và CSS
 

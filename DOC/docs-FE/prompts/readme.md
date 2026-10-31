@@ -12,9 +12,11 @@ Dùng [screen-prompt-template.md](screen-prompt-template.md) nếu muốn điề
 
 ## Generate trang quản trị
 
+Alias Comment/Comments/Bình luận đã có [màn kiểm duyệt](../admin-comments-screen.md) tại `/admin/comments`: đọc danh sách/nội dung, ẩn hoặc hiện lại có lý do theo quyền; không áp dụng CRUD nội dung bình luận.
+
 Dùng [admin-screen-generation.md](admin-screen-generation.md), hoặc tiếp tục gọi screen-generation.md với tên Dashboard quản trị, Quản lý phim, Thêm/Sửa phim, Quản lý tập phim, Quản lý thể loại, Quản lý bình luận hay Quản lý người dùng. Cả hai áp dụng [admin-screens.md](../rules/admin-screens.md) và chỉ tạo màn hình được gọi.
 
-Ví dụ: “Đọc Anime-Web/DOC/docs-FE/prompts/admin-screen-generation.md và tạo màn hình Quản lý phim”. Layout sidebar/header riêng, route dưới /admin, common controls và Tailwind hiện có; chưa có API phù hợp thì dùng repository/phiên mock riêng, không nâng quyền cho tài khoản member. Dashboard đã có UI mock theo [tài liệu màn hình](../admin-dashboard-screen.md); các route CRUD còn là mặc định cho lần generate sau.
+Ví dụ: “Đọc Anime-Web/DOC/docs-FE/prompts/admin-screen-generation.md và tạo màn hình Quản lý phim”. Layout sidebar/header riêng, route dưới /admin, common controls và Tailwind hiện có; chưa có API phù hợp thì dùng repository/phiên mock riêng, không nâng quyền member. [Dashboard](../admin-dashboard-screen.md) và [CRUD anime](../admin-anime-screen.md) đã có FE mock. Lần generate màn quản lý tài nguyên tiếp theo mặc định có CRUD trong chính module được gọi theo admin-screens.md, trừ khi người dùng giới hạn phạm vi; không tạo thêm module khác hoặc thao tác tài khoản/quyền chưa có đặc tả.
 
 ## Đặc tả chi tiết
 
