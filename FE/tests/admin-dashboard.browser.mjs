@@ -60,7 +60,7 @@ export async function verifyAdminDashboard(browser, baseURL) {
     assert.equal(await page.getByRole('navigation', { name: 'Điều hướng chính' }).count(), 0);
     assert.equal(
       await page.getByRole('navigation', { name: 'Điều hướng quản trị' }).locator('a').count(),
-      1,
+      7,
     );
     assert.equal(await page.evaluate(() => localStorage.getItem('aw:session:v1')), null);
     await page.evaluate(() => {

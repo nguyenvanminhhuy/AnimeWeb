@@ -4,7 +4,7 @@ import { Pagination } from '@/components/common/pagination';
 import '@/styles/index.css';
 
 function Fixture() {
-  const [params] = useSearchParams();
+  const [params, setParams] = useSearchParams();
   const page = Number(params.get('page') ?? 50);
   const size = params.get('size') ?? 'md';
   return (
@@ -18,6 +18,21 @@ function Fixture() {
         siblingCount={Number(params.get('siblings') ?? 1)}
         disabled={params.has('disabled')}
         loading={params.has('loading')}
+        showSinglePage={params.has('single')}
+        pageSizeControl={
+          params.has('pageSize')
+            ? {
+                value: Number(params.get('pageSize')),
+                options: [5, 10, 20],
+                onChange: (value) => {
+                  const next = new URLSearchParams(params);
+                  next.set('pageSize', String(value));
+                  next.set('page', '1');
+                  setParams(next);
+                },
+              }
+            : undefined
+        }
         hrefForPage={(nextPage) => {
           const next = new URLSearchParams(params);
           next.set('page', String(nextPage));

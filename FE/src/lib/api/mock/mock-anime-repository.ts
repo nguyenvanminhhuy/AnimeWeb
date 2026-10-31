@@ -3,6 +3,7 @@ import { anime } from '@/testing/mocks/fixtures/anime';
 import { createAnimeDetail } from '@/testing/mocks/fixtures/anime-details';
 import { genreOptions } from '@/config/catalog';
 import { normalizeSearch } from '@/utils/search';
+import { getTopViewedAnime } from '@/lib/api/mock/top-viewed-anime';
 export const mockAnimeRepository: AnimeRepository = {
   async getBySlug(slug, state) {
     await new Promise((resolve) => setTimeout(resolve, 200));
@@ -20,11 +21,12 @@ export const mockAnimeRepository: AnimeRepository = {
   async getHome(state) {
     await new Promise((resolve) => setTimeout(resolve, 250));
     if (state === 'error') throw new Error('Không thể tải danh sách anime demo.');
-    if (state === 'empty') return { featured: [], updated: [], recommended: [] };
+    if (state === 'empty') return { featured: [], updated: [], recommended: [], topViewed: [] };
     return {
       featured: [anime[0], anime[2], anime[4]],
       updated: anime.slice(0, 6),
       recommended: [anime[5], anime[3], anime[6], anime[7]],
+      topViewed: getTopViewedAnime(),
     };
   },
   async list(query, state) {

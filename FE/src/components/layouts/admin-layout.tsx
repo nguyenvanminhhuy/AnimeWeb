@@ -11,6 +11,7 @@ interface AdminLayoutProps {
   children: ReactNode;
   displayName: string;
   pageLabel: string;
+  previewWritable?: boolean;
   onLogout: () => void;
   menu: readonly { label: string; to: string; icon: IconName; end?: boolean }[];
 }
@@ -19,6 +20,7 @@ export function AdminLayout({
   children,
   displayName,
   pageLabel,
+  previewWritable = false,
   onLogout,
   menu,
 }: AdminLayoutProps) {
@@ -100,7 +102,8 @@ export function AdminLayout({
             <div className="tw:rounded-xl tw:border tw:border-[var(--aw-border)] tw:p-4 tw:mb-5">
               <p className="tw:font-semibold tw:mb-2">Phiên quản trị mẫu</p>
               <p className="tw:text-[var(--aw-muted)] tw:mb-0">
-                Chỉ đọc thống kê. Phiên kết thúc khi tải lại trang.
+                {previewWritable ? 'Có thể chỉnh sửa dữ liệu mẫu.' : 'Chỉ đọc dữ liệu mẫu.'} Phiên
+                kết thúc khi tải lại trang.
               </p>
             </div>
             <Link

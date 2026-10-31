@@ -18,7 +18,7 @@ export function ProfilePage() {
     return (
       <section className="aw-shell tw:mx-auto tw:py-12">
         <h1 className="tw:text-2xl">Đăng nhập để xem trang cá nhân</h1>
-        <p className="tw:text-[var(--aw-muted)]">
+        <p className="tw:text-(--aw-muted)">
           Thông tin cá nhân chỉ hiển thị cho tài khoản đang đăng nhập.
         </p>
         <Button as="link" to={paths.loginTo(paths.profile)} label="Đăng nhập" />
@@ -49,7 +49,7 @@ function ProfileContent() {
       <header className="tw:mb-7">
         <p className="aw-eyebrow tw:mb-2">KHÔNG GIAN CỦA RIÊNG BẠN</p>
         <h1 className="tw:text-3xl tw:mb-3">Trang cá nhân</h1>
-        <p className="tw:text-[var(--aw-muted)] tw:mb-0">
+        <p className="tw:text-(--aw-muted) tw:mb-0">
           Những câu chuyện yêu thích và hành trình xem của bạn, ở cùng một nơi.
         </p>
       </header>
@@ -61,7 +61,11 @@ function ProfileContent() {
         historyTo={toLibrary('history')}
       />
       <div className="tw:grid tw:grid-cols-[300px_minmax(0,1fr)] tw:gap-6 tw:mt-8 tw:max-tablet:grid-cols-1">
-        <ProfileInfo displayName={displayName} email={email} />
+        <ProfileInfo
+          displayName={displayName}
+          email={email}
+          changePasswordTo={paths.changePassword}
+        />
         <section aria-label="Nội dung thư viện cá nhân" aria-busy={loading} className="tw:min-w-0">
           {!canRead ? (
             <ContentState
