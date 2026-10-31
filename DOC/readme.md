@@ -32,6 +32,8 @@ Anime-Web/
 
 | Tài liệu | Nội dung |
 | --- | --- |
+| [fe-backend-handoff.md](fe-backend-handoff.md) | Bàn giao BE: feature → lời gọi FE thực tế → input/output → HTTP API thay thế |
+| [feature-api-review.md](feature-api-review.md) | Review toàn bộ feature, API đã có/còn thiếu, khoảng cách FE/BE và checklist triển khai — 2026-11-01 |
 | [roadmap.md](roadmap.md) | Phạm vi và các giai đoạn toàn dự án |
 | [decisions.md](decisions.md) | Yêu cầu đã xác nhận và đề xuất chưa duyệt |
 | [docs-FE/readme.md](docs-FE/readme.md) | Điểm bắt đầu cho frontend |
