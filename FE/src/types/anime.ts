@@ -19,10 +19,15 @@ export interface AnimeDetail extends Anime {
   episodes: Episode[];
   related: Anime[];
 }
+export interface TopViewedAnimeEntry {
+  anime: Anime;
+  viewCount: number;
+}
 export interface HomeCatalog {
   featured: Anime[];
   updated: Anime[];
   recommended: Anime[];
+  topViewed: TopViewedAnimeEntry[];
 }
 export interface CatalogResult {
   data: Anime[];

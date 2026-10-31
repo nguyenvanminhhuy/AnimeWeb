@@ -92,6 +92,15 @@ export const localDemoAuthRepository: AuthRepository = {
       );
     return profile;
   },
+  async previewPasswordChange(id, state, signal) {
+    if (!isDemoUser(id) || !localDemoAuthRepository.getProfile(id))
+      throw new DemoAuthError('Hồ sơ mẫu không còn khả dụng. Vui lòng đăng nhập lại.');
+    await wait(state, signal);
+    signal.throwIfAborted();
+    if (!localDemoAuthRepository.getProfile(id))
+      throw new DemoAuthError('Hồ sơ mẫu không còn khả dụng. Vui lòng đăng nhập lại.');
+    return { status: 'preview-only' };
+  },
   async register(input, state, signal) {
     await wait(state, signal);
     const profiles = readProfiles();

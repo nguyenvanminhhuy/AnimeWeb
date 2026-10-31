@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Artwork } from '@/components/common/artwork';
+import { TopViewedAnime } from '@/components/anime/top-viewed-anime';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
 import type { IconName } from '@/components/ui/icon-definitions';
@@ -127,7 +128,7 @@ export function DashboardOverview({ data }: { data: AdminDashboardData }) {
               <dd className="tw:m-0 tw:font-semibold">{data.totalSeasons}</dd>
             </div>
             <div className="tw:flex tw:justify-between tw:gap-3">
-              <dt className="tw:text-[var(--aw-muted)] tw:font-normal">Thể loại đang dùng</dt>
+              <dt className="tw:text-[var(--aw-muted)] tw:font-normal">Thể loại trong danh mục</dt>
               <dd className="tw:m-0 tw:font-semibold">{data.totalGenres}</dd>
             </div>
             <div className="tw:flex tw:justify-between tw:gap-3">
@@ -144,6 +145,7 @@ export function DashboardOverview({ data }: { data: AdminDashboardData }) {
           </p>
         </section>
       </div>
+      <TopViewedAnime items={data.topViewed} />
       <section className="aw-surface tw:rounded-xl tw:min-w-0" aria-labelledby="admin-recent-title">
         <div className="tw:p-6 tw:flex tw:justify-between tw:items-center tw:gap-4 tw:flex-wrap">
           <div>
@@ -209,13 +211,17 @@ export function DashboardOverview({ data }: { data: AdminDashboardData }) {
                       : 'Chưa có tập'}
                   </td>
                   <td className="tw:px-6 tw:py-4">
-                    <Link
-                      to={paths.animeDetail(item.anime.slug)}
-                      aria-label={`Xem chi tiết ${item.anime.title}`}
-                      className="tw:text-[var(--aw-accent)]"
-                    >
-                      Xem <Icon name="arrow-right" size="sm" />
-                    </Link>
+                    {item.publicSlug ? (
+                      <Link
+                        to={paths.animeDetail(item.publicSlug)}
+                        aria-label={`Xem chi tiết ${item.anime.title}`}
+                        className="tw:text-[var(--aw-accent)]"
+                      >
+                        Xem <Icon name="arrow-right" size="sm" />
+                      </Link>
+                    ) : (
+                      <span className="tw:text-[var(--aw-muted)]">Chưa công khai</span>
+                    )}
                   </td>
                 </tr>
               ))}

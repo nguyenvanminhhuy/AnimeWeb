@@ -25,7 +25,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
       >
         {(error || Object.values(errors).some(Boolean)) && (
           <div
-            className="aw-auth-error tw:px-3.25 tw:py-2.75 tw:rounded-[6px] tw:text-body tw:leading-[1.7]"
+            className="aw-auth-error tw:px-3.25 tw:py-2.75 tw:rounded-md tw:text-body tw:leading-[1.7]"
             role="alert"
           >
             {error || 'Vui lòng kiểm tra các trường được đánh dấu bên dưới.'}

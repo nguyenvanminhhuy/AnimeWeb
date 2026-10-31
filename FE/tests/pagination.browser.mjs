@@ -94,6 +94,39 @@ export async function verifyPagination(browser, baseURL) {
         .evaluate((element) => getComputedStyle(element).outlineStyle),
       'solid',
     );
+    await goto('page=2&total=4&pageSize=5&q=kept');
+    const pageSize = page.getByLabel('Số bản ghi mỗi trang', { exact: true });
+    await page.evaluate(() => {
+      window.__paginationDocument = 'same';
+    });
+    await pageSize.selectOption('10');
+    await current(1);
+    assert.equal(new URL(page.url()).searchParams.get('q'), 'kept');
+    assert.equal(new URL(page.url()).searchParams.get('pageSize'), '10');
+    assert.equal(await page.evaluate(() => window.__paginationDocument), 'same');
+    await page.goBack();
+    await current(2);
+    assert.equal(await pageSize.inputValue(), '5');
+    for (const width of [375, 768, 1440]) {
+      await page.setViewportSize({ width, height: 1000 });
+      assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+      if (width === 1440) {
+        const navBox = await nav().boundingBox();
+        const sizeBox = await pageSize.boundingBox();
+        assert.ok(sizeBox.x > navBox.x + navBox.width, 'Page size is on the right');
+      }
+    }
+    for (const flag of ['disabled', 'loading']) {
+      await goto(`page=1&total=4&pageSize=5&${flag}=1`);
+      assert.equal(await pageSize.isDisabled(), true);
+      assert.equal(await nav().locator('a').count(), 0);
+    }
+    await goto('page=1&total=1&single=1');
+    await current(1);
+    assert.equal(await page.getByRole('combobox').count(), 0);
+    await goto('page=1&total=0&pageSize=5');
+    assert.equal(await pageSize.isVisible(), true);
+    assert.equal(await page.getByRole('link', { name: 'Trang 0', exact: true }).count(), 0);
     assert.deepEqual(errors, []);
     console.log(
       'PASS Pagination: query/SPA/history/reload, first/last/ellipsis/current, sizes/responsive/14px, loading/disabled, invalid inputs, bounded billion-page rendering and keyboard focus.',

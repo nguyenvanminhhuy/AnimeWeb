@@ -86,7 +86,8 @@ export function ProfileOverview({
 export function ProfileInfo({
   displayName,
   email,
-}: Pick<ProfileOverviewProps, 'displayName' | 'email'>) {
+  changePasswordTo,
+}: Pick<ProfileOverviewProps, 'displayName' | 'email'> & { changePasswordTo: string }) {
   return (
     <section
       className="aw-surface tw:rounded-xl tw:p-6 tw:self-start"
@@ -113,6 +114,13 @@ export function ProfileInfo({
         Hồ sơ mẫu và thư viện chỉ thuộc trình duyệt hiện tại. Thông tin đang được hiển thị ở chế độ
         chỉ đọc.
       </p>
+      <Button
+        as="link"
+        to={changePasswordTo}
+        variant="quiet"
+        label="Đổi mật khẩu"
+        className="tw:mt-4"
+      />
     </section>
   );
 }

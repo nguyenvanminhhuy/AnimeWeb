@@ -113,8 +113,14 @@ export function AuthScreen({ mode }: { mode: AuthMode }) {
                   <Button
                     variant="glass"
                     className="tw:w-full"
-                    onClick={openAdminPreview}
+                    onClick={() => openAdminPreview()}
                     label="Dùng phiên quản trị mẫu"
+                  />
+                  <Button
+                    variant="quiet"
+                    className="tw:w-full tw:mt-3"
+                    onClick={() => openAdminPreview(true)}
+                    label="Dùng phiên quản trị có quyền chỉnh sửa"
                   />
                 </div>
               )}

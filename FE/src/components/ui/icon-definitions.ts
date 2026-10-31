@@ -10,6 +10,8 @@ import {
   faPlay,
   faPlus,
   faRotateLeft,
+  faTags,
+  faUsers,
   faXmark,
 } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as faHeartOutline } from '@fortawesome/free-regular-svg-icons';
@@ -28,6 +30,8 @@ export const iconDefinitions = {
   close: faXmark,
   check: faCheck,
   plus: faPlus,
+  tags: faTags,
+  users: faUsers,
 } as const;
 
 export type IconName = keyof typeof iconDefinitions;

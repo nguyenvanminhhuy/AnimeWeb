@@ -33,17 +33,21 @@ Baseline kỹ thuật triển khai theo quyền lựa chọn đã giao: .NET 10 
 
 Người dùng xác nhận dùng các mặc định khi generate feature Anime: chỉ công khai anime published; tìm không phân biệt hoa/thường theo title và alternativeTitles; mặc định mới nhất trước; trang vượt cuối trả danh sách rỗng. publicationStatus được tách khỏi status phát hành, mặc định draft. Các chi tiết kỹ thuật (newest theo releaseYear, khóa phụ id, giới hạn query, collation, lọc genres) được ghi tại [API contract](api-contract.md); không suy diễn thành quyết định cho module chưa triển khai.
 
-## Quy tắc Mùa và tập xác nhận ngày 2026-10-30
+## Quy định tài liệu role ngày 2026-10-31
 
-Người dùng xác nhận mỗi anime có nhiều mùa; phim điện ảnh dùng một mùa/một tập; chỉ trả mùa thuộc anime published và tập published. Thứ tự đọc dùng sortOrder rồi id; không suy ra từ số tập. Các chi tiết DTO/validation/duration/timestamp và hasPlayback được ghi tại [API contract](api-contract.md). Đây là feature metadata, chưa triển khai nguồn phát.
+Theo yêu cầu bổ sung rules cho ba role `user / manage / admin`, quy ước generate: user là thành viên có chức năng cá nhân; manage đọc quản trị; admin có thêm quyền ghi nội dung và kiểm duyệt theo ma trận cụ thể. Guest là ngữ cảnh chưa đăng nhập. Quản lý người dùng giữ phạm vi chỉ đọc; chưa cấp quyền gán role/reset mật khẩu hoặc bỏ qua ràng buộc tài nguyên. Chi tiết tại [roles-permissions.md](docs-FE/rules/roles-permissions.md).
 
-## Các đề xuất nghiệp vụ còn mở
+Đây là cập nhật tài liệu, chưa thay source member/adminPreview thành role thật, chưa triển khai seed/claims/middleware RBAC, API quản trị hoặc cơ chế kế thừa quyền trong phiên. Các quy tắc auth/contract BE còn mở vẫn cần chốt khi triển khai.
+
+## Đề xuất nghiệp vụ khác đang chờ duyệt
 
 | Vấn đề | Đề xuất ban đầu | Ảnh hưởng |
 | --- | --- | --- |
+| Mùa/phần | Một anime chứa nhiều mùa | URL, entity và danh sách tập |
+| Phim điện ảnh | Một mùa, một tập | Cách tái sử dụng trình phát |
 | Giao diện | Nền tối; màu nhấn chờ chọn | Tokens, thiết kế màn hình |
 | Thời điểm có đăng nhập thật | FE mô phỏng guest/member trước; BE xác thực thật sau | Thư viện và gửi bình luận chỉ mở cho trạng thái member |
-| Phân quyền chi tiết | RBAC với UserRole/RolePermission, quyền own kiểm tra ownership | Chi tiết role moderator/admin và cách xác thực chưa chốt |
+| Triển khai phân quyền | Ba role user/manage/admin đã có quy định tài liệu; map UserRole/RolePermission và own theo rules | Auth, seed/claims, middleware và API kiểm tra quyền thật chưa triển khai |
 | Bình luận | Guest đọc; member tạo và sửa/xóa của mình | Đọc công khai, sửa/xóa và chính sách duyệt là đề xuất |
 | Trang quản trị | Bổ sung khi triển khai BE | Phạm vi và thời gian |
 | Xác thực BE và hạ tầng | Stack C#/ASP.NET Core/PostgreSQL/EF Core đã chốt; cookie/token và hosting chưa chọn | Vòng đời phiên, triển khai và vận hành |

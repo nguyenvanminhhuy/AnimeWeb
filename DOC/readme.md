@@ -6,6 +6,12 @@ Mục tiêu là web xem anime hoạt động thực tế. FE dùng mock và dữ
 
 ## Cấu trúc
 
+FE bổ sung [quản lý Mùa/phần và tập phim](docs-FE/admin-episodes-screen.md) tại `/admin/episodes`: CRUD metadata trong phiên quản trị mẫu; chưa có API mùa/tập hoặc nguồn phát thật.
+
+[Nguồn phát và phụ đề](docs-FE/admin-playback-screen.md) tại `/admin/playback` đã có CRUD cấu hình nguồn theo tập và phụ đề theo nguồn trong FE mock; chưa fetch/kiểm chứng video hoặc nối player/API thật.
+
+[Quản lý bình luận](docs-FE/admin-comments-screen.md) tại `/admin/comments` có danh sách/bộ lọc/panel nội dung và ẩn/hiện lại theo quyền trong phiên mẫu; không sửa bình luận cá nhân hoặc triển khai API kiểm duyệt BE.
+
 ```text
 Anime-Web/
 ├── FE/                     # Source frontend
@@ -26,6 +32,8 @@ Anime-Web/
 
 | Tài liệu | Nội dung |
 | --- | --- |
+| [fe-backend-handoff.md](fe-backend-handoff.md) | Bàn giao BE: feature → lời gọi FE thực tế → input/output → HTTP API thay thế |
+| [feature-api-review.md](feature-api-review.md) | Review toàn bộ feature, API đã có/còn thiếu, khoảng cách FE/BE và checklist triển khai — 2026-11-01 |
 | [roadmap.md](roadmap.md) | Phạm vi và các giai đoạn toàn dự án |
 | [decisions.md](decisions.md) | Yêu cầu đã xác nhận và đề xuất chưa duyệt |
 | [docs-FE/readme.md](docs-FE/readme.md) | Điểm bắt đầu cho frontend |
@@ -38,8 +46,16 @@ API/entity, roadmap và quyết định chung giữ một bản tại DOC để 
 
 ## Chạy FE hiện có
 
+[Đổi mật khẩu](docs-FE/change-password-screen.md) tại `/profile/change-password` đã có form cho member, mở qua avatar/Profile; chỉ kiểm tra giao diện, chưa xác thực hoặc thay đổi mật khẩu thật.
+
 Từ SRC chạy `pnpm --filter anime-web-fe run dev`, hoặc chạy `pnpm dev` trong `Anime-Web/FE`. Route: `/`, `/anime`, `/anime/:slug`, `/watch/:episodeId`, `/library`, `/login`, `/register`; thư viện yêu cầu phiên demo.
 
-[Dashboard quản trị](docs-FE/admin-dashboard-screen.md) tại `/admin` đã có UI đọc dữ liệu mẫu; mở phiên quản trị riêng qua Login trong dev. Production từ chối khi chưa có auth/quyền thật; chưa triển khai CRUD hoặc API quản trị.
+[Dashboard quản trị](docs-FE/admin-dashboard-screen.md) tại `/admin` đã có UI tổng hợp workspace mẫu; mở phiên quản trị riêng qua Login trong dev. Production từ chối khi chưa có auth/quyền thật; chưa có API quản trị.
+
+[Quản lý anime](docs-FE/admin-anime-screen.md) tại `/admin/anime` đã có tìm/lọc/sort/phân trang, thêm/sửa/xoá và liên kết công khai hợp lệ. Chọn phiên có quyền chỉnh sửa tại Login để dùng CRUD; phiên chỉ đọc vẫn dùng được danh sách. Dữ liệu chỉ ở bộ nhớ theo phiên, không đổi fixture công khai; reload/đổi phiên đặt lại seed.
+
+[Quản lý thể loại](docs-FE/admin-genres-screen.md) tại `/admin/genres` đã có CRUD tên/slug và liên kết với Anime trong cùng workspace; chặn xoá khi còn phim sử dụng. Dùng cùng lựa chọn phiên chỉ đọc/chỉnh sửa, không gọi API quản trị thật.
+
+[Quản lý người dùng](docs-FE/admin-users-screen.md) tại `/admin/users` đã có danh sách/tìm/lọc/sort/phân trang và xem hồ sơ hư cấu theo userId. Cả hai preview đều chỉ đọc User; chưa có khoá/mở khoá, xoá tài khoản hoặc cấp role.
 
 [Kiểm chứng FE](docs-FE/verification.md) được chuyển nguyên trạng. Các đường dẫn trong bằng chứng cũ phản ánh thời điểm chạy, không sửa lại lịch sử khi đổi vị trí tài liệu.
