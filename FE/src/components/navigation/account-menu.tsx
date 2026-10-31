@@ -1,7 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Icon } from '@/components/ui/icon';
 import { Avatar } from '@/components/ui/avatar';
 
 export interface AccountMenuProps {
@@ -59,13 +58,7 @@ export function AccountMenu({ displayName, identity, links, onLogout }: AccountM
         aria-expanded={open}
         aria-controls={id}
         onClick={() => setOpen((value) => !value)}
-        label={
-          <span className="tw:flex tw:items-center tw:gap-2">
-            <Avatar name={displayName} />
-            <span className="tw:max-w-36 tw:truncate tw:max-phone:hidden">{displayName}</span>
-          </span>
-        }
-        endIcon={<Icon name="arrow-down" size="sm" />}
+        label={<Avatar name={displayName} />}
       />
       {open && (
         <nav

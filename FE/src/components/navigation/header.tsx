@@ -71,6 +71,7 @@ export function Header() {
                 ...(user
                   ? [
                       { label: 'Trang cá nhân', to: paths.profile },
+                      { label: 'Đổi mật khẩu', to: paths.changePassword },
                       { label: 'Thư viện của tôi', to: paths.library },
                     ]
                   : []),
@@ -90,7 +91,6 @@ export function Header() {
             className="aw-account tw:max-desktop:ml-auto tw:max-phone:p-2.25 tw:max-phone:text-body"
             to={paths.loginTo(returnTo)}
             label="Đăng nhập"
-            endIcon={<Icon name="external-link" size="sm" />}
           />
         )}
       </div>

@@ -12,7 +12,7 @@ Tại SRC: `pnpm --filter anime-web-fe run dev --port 4174 --strictPort`. Đã x
 
 Hai trang dùng cùng MainLayout và AuthScreen, artwork SVG cục bộ. Mobile tập trung vào form; desktop có phần minh họa cạnh form. Hai nút Dùng tài khoản có lịch sử mẫu/Dùng tài khoản mới vẫn giữ nguyên để các luồng cũ hoạt động.
 
-Từ 2026-10-30, Login có thêm nút Dùng phiên quản trị mẫu chỉ trong dev và khi returnTo thuộc /admin. Phiên adminPreview chỉ ở bộ nhớ, chỉ đọc Dashboard, tách riêng user member và không persist; production không có activation này. AuthScreen hiển thị xác nhận/tiếp tục cho preview chỉ khi quay về admin; tại login công khai vẫn cho chọn member để đổi phiên. Xem [Dashboard](admin-dashboard-screen.md).
+Từ 2026-10-30, Login khi returnTo thuộc /admin và chạy dev có hai lựa chọn chủ động: **Dùng phiên quản trị mẫu** (đọc Dashboard/Anime/Thể loại/Người dùng) và **Dùng phiên quản trị có quyền chỉnh sửa** (chỉ thêm quyền ghi Anime/Thể loại). Mỗi activation tạo adminPreview với ID/workspace bộ nhớ riêng, tách user member và không persist; production không có cả hai activation. Đăng xuất/đổi phiên/reload bỏ dữ liệu CRUD của phiên cũ. AuthScreen chỉ xác nhận preview khi quay về admin; login công khai vẫn cho chọn member. Xem [Dashboard](admin-dashboard-screen.md), [Anime](admin-anime-screen.md), [Thể loại](admin-genres-screen.md) và [Người dùng](admin-users-screen.md).
 
 ## Quy tắc demo
 
@@ -41,6 +41,10 @@ Role/quyền vẫn là member demo mặc định, không lấy quyền/admin t�
 - Layout/spacing/responsive dùng utility Tailwind trong AuthScreen/AuthForm; CSS giữ giao diện, state và các selector form theo ngữ cảnh. Font dùng token 14px, các breakpoint cũ giữ qua variant trong rules/styling.md.
 
 ## Kiểm chứng
+
+[Đổi mật khẩu](change-password-screen.md) đã có FE tại `/profile/change-password`, mở qua avatar/Profile. Tái sử dụng PasswordField trong feature auth; AuthRepository.previewPasswordChange chỉ nhận ID mẫu/state/signal, không mật khẩu, chỉ trả preview-only. Không xác minh mật khẩu hiện tại hoặc thay credential; không đổi quy tắc Login/Register và không lưu hash/password.
+
+Phiên quản trị mẫu (dev, bật chủ động khi returnTo thuộc admin) đọc các module đã triển khai, gồm Bình luận qua admin:comment:read. Lựa chọn chỉnh sửa thêm quyền ghi Anime/Thể loại/Mùa và tập/Nguồn và phụ đề, cùng admin:comment:moderate; không ghi User hoặc sửa nội dung của tác giả. Xem [quy tắc quản trị](rules/admin-screens.md) và [Bình luận](admin-comments-screen.md). Không lưu hoặc cấp quyền server qua lựa chọn này.
 
 Dev hỗ trợ `?mock=error` để lỗi thao tác một lần rồi submit thử lại, `?mock=loading` để kéo dài pending 1,5 giây. Chỉ áp dụng khi submit form, không ảnh hưởng nút tài khoản mẫu. Production bỏ qua mock. Không có bảng debug trên UI.
 

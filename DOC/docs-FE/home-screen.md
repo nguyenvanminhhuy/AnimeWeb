@@ -16,7 +16,11 @@ Trong phiên triển khai đã xác nhận server `http://127.0.0.1:4174/` bằn
 - Hai tài khoản demo: có lịch sử mẫu và tài khoản mới chưa có lịch sử. Thành viên có thể bật/tắt yêu thích; dữ liệu tách theo tài khoản và lưu localStorage schema v1. Đăng xuất xóa dữ liệu cá nhân khỏi state hiện tại.
 - Lịch sử mẫu dẫn tới `/watch/episode-01-03` hoặc `/watch/episode-02-02`. Đây là fixture, chưa phải tiến độ video thật.
 - Màn hình [Khám phá](explore-screen.md) tại `/anime` đã triển khai ngày 2026-10-28; tìm kiếm và liên kết thể loại từ banner hoạt động với danh mục chung. [Thư viện](library-screen.md) tại `/library` đã triển khai; [Chi tiết anime](anime-detail-screen.md) tại `/anime/:slug` đã triển khai; `/watch/:episodeId` vẫn là thông báo chưa có video demo, có đường về Trang chủ. `/login` mô phỏng phiên; returnTo chỉ cho URL nội bộ.
-- Tiêu đề anime hư cấu, artwork SVG vẽ cục bộ, không có điểm/lượt xem giả hoặc asset ngoài. Mô hình mùa/phần vẫn là đề xuất trong entities.md; Trang chủ chưa cần triển khai mùa.
+- Tiêu đề anime hư cấu, artwork SVG vẽ cục bộ, không có điểm hoặc asset ngoài. Top lượt xem sử dụng số liệu mẫu được ghi rõ theo mục dưới. Mô hình mùa/phần vẫn là đề xuất trong entities.md; Trang chủ chưa cần triển khai mùa.
+
+## Top phim được xem nhiều nhất — 2026-10-31
+
+Thêm Top 10 sau khu Tiếp tục xem và trước Mới cập nhật, dùng [TopViewedAnime chung](rules/common/top-viewed-anime.md) cùng Dashboard. HomeCatalog.topViewed do repository trả từ cùng nguồn thống kê mẫu, thứ tự lượt xem giảm dần rồi ID, loại phim upcoming; bộ lọc thể loại của phần đề xuất không tác động Top 10. Có hạng, poster, tên phim, tổng lượt xem và link chi tiết. Hiện rõ “Số liệu mẫu”; không có analytics/API thật và không tự cộng lượt xem khi nhấn link. Component hai cột, mobile một cột, giữ font 14px.
 
 ## Source
 

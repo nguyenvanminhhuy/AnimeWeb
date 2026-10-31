@@ -9,7 +9,18 @@ export const routePatterns = {
   login: '/login',
   register: '/register',
   admin: '/admin',
+  adminAnime: '/admin/anime',
+  adminAnimeNew: '/admin/anime/new',
+  adminAnimeEdit: '/admin/anime/:animeId/edit',
+  adminGenres: '/admin/genres',
+  adminUsers: '/admin/users',
+  adminEpisodes: '/admin/episodes',
+  adminPlayback: '/admin/playback',
+  adminComments: '/admin/comments',
+  adminEpisodeNew: '/admin/episodes/new',
+  adminEpisodeEdit: '/admin/episodes/:episodeId/edit',
   profile: '/profile',
+  changePassword: '/profile/change-password',
 } as const;
 
 export const paths = {
@@ -19,7 +30,24 @@ export const paths = {
   login: routePatterns.login,
   register: routePatterns.register,
   admin: routePatterns.admin,
+  adminAnime: routePatterns.adminAnime,
+  adminGenres: routePatterns.adminGenres,
+  adminUsers: routePatterns.adminUsers,
+  adminEpisodes: routePatterns.adminEpisodes,
+  adminPlayback: routePatterns.adminPlayback,
+  adminComments: routePatterns.adminComments,
+  adminPlaybackForEpisode: (episodeId: string) =>
+    `${routePatterns.adminPlayback}?${createSearchParams({ episodeId })}`,
+  adminEpisodeNew: (animeId = '', seasonId = '', returnTo: string = routePatterns.adminEpisodes) =>
+    `${routePatterns.adminEpisodeNew}?${createSearchParams({ animeId, seasonId, returnTo })}`,
+  adminEpisodeEdit: (episodeId: string, returnTo: string = routePatterns.adminEpisodes) =>
+    `${generatePath(routePatterns.adminEpisodeEdit, { episodeId: encodeURIComponent(episodeId) })}?${createSearchParams({ returnTo })}`,
+  adminAnimeNew: (returnTo?: string) =>
+    `${routePatterns.adminAnimeNew}${returnTo ? `?${createSearchParams({ returnTo })}` : ''}`,
+  adminAnimeEdit: (animeId: string, returnTo?: string) =>
+    `${generatePath(routePatterns.adminAnimeEdit, { animeId: encodeURIComponent(animeId) })}${returnTo ? `?${createSearchParams({ returnTo })}` : ''}`,
   profile: routePatterns.profile,
+  changePassword: routePatterns.changePassword,
   animeDetail: (slug: string) =>
     generatePath(routePatterns.animeDetail, { slug: encodeURIComponent(slug) }),
   watch: (episodeId: string) =>

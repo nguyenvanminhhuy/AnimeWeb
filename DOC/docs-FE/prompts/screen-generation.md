@@ -19,7 +19,7 @@ Chỉ triển khai màn hình được gọi tên và nền/component cần thi�
 - Ô nhập dùng [Input](../rules/common/input.md), nhập có gợi ý tự do dùng [Combobox](../rules/common/combobox.md), lựa chọn giới hạn dùng [Selectbox](../rules/common/selectbox.md). Giữ label/validation và Form/query theo nghiệp vụ; không tự xây lại control tương đương.
 - Các common control hỗ trợ [size sm/md/lg](../rules/common/sizes.md), mặc định md, font 14px; dùng prop size thay vì tự tạo class kích thước. htmlSize dành cho size HTML dạng số.
 - Icon chức năng dùng [common Icon/Font Awesome Free](../rules/common/icon.md), import từ registry nội bộ; không thêm CDN/Kit hoặc dùng Unicode thay icon. Icon trang trí ẩn với screen reader, nút chỉ icon phải có nhãn.
-- Danh sách phân trang dùng [Pagination chung](../rules/common/pagination.md), truyền label và URL builder giữ query, dùng size/loading/disabled khi cần. Không tạo pagination trùng trong feature hoặc điều hướng bằng callback thủ công.
+- Danh sách phân trang dùng [Pagination chung](../rules/common/pagination.md), truyền label và URL builder giữ query, dùng size/loading/disabled khi cần. Admin có hai thanh trước/sau records và bật showSinglePage; chỉ thanh trên truyền pageSizeControl để chọn số bản ghi mỗi trang ở bên phải. Thanh dưới và các màn công khai không bật ô số lượng. Không viết lại logic dãy số trang trong feature hoặc điều hướng link trang bằng callback thủ công.
 - Kiểm tra source thực tế, package.json, workspace, router, styles, component và thay đổi đang có. Source có thể đã phát triển kể từ lúc tài liệu này được viết.
 - Giữ nguyên thay đổi ngoài phạm vi và các màn hình đã làm. Tài liệu dự án tập trung trong DOC.
 - Không yêu cầu người dùng điền lại route, component, mock, quyền hoặc checklist: tự suy ra từ các phần bên dưới và tài liệu liên quan.
@@ -38,15 +38,17 @@ Không phân biệt hoa/thường. Chấp nhận các tên tiếng Việt hoặc
 | Profile / Hồ sơ / Trang cá nhân | ProfilePage | /profile | Avatar, tên/email, thống kê thư viện và nội dung cá nhân chỉ đọc; xem profile-screen.md |
 | Đăng nhập / Login | LoginPage | /login | Đăng nhập mock có nhãn rõ, quay về route nội bộ đã yêu cầu |
 | Đăng ký / Register / Sign up | RegisterPage | /register | Form tạo hồ sơ demo riêng, không lưu mật khẩu; giữ returnTo giữa hai trang auth |
+| Change password / Đổi mật khẩu | ChangePasswordPage | /profile/change-password | Form hiện tại/mới/xác nhận cho member; chỉ preview với auth mẫu, xem [change-password-screen.md](../change-password-screen.md) |
 | Dashboard / Dashboard quản trị | AdminDashboardPage | /admin | Tổng quan dữ liệu mẫu; layout/quyền theo admin-screens.md |
-| Quản lý phim / Quản lý anime | AdminAnimePage | /admin/anime | Danh sách/tìm/lọc/phân trang, hành động theo quyền |
+| Quản lý phim / Quản lý anime / Admin anime | AdminAnimePage | /admin/anime | Danh sách/tìm/lọc/sort/phân trang và thêm/sửa/xoá theo quyền; xem admin-anime-screen.md |
 | Thêm phim / Sửa phim | AdminAnimeFormPage | /admin/anime/new hoặc /admin/anime/:animeId/edit | Form metadata, validation, lưu/hủy |
-| Quản lý tập phim / Thêm tập phim / Sửa tập phim | AdminEpisodesPage / AdminEpisodeFormPage | /admin/episodes và route form | Chọn anime/mùa, metadata tập; xem bảng admin-screens.md |
-| Quản lý thể loại | AdminGenresPage | /admin/genres | Danh sách và form ngắn tên/slug |
-| Quản lý bình luận / Kiểm duyệt bình luận | AdminCommentsPage | /admin/comments | Danh sách/trạng thái và hành động kiểm duyệt theo quyền |
-| Quản lý người dùng | AdminUsersPage | /admin/users | Danh sách/tìm/lọc/hồ sơ tối thiểu, không tự cấp role |
+| Mùa/phần và tập phim / Mùa / Phần / Quản lý tập phim / Thêm tập phim / Sửa tập phim | AdminEpisodesPage / AdminEpisodeFormPage | /admin/episodes và route form | CRUD mùa inline, CRUD metadata tập theo quyền; xem [admin-episodes-screen.md](../admin-episodes-screen.md) |
+| Quản lý nguồn phát và phụ đề / Nguồn phát / Phụ đề / Playback sources / Subtitles | AdminPlaybackPage | /admin/playback | CRUD nguồn theo tập và phụ đề theo nguồn, enabled/mặc định và quan hệ; xem [admin-playback-screen.md](../admin-playback-screen.md) |
+| Thể loại / Quản lý thể loại / Genres | AdminGenresPage | /admin/genres | Danh sách/tìm/lọc/sort/phân trang, form tên/slug và xoá theo quyền; xem admin-genres-screen.md |
+| Comment / Comments / Bình luận / Quản lý bình luận / Kiểm duyệt bình luận | AdminCommentsPage | /admin/comments | Tìm/lọc/sort/phân trang, panel commentId, ẩn/hiện lại theo quyền; xem [admin-comments-screen.md](../admin-comments-screen.md) |
+| User / Users / Người dùng / Quản lý người dùng | AdminUsersPage | /admin/users | Danh sách/tìm/lọc/sort/phân trang và hồ sơ cơ bản chỉ đọc; xem admin-users-screen.md |
 
-Các route quản trị là mặc định khi được gọi; hiện Dashboard /admin đã có UI mock, các trang CRUD chưa triển khai. Xem [Dashboard hiện tại](../admin-dashboard-screen.md) trước khi sửa. Chỉ tạo màn hình được yêu cầu và nền cần thiết theo admin-screens.md; không sinh toàn bộ CRUD từ tên Dashboard hoặc danh sách.
+Dashboard, CRUD anime/thể loại, [Mùa và tập](../admin-episodes-screen.md), [Nguồn và phụ đề](../admin-playback-screen.md), [Kiểm duyệt bình luận](../admin-comments-screen.md) và [Người dùng chỉ đọc](../admin-users-screen.md) đã có FE mock. Theo [rule CRUD](../rules/admin-screens.md), màn quản lý phim/tập/thể loại/nguồn/phụ đề mặc định hoàn thiện CRUD của chính module, trừ khi người dùng giới hạn. Bình luận chỉ kiểm duyệt, không tạo/sửa nội dung hoặc khôi phục deleted. Người dùng giữ phạm vi đọc; Dashboard chỉ tổng hợp, không tự tạo quyền quản trị thật.
 
 Tên chưa có trong bảng: ưu tiên tìm đặc tả trong DOC và source. Nếu đủ rõ, tự chọn route/page phù hợp, nêu giả định trong bàn giao. Chỉ hỏi khi tên thực sự mơ hồ hoặc liên quan quyết định nghiệp vụ chưa thể suy ra; không tự dựng chức năng quản trị ngoài màn hình được gọi hoặc cấp quyền thật.
 
@@ -94,6 +96,8 @@ FE/src/styles/                     Entry CSS, tokens, global và common
 - localStorage có schema version, xử lý dữ liệu lỗi/hết dung lượng và tách dữ liệu cá nhân theo tài khoản mock.
 
 ## 5. Quyền truy cập mặc định
+
+- Áp dụng ma trận [user/manage/admin](../rules/roles-permissions.md): user dùng chức năng cá nhân, manage chỉ đọc quản trị, admin có các quyền ghi/kiểm duyệt được liệt kê. Guest là ngữ cảnh công khai. Không mặc định admin được mọi quyền, không tự gán role thật hoặc tạo chức năng quản lý tài khoản ngoài phạm vi khi generate.
 
 - Guest và member dùng nội dung công khai tương ứng `/api/v1/common/...`: danh mục, tìm kiếm, chi tiết, playback.
 - `/api/v1/me/...` dành cho thư viện, tiến độ cá nhân và ghi bình luận; yêu cầu đăng nhập và permission theo roles-permissions.md.

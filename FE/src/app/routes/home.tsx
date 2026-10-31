@@ -5,6 +5,7 @@ import { paths } from '@/config/paths';
 import { useHomeCatalog } from '@/features/anime/hooks/use-home-catalog';
 import { FeaturedBanner } from '@/features/anime/components/featured-banner';
 import { AnimeCard } from '@/components/anime/anime-card';
+import { TopViewedAnime } from '@/components/anime/top-viewed-anime';
 import { ContinueWatching } from '@/features/anime/components/continue-watching';
 import { ContentState } from '@/components/common/content-state';
 const genres = ['Tất cả', 'Phiêu lưu', 'Giả tưởng', 'Đời thường', 'Tình cảm'];
@@ -68,6 +69,9 @@ export function HomePage() {
         </span>
       </div>
       <ContinueWatching items={[...data.updated, ...data.recommended]} />
+      <div className="tw:mt-8">
+        <TopViewedAnime items={data.topViewed} />
+      </div>
       <section
         className="aw-section tw:mt-10.5 tw:max-phone:mt-7.5"
         aria-labelledby="updated-title"

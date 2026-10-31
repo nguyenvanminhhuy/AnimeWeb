@@ -15,7 +15,7 @@ interface Session {
   permissions: readonly string[];
   notice: string;
   adminPreview: AdminPreviewSession | null;
-  openAdminPreview: () => void;
+  openAdminPreview: (writable?: boolean) => void;
   login: (user: DemoUser) => boolean;
   logout: () => void;
   toggleFavorite: (id: string) => void;
@@ -55,12 +55,27 @@ export function SessionProvider({ children }: { children: ReactNode }) {
           : [],
     notice,
     adminPreview,
-    openAdminPreview() {
+    openAdminPreview(writable = false) {
       if (!import.meta.env.DEV) return;
       current.current = { user: null, account: null };
       setProfile(null);
       setAccount(null);
-      setAdminPreview(adminPreviewSession);
+      setAdminPreview({
+        ...adminPreviewSession,
+        id: crypto.randomUUID(),
+        permissions: [
+          ...adminPreviewSession.permissions,
+          ...(writable
+            ? [
+                'admin:anime:write',
+                'admin:genre:write',
+                'admin:episode:write',
+                'admin:playback:write',
+                'admin:comment:moderate',
+              ]
+            : []),
+        ],
+      });
       const cleared = demoAccount.saveSession(null);
       setNotice(
         cleared ? '' : 'Không thể xóa phiên đã lưu; tải lại có thể khôi phục tài khoản cũ.',
