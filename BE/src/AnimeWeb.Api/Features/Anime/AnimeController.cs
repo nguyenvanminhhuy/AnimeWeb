@@ -21,6 +21,7 @@ public sealed class AnimeController(AnimeService service) : ControllerBase
 
     [HttpGet("{slug}")]
     [ProducesResponseType<ApiResponse<AnimeDetailDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ApiErrorResponse>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ApiErrorResponse>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ApiResponse<AnimeDetailDto>>> GetBySlugAsync(
         [StringLength(200), RegularExpression("^[a-z0-9]+(-[a-z0-9]+)*$")] string slug,

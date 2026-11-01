@@ -10,8 +10,11 @@ MỤC TIÊU: <hành vi đầu vào/đầu ra người dùng cần>
 PHẠM VI: <endpoint/nghiệp vụ cần làm, phần loại trừ nếu có>
 CÔNG NGHỆ: C# / ASP.NET Core Web API Controller / PostgreSQL / EF Core theo setup.md
 CONTRACT: <mục trong DOC/api-contract.md; thay đổi đã được xác nhận nếu có>
+HANDOFF FE: <mục/flow/repository trong DOC/fe-backend-handoff.md>
+HIỆN TRẠNG: <API đã có cần tái sử dụng; phần mới chưa triển khai>
+QUYẾT ĐỊNH CÒN MỞ: <lựa chọn nghiệp vụ cần chốt trước code phụ thuộc>
 DỮ LIỆU: <entity, migration, constraint và fixture cần thiết>
-QUYỀN: <guest/member, permission, ownership và trạng thái tài nguyên>
+QUYỀN: <guest/user/manage/admin, permission cụ thể, ownership và trạng thái tài nguyên>
 NGHIỆP VỤ ĐẶC BIỆT: <quy tắc chưa có trong contract>
 TÍCH HỢP FE: <có/không; luồng và adapter liên quan>
 NGHIỆM THU: <request/response, lỗi, test database và quyền phải đạt>
@@ -20,11 +23,13 @@ Chỉ làm cục bộ. Không đọc .env/credentials hoặc gọi API/model th�
 Giữ thay đổi đang có, cập nhật tài liệu và thêm bằng chứng chạy thật.
 ```
 
-Ví dụ sau này, khi nền và publication đã được chốt:
+Ví dụ cho module chưa có; nền và API đọc Anime/Mùa/tập đã có:
 
 ```text
-Đọc DOC/docs-BE/prompts/module-generation.md và tạo module danh mục anime.
-Phạm vi: GET common/anime, common/anime/:slug và common/genres theo contract.
-Dùng stack và publication đã xác nhận trong DOC/decisions.md; chưa sửa FE.
-Nghiệm thu: filter kết hợp, input sai, phân trang, empty và anime không công khai.
+Đọc DOC/docs-BE/prompts/module-generation.md và tạo module quản trị thể loại.
+Lấy flow Admin Genres trong DOC/fe-backend-handoff.md; đặc tả endpoint/DTO/query/lỗi trong contract trước code.
+Tái sử dụng Genre đã có; không tạo lại schema/catalog public. Chốt unique/delete/concurrency trong phạm vi.
+Áp admin:genre:read/write theo ma trận user/manage/admin; không dùng auth fake ở runtime.
+Nếu thiếu Auth, soạn contract và chỉ rõ phụ thuộc, không tự generate mọi module. Chưa sửa FE.
+Nghiệm thu khi triển khai: options có unused, usage counts/meta đúng scope, detail/ghi theo contract và constraint/quyền đúng.
 ```

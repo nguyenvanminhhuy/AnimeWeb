@@ -1,6 +1,6 @@
 namespace AnimeWeb.Api.Features.Anime;
 
-public sealed class Genre
+public sealed class Genre : global::AnimeWeb.Api.Shared.VersionedEntity
 {
     public required string Id { get; set; }
     public required string Slug { get; set; }

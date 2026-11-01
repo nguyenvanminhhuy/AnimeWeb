@@ -23,6 +23,7 @@ public static class ApiErrors
             403 => ("FORBIDDEN", "The operation is not allowed."),
             404 => ("NOT_FOUND", "The requested resource was not found."),
             405 => ("METHOD_NOT_ALLOWED", "The HTTP method is not allowed."),
+            409 => ("CONFLICT", "The resource changed or is still in use."),
             415 => ("UNSUPPORTED_MEDIA_TYPE", "The content type is not supported."),
             429 => ("TOO_MANY_REQUESTS", "Too many requests."),
             503 => ("SERVICE_UNAVAILABLE", "The service is temporarily unavailable."),
