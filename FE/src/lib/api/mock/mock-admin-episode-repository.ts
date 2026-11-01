@@ -1,3 +1,6 @@
+import { normalizeSearch } from '@/utils/search';
+import { pageRows } from '@/lib/api/mock/page';
+import { assertVersion } from '@/lib/api/backend/error';
 import type { AdminEpisodeRepository } from '@/lib/api/contracts/admin-episode-repository';
 import { adminCatalogWorkspace } from '@/lib/api/mock/admin-catalog-workspace';
 import { waitForAdminMock } from '@/lib/api/mock/admin-anime-workspace';
@@ -23,6 +26,39 @@ function syncCounts(session: AdminPreviewSession) {
   }
 }
 export const mockAdminEpisodeRepository: AdminEpisodeRepository = {
+  async list(query, signal, session, fail) {
+    const data = await mockAdminEpisodeRepository.getCatalog(signal, session, fail);
+    const bySeason = new Map(data.seasons.map((row) => [row.id, row]));
+    const rows = (query.empty ? [] : data.episodes)
+      .filter((row) => {
+        const season = bySeason.get(row.seasonId);
+        return (
+          (!query.animeId || season?.animeId === query.animeId) &&
+          (!query.seasonId || row.seasonId === query.seasonId) &&
+          (!query.status || row.status === query.status) &&
+          (!query.q ||
+            normalizeSearch(`${row.title} ${row.number}`).includes(normalizeSearch(query.q)))
+        );
+      })
+      .sort((a, b) =>
+        query.sort === 'title'
+          ? a.title.toLowerCase().localeCompare(b.title.toLowerCase()) || a.id.localeCompare(b.id)
+          : (bySeason.get(a.seasonId)?.animeId ?? '').localeCompare(
+              bySeason.get(b.seasonId)?.animeId ?? '',
+            ) ||
+            (bySeason.get(a.seasonId)?.sortOrder ?? 0) -
+              (bySeason.get(b.seasonId)?.sortOrder ?? 0) ||
+            a.sortOrder - b.sortOrder ||
+            a.id.localeCompare(b.id),
+      );
+    const page = pageRows(rows, query.page, query.pageSize);
+    return { ...data, episodes: page.rows, meta: page.meta };
+  },
+  async getById(id, signal, session) {
+    const data = await mockAdminEpisodeRepository.getCatalog(signal, session);
+    return data.episodes.find((row) => row.id === id) ?? null;
+  },
+
   async getCatalog(signal, session, fail) {
     workspace(session);
     await waitForAdminMock(signal, fail);
@@ -42,6 +78,7 @@ export const mockAdminEpisodeRepository: AdminEpisodeRepository = {
     await waitForAdminMock(signal, fail);
     const store = workspace(session, true);
     const clean = {
+      version: input.version,
       animeId: input.animeId,
       title: input.title.trim(),
       number: input.number,
@@ -63,20 +100,27 @@ export const mockAdminEpisodeRepository: AdminEpisodeRepository = {
         fields[key] = 'Giá trị đã được dùng trong phim này.';
     if (Object.keys(fields).length)
       throw new AdminEpisodeError('Kiểm tra thông tin mùa/phần.', fields);
-    if (current) Object.assign(current, clean);
-    else store.seasons.push({ ...clean, id: `admin-season-${crypto.randomUUID()}` });
+    if (current) {
+      assertVersion(current.version, input.version);
+      Object.assign(current, clean, { version: current.version + 1 });
+    } else {
+      assertVersion(0, input.version);
+      store.seasons.push({ ...clean, version: 1, id: `admin-season-${crypto.randomUUID()}` });
+    }
   },
   async saveEpisode(id, input, signal, session, fail) {
     workspace(session, true);
     await waitForAdminMock(signal, fail);
     const store = workspace(session, true);
     const clean = {
+      version: input.version,
       animeId: input.animeId,
       seasonId: input.seasonId,
       title: input.title.trim(),
       number: input.number,
       sortOrder: input.sortOrder,
       durationSeconds: input.durationSeconds,
+      thumbnailUrl: input.thumbnailUrl,
       status: input.status,
     };
     const fields = validateAdminEpisode(clean);
@@ -92,8 +136,7 @@ export const mockAdminEpisodeRepository: AdminEpisodeRepository = {
     if (id && !current) throw new AdminEpisodeError('Không tìm thấy tập phim.');
     if (current && current.seasonId !== clean.seasonId)
       fields.seasonId = 'Không chuyển tập sang mùa khác; tạo tập mới nếu cần.';
-    if (current?.status === 'published' && clean.status !== 'published')
-      fields.status = 'Chưa hỗ trợ thu hồi tập đã công bố.';
+
     for (const key of ['number', 'sortOrder'] as const)
       if (
         store.episodes.some(
@@ -104,22 +147,27 @@ export const mockAdminEpisodeRepository: AdminEpisodeRepository = {
     if (Object.keys(fields).length)
       throw new AdminEpisodeError('Kiểm tra thông tin tập phim.', fields);
     const { animeId: _animeId, ...metadata } = clean;
-    if (current)
+    if (current) {
+      assertVersion(current.version, input.version);
       Object.assign(current, metadata, {
+        version: current.version + 1,
         publishedAt:
           current.publishedAt ?? (clean.status === 'published' ? new Date().toISOString() : null),
       });
-    else
+    } else {
+      assertVersion(0, input.version);
       store.episodes.push({
         ...metadata,
+        version: 1,
         id: `admin-episode-${crypto.randomUUID()}`,
-        thumbnailUrl: anime!.posterUrl,
+        thumbnailUrl: input.thumbnailUrl,
         publishedAt: clean.status === 'published' ? new Date().toISOString() : null,
         hasPlayback: false,
       });
+    }
     syncCounts(session);
   },
-  async remove(kind, id, signal, session, fail) {
+  async remove(kind, id, version, signal, session, fail) {
     workspace(session, true);
     await waitForAdminMock(signal, fail);
     const store = workspace(session, true);
@@ -130,6 +178,7 @@ export const mockAdminEpisodeRepository: AdminEpisodeRepository = {
         throw new AdminEpisodeError(
           'Mùa còn tập phim. Hãy xử lý các tập trước; không xoá dây chuyền.',
         );
+      assertVersion(store.seasons[index].version, version);
       store.seasons.splice(index, 1);
     } else {
       const index = store.episodes.findIndex((e) => e.id === id);
@@ -142,6 +191,7 @@ export const mockAdminEpisodeRepository: AdminEpisodeRepository = {
         throw new AdminEpisodeError(
           'Không thể xoá tập đã công bố khi chưa có chính sách lịch sử xem. Chỉ xoá tập nháp.',
         );
+      assertVersion(store.episodes[index].version, version);
       store.episodes.splice(index, 1);
     }
     syncCounts(session);

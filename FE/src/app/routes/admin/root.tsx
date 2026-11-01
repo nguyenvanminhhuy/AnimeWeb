@@ -12,7 +12,8 @@ import { useSession } from '@/stores/session';
 import { paths, routePatterns } from '@/config/paths';
 
 export function AdminRoot() {
-  const { user, adminPreview, permissions, displayName, logout, notice } = useSession();
+  const { user, adminPreview, permissions, displayName, logout, notice, initializing } =
+    useSession();
   const location = useLocation();
   const navigate = useNavigate();
   const isDashboard = useMatch({ path: paths.admin, end: true });
@@ -26,7 +27,6 @@ export function AdminRoot() {
   const isComments = useMatch(routePatterns.adminComments);
   const returnTo = location.pathname + location.search + location.hash;
   const canRead =
-    import.meta.env.DEV &&
     adminPreview &&
     permissions.includes(
       isComments
@@ -43,6 +43,7 @@ export function AdminRoot() {
                   ? 'admin:anime:read'
                   : 'admin:dashboard:read',
     );
+  if (initializing) return <p role="status">Đang khôi phục phiên…</p>;
   if (!canRead)
     return (
       <main className="tw:min-h-screen tw:grid tw:place-items-center tw:p-6 tw:bg-[var(--aw-background)]">

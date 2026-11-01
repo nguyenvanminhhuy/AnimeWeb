@@ -144,7 +144,7 @@ export async function verifyAdminAnimeCrud(browser, baseURL) {
     await dialog.getByRole('alert').waitFor();
     assert.match(
       await dialog.getByRole('alert').innerText(),
-      /Không thể xoá phim đã có tập công khai/,
+      /Chuyển phim về bản nháp trước khi xoá/,
     );
     await dialog.getByRole('button', { name: 'Huỷ', exact: true }).click();
     await page.locator('[data-anime-id="anime-01"]').getByRole('link', { name: /^Sửa / }).click();
@@ -188,9 +188,13 @@ export async function verifyAdminAnimeCrud(browser, baseURL) {
     await save();
     await listReady();
     assert.equal(await page.locator('tbody tr').filter({ hasText: 'Phim thử lại' }).count(), 1);
-    await openSession('/admin/anime?mock=delete-error');
+    await openSession(
+      '/admin/anime/new?returnTo=' + encodeURIComponent('/admin/anime?mock=delete-error'),
+    );
+    await fill('Phim thử xoá', 'phim-thu-xoa');
+    await save();
     await listReady();
-    const upcoming = page.locator('[data-anime-id="anime-08"]');
+    const upcoming = page.locator('tbody tr').filter({ hasText: 'Phim thử xoá' });
     await upcoming.getByRole('button', { name: /^Xoá / }).click();
     await dialog.getByRole('button', { name: 'Xác nhận xoá', exact: true }).click();
     await dialog.getByRole('alert').waitFor();

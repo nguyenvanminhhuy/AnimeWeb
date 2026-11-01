@@ -1,3 +1,4 @@
+import { animeFormatLabel } from '@/config/catalog';
 import type { Anime } from '@/types/anime';
 import { Artwork } from '@/components/common/artwork';
 import { Link } from 'react-router-dom';
@@ -19,7 +20,7 @@ export function AnimeCard({ anime }: { anime: Anime }) {
         <span>·</span>
         {anime.genres[0]}
         <span>·</span>
-        {anime.format === 'tv' ? 'TV' : 'Movie'}
+        {animeFormatLabel(anime.format)}
       </p>
     </article>
   );

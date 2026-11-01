@@ -10,7 +10,7 @@ export function DeleteMetadataDialog({
   onClose,
   onDeleted,
 }: {
-  target: { kind: 'season' | 'episode'; id: string; title: string };
+  target: { kind: 'season' | 'episode'; id: string; version: number; title: string };
   session: AdminPreviewSession;
   fail?: boolean;
   onClose: () => void;
@@ -45,6 +45,7 @@ export function DeleteMetadataDialog({
       await adminEpisodeRepository.remove(
         target.kind,
         target.id,
+        target.version,
         controller.signal,
         session,
         shouldFail,

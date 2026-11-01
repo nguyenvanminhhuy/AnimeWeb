@@ -14,7 +14,10 @@ window.verifyAdminEpisodesRepository = async () => {
     try {
       await action();
     } catch (e) {
-      if (e.name === 'AbortError' || /quyền|tồn tại|mùa|Mùa|tập|Tập|thông tin/.test(e.message))
+      if (
+        e.name === 'AbortError' ||
+        /quyền|tồn tại|mùa|Mùa|tập|Tập|thông tin|bản nháp/.test(e.message)
+      )
         return;
       throw e;
     }
@@ -35,7 +38,7 @@ window.verifyAdminEpisodesRepository = async () => {
   check(before.seasons.length === 22 && before.episodes.length === 155, 'Stable seed');
   const owner = before.anime[0].id;
   const publicBefore = JSON.stringify(createAnimeDetail(anime[0]));
-  const input = { animeId: owner, number: 99, title: 'Season test', sortOrder: 999 };
+  const input = { version: 0, animeId: owner, number: 99, title: 'Season test', sortOrder: 999 };
   await denied(() => repo.saveSeason(null, input, signal(), readOnly), 'Read-only write allowed');
   await denied(
     () => repo.getCatalog(signal(), { ...session, permissions: [] }),
@@ -51,8 +54,15 @@ window.verifyAdminEpisodesRepository = async () => {
   const season = current.seasons.find((s) => s.title === input.title);
   check(season && season.animeId === owner, 'Season create');
   await denied(() => repo.saveSeason(null, input, signal(), session), 'Duplicate season');
-  await repo.saveSeason(season.id, { ...input, title: 'Renamed season' }, signal(), session);
+  await repo.saveSeason(
+    season.id,
+    { ...input, version: season.version, title: 'Renamed season' },
+    signal(),
+    session,
+  );
   const episode = {
+    version: 0,
+    thumbnailUrl: '',
     animeId: owner,
     seasonId: season.id,
     number: 1,
@@ -66,7 +76,7 @@ window.verifyAdminEpisodesRepository = async () => {
     'Foreign season accepted',
   );
   await denied(
-    () => repo.saveEpisode(null, { ...episode, durationSeconds: 0 }, signal(), session),
+    () => repo.saveEpisode(null, { ...episode, durationSeconds: -1 }, signal(), session),
     'Duration accepted',
   );
   await Promise.all([
@@ -82,11 +92,19 @@ window.verifyAdminEpisodesRepository = async () => {
   let row = current.episodes.find((e) => e.title === episode.title);
   check(current.episodes.filter((e) => e.title === episode.title).length === 1, 'Duplicate race');
   check(!row.hasPlayback && row.publishedAt === null, 'Draft fabricated playback/date');
-  await denied(() => repo.remove('season', season.id, signal(), session), 'Cascade deletion');
-  await denied(() => films.remove(owner, signal(), session), 'Anime dependency deleted');
-  await repo.saveEpisode(row.id, { ...episode, title: 'Edited draft' }, signal(), session);
-  await repo.remove('episode', row.id, signal(), session);
-  await repo.remove('season', season.id, signal(), session);
+  await denied(
+    () => repo.remove('season', season.id, season.version + 1, signal(), session),
+    'Cascade deletion',
+  );
+  await denied(() => films.remove(owner, 1, signal(), session), 'Anime dependency deleted');
+  await repo.saveEpisode(
+    row.id,
+    { ...episode, version: row.version, title: 'Edited draft' },
+    signal(),
+    session,
+  );
+  await repo.remove('episode', row.id, row.version + 1, signal(), session);
+  await repo.remove('season', season.id, season.version + 1, signal(), session);
   check((await catalog()).seasons.length === 22, 'Season delete');
   const baseSeason = before.seasons.find((s) => s.animeId === owner);
   const publish = {
@@ -100,11 +118,19 @@ window.verifyAdminEpisodesRepository = async () => {
   current = await catalog();
   row = current.episodes.find((e) => e.number === 999);
   check(row && row.publishedAt && !row.hasPlayback, 'Published metadata');
-  await denied(() => repo.remove('episode', row.id, signal(), session), 'Published deletion');
   await denied(
-    () => repo.saveEpisode(row.id, { ...publish, status: 'draft' }, signal(), session),
-    'Published withdrawal',
+    () => repo.remove('episode', row.id, row.version, signal(), session),
+    'Published deletion',
   );
+  await repo.saveEpisode(
+    row.id,
+    { ...publish, version: row.version, status: 'draft' },
+    signal(),
+    session,
+  );
+  const withdrawn = (await catalog()).episodes.find((item) => item.id === row.id);
+  check(withdrawn.publishedAt === row.publishedAt, 'First publication date changed');
+  await repo.saveEpisode(row.id, { ...publish, version: withdrawn.version }, signal(), session);
   check(
     (await dashboard.getOverview('normal', signal(), session)).publishedEpisodes === 156,
     'Dashboard stale',

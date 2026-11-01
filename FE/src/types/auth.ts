@@ -1,4 +1,5 @@
-export type DemoUser = 'viewer' | 'newcomer' | `local-${string}`;
+// Server IDs are opaque strings; isDemoUser still restricts local fixture activation.
+export type DemoUser = string;
 export interface DemoProfile {
   id: DemoUser;
   displayName: string;
@@ -6,3 +7,11 @@ export interface DemoProfile {
 }
 
 export type AuthState = 'ready' | 'error' | 'slow';
+
+export type {
+  ProfileDto,
+  LoginDto,
+  LoginInput,
+  RegisterInput,
+  PasswordInput,
+} from '@/lib/api/backend/types';

@@ -84,8 +84,10 @@ export function SeasonEpisodes({ detail }: { detail: AnimeDetail }) {
                     <span>
                       <strong>{episode.title}</strong>
                       <small>
-                        {Math.ceil(episode.durationSeconds / 60)} phút ·{' '}
-                        {saved ? 'Có tiến độ demo' : 'Chưa có video'}
+                        {episode.durationSeconds === null
+                          ? '—'
+                          : Math.ceil(episode.durationSeconds / 60)}{' '}
+                        phút · {saved ? 'Có tiến độ demo' : 'Chưa có video'}
                       </small>
                     </span>
                     <Icon name="external-link" size="sm" />

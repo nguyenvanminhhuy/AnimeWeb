@@ -1,3 +1,4 @@
+import { ApiError } from '@/lib/api/backend/error';
 import { useEffect, useRef, useState } from 'react';
 import { AdminAnimeError } from '@/utils/admin-anime-validation';
 
@@ -18,9 +19,14 @@ export function useAdminAnimeMutation() {
     } catch (cause) {
       if (!controller.signal.aborted)
         setError(
-          cause instanceof AdminAnimeError
-            ? cause
-            : new AdminAnimeError('Thao tác chưa thành công. Vui lòng thử lại.'),
+          cause instanceof ApiError
+            ? new AdminAnimeError(cause.message, {
+                ...cause.fields,
+                ...(cause.fields.genreIds ? { genres: cause.fields.genreIds } : {}),
+              })
+            : cause instanceof AdminAnimeError
+              ? cause
+              : new AdminAnimeError('Thao tác chưa thành công. Vui lòng thử lại.'),
         );
     } finally {
       if (!controller.signal.aborted) {

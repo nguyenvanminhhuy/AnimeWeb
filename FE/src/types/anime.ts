@@ -9,7 +9,7 @@ export interface Anime {
   bannerUrl: string;
   releaseYear: number;
   status: 'airing' | 'completed' | 'upcoming';
-  format: 'tv' | 'movie';
+  format: 'tv' | 'movie' | 'ova' | 'ona' | 'special';
   genres: string[];
   episodeLabel: string;
 }
@@ -30,6 +30,7 @@ export interface HomeCatalog {
   topViewed: TopViewedAnimeEntry[];
 }
 export interface CatalogResult {
+  options?: { genres: { value: string; label: string }[]; years: number[] };
   data: Anime[];
   meta: { page: number; pageSize: number; total: number; totalPages: number };
 }

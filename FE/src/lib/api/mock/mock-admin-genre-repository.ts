@@ -1,3 +1,4 @@
+import { assertVersion } from '@/lib/api/backend/error';
 import type { AdminGenreRepository } from '@/lib/api/contracts/admin-genre-repository';
 import type { AdminPreviewSession } from '@/types/admin';
 import type { AdminGenreInput } from '@/types/admin-genre';
@@ -17,6 +18,7 @@ function workspace(session: AdminPreviewSession, write = false) {
 }
 function validated(input: AdminGenreInput, session: AdminPreviewSession, id?: string) {
   const clean = {
+    version: input.version,
     name: input.name.trim().replace(/\s+/g, ' ').normalize('NFC'),
     slug: input.slug.trim(),
   };
@@ -85,7 +87,8 @@ export const mockAdminGenreRepository: AdminGenreRepository = {
     workspace(session, true);
     await waitForAdminMock(signal, fail);
     const data = workspace(session, true);
-    const row = { ...validated(input, session), id: `genre-${crypto.randomUUID()}` };
+    assertVersion(0, input.version);
+    const row = { ...validated(input, session), id: `genre-${crypto.randomUUID()}`, version: 1 };
     data.genres.push(row);
     return structuredClone(row);
   },
@@ -95,19 +98,21 @@ export const mockAdminGenreRepository: AdminGenreRepository = {
     const data = workspace(session, true);
     const row = data.genres.find((item) => item.id === id);
     if (!row) throw new AdminGenreError('Thể loại không còn tồn tại trong phiên mẫu.');
+    assertVersion(row.version, input.version);
     const clean = validated(input, session, id);
     // Only rename references inside the same admin snapshot; never change public fixtures.
     for (const item of data.anime)
       item.anime.genres = item.anime.genres.map((name) => (name === row.name ? clean.name : name));
-    Object.assign(row, clean);
+    Object.assign(row, clean, { version: row.version + 1 });
     return structuredClone(row);
   },
-  async remove(id, signal, session, fail) {
+  async remove(id, version, signal, session, fail) {
     workspace(session, true);
     await waitForAdminMock(signal, fail);
     const data = workspace(session, true);
     const index = data.genres.findIndex((row) => row.id === id);
     if (index < 0) throw new AdminGenreError('Thể loại không còn tồn tại trong phiên mẫu.');
+    assertVersion(data.genres[index].version, version);
     if (data.anime.some((row) => row.anime.genres.includes(data.genres[index].name)))
       throw new AdminGenreError(
         'Không thể xoá thể loại đang được phim sử dụng. Hãy đổi thể loại của các phim liên quan trước.',

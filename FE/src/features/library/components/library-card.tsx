@@ -27,16 +27,20 @@ export function LibraryCard({ item, tab, favorite, canWrite, onToggleFavorite }:
             <span>
               {completed
                 ? 'Đã xem xong'
-                : `${Math.round((progress.positionSeconds / progress.durationSeconds) * 100)}%`}
+                : progress.durationSeconds === null
+                  ? 'Chưa rõ thời lượng'
+                  : `${progress.durationSeconds ? Math.round((progress.positionSeconds / progress.durationSeconds) * 100) : 0}%`}
             </span>
           </div>
           <progress
-            value={progress.positionSeconds}
-            max={progress.durationSeconds}
+            value={progress.durationSeconds === null ? undefined : progress.positionSeconds}
+            max={progress.durationSeconds ?? undefined}
             aria-label={`Tiến độ tập ${progress.episodeNumber} của ${anime.title}`}
           />
           <p>
-            {minutes} / {Math.ceil(progress.durationSeconds / 60)} phút · Tiến độ mẫu
+            {minutes} /{' '}
+            {progress.durationSeconds === null ? '—' : Math.ceil(progress.durationSeconds / 60)}{' '}
+            phút · Tiến độ mẫu
           </p>
           {tab === 'history' && progress.updatedAt && (
             <p>

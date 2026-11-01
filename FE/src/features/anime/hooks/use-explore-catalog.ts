@@ -29,7 +29,10 @@ export function useExploreCatalog() {
   const matches = response?.key === requestKey || response?.resolvedKey === requestKey;
   const result = matches && response ? response.result : null;
   const error = matches && response ? response.error : '';
-  const canonicalHref = result ? catalogHref({ ...query, page: result.meta.page }, mock) : null;
+  const resolvedPage = result
+    ? Math.min(query.page, Math.max(1, result.meta.totalPages))
+    : query.page;
+  const canonicalHref = result ? catalogHref({ ...query, page: resolvedPage }, mock) : null;
   const currentSearch = searchParams.toString();
 
   useEffect(() => {
@@ -69,7 +72,7 @@ export function useExploreCatalog() {
   }, [canonicalHref, currentSearch, navigate]);
 
   return {
-    query: { ...query, page: result?.meta.page ?? query.page },
+    query: { ...query, page: resolvedPage },
     result,
     error,
     mock,

@@ -108,6 +108,7 @@ export async function verifyAdminEpisodes(browser, baseURL) {
     await page.getByLabel('Phim', { exact: true }).selectOption('');
     await page.waitForURL((url) => !url.searchParams.has('animeId'));
     await page.locator('tbody tr').first().waitFor();
+    await page.waitForFunction(() => document.querySelectorAll('tbody tr').length === 10);
     assert.equal(await page.locator('tbody tr').count(), 10);
     await page.getByLabel('Tìm tập phim', { exact: true }).fill('khong co tap abc');
     await page.waitForURL((url) => url.searchParams.get('q') === 'khong co tap abc');

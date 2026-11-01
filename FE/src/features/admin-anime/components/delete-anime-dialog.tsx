@@ -72,7 +72,8 @@ export function DeleteAnimeDialog({
             const shouldFail = failOnce.current;
             failOnce.current = false;
             void run(
-              (signal) => adminAnimeRepository.remove(row.anime.id, signal, session, shouldFail),
+              (signal) =>
+                adminAnimeRepository.remove(row.anime.id, row.version, signal, session, shouldFail),
               onDeleted,
             );
           }}

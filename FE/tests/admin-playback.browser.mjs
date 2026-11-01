@@ -29,7 +29,7 @@ export async function verifyAdminPlayback(browser, baseURL) {
       return route.abort();
     }
     if (r.method() !== 'GET') writes.push(r.url());
-    if (new URL(r.url()).pathname.startsWith('/media/')) {
+    if (new URL(r.url()).pathname.startsWith('https://media.example.invalid/')) {
       media.push(r.url());
       return route.abort();
     }
@@ -96,7 +96,9 @@ export async function verifyAdminPlayback(browser, baseURL) {
       await page.getByLabel('Địa chỉ tài nguyên *', { exact: true }).getAttribute('aria-invalid'),
       'true',
     );
-    await page.getByLabel('Địa chỉ tài nguyên *', { exact: true }).fill('/media/test.mp4');
+    await page
+      .getByLabel('Địa chỉ tài nguyên *', { exact: true })
+      .fill('https://media.example.invalid/test.mp4');
     await save('nguồn phát');
     await page.getByRole('button', { name: 'Sửa nguồn Nguồn chính', exact: true }).click();
     await page.getByLabel('Bật nguồn phát', { exact: true }).check();
@@ -107,13 +109,17 @@ export async function verifyAdminPlayback(browser, baseURL) {
     await page.getByRole('link', { name: 'Phụ đề của Nguồn chính', exact: true }).click();
     await page.getByRole('button', { name: 'Thêm phụ đề', exact: true }).click();
     await page.getByLabel('Nhãn *', { exact: true }).fill('Tiếng Việt');
-    await page.getByLabel('Địa chỉ tài nguyên *', { exact: true }).fill('/media/vi.vtt');
+    await page
+      .getByLabel('Địa chỉ tài nguyên *', { exact: true })
+      .fill('https://media.example.invalid/vi.vtt');
     await page.getByLabel('Đặt làm phụ đề mặc định', { exact: true }).check();
     await save('phụ đề');
     await page.getByRole('button', { name: 'Thêm phụ đề', exact: true }).click();
     await page.getByLabel('Nhãn *', { exact: true }).fill('English');
     await page.getByLabel('Ngôn ngữ *', { exact: true }).fill('en');
-    await page.getByLabel('Địa chỉ tài nguyên *', { exact: true }).fill('/media/en.vtt');
+    await page
+      .getByLabel('Địa chỉ tài nguyên *', { exact: true })
+      .fill('https://media.example.invalid/en.vtt');
     await page.getByLabel('Đặt làm phụ đề mặc định', { exact: true }).check();
     await save('phụ đề');
     assert.equal(
@@ -132,19 +138,20 @@ export async function verifyAdminPlayback(browser, baseURL) {
     await page.getByRole('button', { name: 'Sửa phụ đề English', exact: true }).click();
     await page.getByLabel('Nhãn *', { exact: true }).fill('English edited');
     await save('phụ đề');
-    await source('Nguồn dự phòng', '/media/backup.mp4');
+    await source('Nguồn dự phòng', 'https://media.example.invalid/backup.mp4');
     await save('nguồn phát');
     await page.getByLabel('Tìm nguồn phát', { exact: true }).fill('du phong');
     await page.waitForURL((u) => u.searchParams.get('q') === 'du phong');
     await page
       .getByRole('button', { name: 'Sửa nguồn Nguồn chính', exact: true })
       .waitFor({ state: 'hidden' });
+    await ready();
     assert.equal(await page.locator('tbody tr').count(), 1);
     await page.goBack();
     await page.getByRole('button', { name: 'Sửa nguồn Nguồn chính', exact: true }).waitFor();
     assert.equal(await page.getByLabel('Tìm nguồn phát', { exact: true }).inputValue(), '');
     for (let index = 1; index <= 4; index++) {
-      await source(`Extra ${index}`, `/media/extra-${index}.mp4`);
+      await source(`Extra ${index}`, `https://media.example.invalid/extra-${index}.mp4`);
       await save('nguồn phát');
     }
     await page
@@ -152,6 +159,7 @@ export async function verifyAdminPlayback(browser, baseURL) {
       .getByRole('link', { name: 'Trang 2', exact: true })
       .click();
     await page.getByRole('button', { name: 'Sửa nguồn Extra 4', exact: true }).waitFor();
+    await ready();
     assert.equal(await page.locator('tbody tr').count(), 1);
     await page.getByLabel('Số nguồn mỗi trang', { exact: true }).selectOption('20');
     await page.getByRole('button', { name: 'Sửa nguồn Nguồn chính', exact: true }).waitFor();
@@ -239,7 +247,9 @@ export async function verifyAdminPlaybackStates(browser, baseURL) {
     const fill = async () => {
       await page.getByRole('button', { name: 'Thêm nguồn phát', exact: true }).click();
       await page.getByLabel('Nhãn *', { exact: true }).fill('Retry source');
-      await page.getByLabel('Địa chỉ tài nguyên *', { exact: true }).fill('/media/retry.mp4');
+      await page
+        .getByLabel('Địa chỉ tài nguyên *', { exact: true })
+        .fill('https://media.example.invalid/retry.mp4');
     };
     await enter('/admin/playback?episodeId=episode-01-01&mock=save-error');
     await fill();

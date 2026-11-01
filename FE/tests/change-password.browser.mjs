@@ -60,10 +60,14 @@ export async function verifyChangePassword(browser, baseURL) {
     const before = await snapshot();
     await page.evaluate(async () => {
       const { authRepository } = await import('/src/lib/api/repositories.ts');
-      const original = authRepository.previewPasswordChange;
+      const original = authRepository.changePassword;
       window.passwordBoundary = [];
-      authRepository.previewPasswordChange = (...args) => {
-        window.passwordBoundary.push({ id: args[0], state: args[1], count: args.length });
+      authRepository.changePassword = (...args) => {
+        window.passwordBoundary.push({
+          keys: Object.keys(args[0]).sort(),
+          state: args[1],
+          count: args.length,
+        });
         return original(...args);
       };
     });
@@ -116,7 +120,11 @@ export async function verifyChangePassword(browser, baseURL) {
     assert.equal(await snapshot(), before);
     const boundary = await page.evaluate(() => window.passwordBoundary);
     assert.equal(boundary.length, 2);
-    assert.ok(boundary.every((call) => call.id === 'viewer' && call.count === 3));
+    assert.ok(
+      boundary.every(
+        (call) => call.keys.join(',') === 'currentPassword,newPassword' && call.count === 3,
+      ),
+    );
     assert.ok(!JSON.stringify(boundary).includes(newPassword));
     await page.getByRole('button', { name: 'Thử lại biểu mẫu', exact: true }).click();
     assert.equal(await page.getByLabel('Mật khẩu hiện tại', { exact: true }).inputValue(), '');

@@ -12,10 +12,7 @@ export function useAdminGenres() {
   const { adminPreview, permissions } = useSession();
   const mock = import.meta.env.DEV ? params.get('mock') : null;
   const canRead = Boolean(
-    import.meta.env.DEV &&
-    adminPreview &&
-    permissions.includes('admin:genre:read') &&
-    mock !== 'forbidden',
+    adminPreview && permissions.includes('admin:genre:read') && mock !== 'forbidden',
   );
   const canWrite = canRead && permissions.includes('admin:genre:write');
   const queryKey = genreParams(parseGenreQuery(params)).toString();
@@ -64,7 +61,10 @@ export function useAdminGenres() {
     );
     return () => controller.abort();
   }, [canRead, adminPreview, mock, response, key, query, state, revision]);
-  const canonical = result ? genreHref({ ...query, page: result.meta.page }, mock) : null;
+  const resolvedPage = result
+    ? Math.min(query.page, Math.max(1, result.meta.totalPages))
+    : query.page;
+  const canonical = result ? genreHref({ ...query, page: resolvedPage }, mock) : null;
   useEffect(() => {
     if (canonical && canonical !== location.pathname + location.search)
       navigate(canonical + location.hash, { replace: true, preventScrollReset: true });
@@ -72,7 +72,7 @@ export function useAdminGenres() {
   return {
     canRead,
     canWrite,
-    query: { ...query, page: result?.meta.page ?? query.page },
+    query: { ...query, page: resolvedPage },
     result,
     error,
     mock,

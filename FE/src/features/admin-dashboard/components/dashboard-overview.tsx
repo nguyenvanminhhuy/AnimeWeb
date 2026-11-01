@@ -1,3 +1,4 @@
+import { animeFormatLabel } from '@/config/catalog';
 import { Link } from 'react-router-dom';
 import { Artwork } from '@/components/common/artwork';
 import { TopViewedAnime } from '@/components/anime/top-viewed-anime';
@@ -202,7 +203,7 @@ export function DashboardOverview({ data }: { data: AdminDashboardData }) {
                     </div>
                   </th>
                   <td className="tw:px-6 tw:py-4 tw:whitespace-nowrap tw:text-[var(--aw-muted)]">
-                    {item.anime.format === 'tv' ? 'TV series' : 'Điện ảnh'}
+                    {animeFormatLabel(item.anime.format)}
                   </td>
                   <td className="tw:px-6 tw:py-4">{item.episodeCount}</td>
                   <td className="tw:px-6 tw:py-4 tw:whitespace-nowrap tw:text-[var(--aw-muted)]">

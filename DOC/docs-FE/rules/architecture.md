@@ -41,9 +41,9 @@ localStorage cần xử lý dữ liệu lỗi, hết dung lượng và thay đ�
 
 ## Phân quyền API — cập nhật 2026-10-24
 
-Danh mục, tìm kiếm và playback dùng `/api/v1/common/...`, không cần đăng nhập. Thư viện, tiến độ cá nhân và ghi bình luận dùng `/api/v1/me/...`, cần xác thực và permission. Route đọc bình luận công khai là đề xuất trong API contract. Xem [roles-permissions.md](roles-permissions.md).
+Danh mục, tìm kiếm và playback dùng `/api/v1/common/...`, không cần đăng nhập. Thư viện, tiến độ cá nhân và ghi bình luận dùng `/api/v1/me/...`, cần xác thực và permission. Route đọc bình luận công khai đã có trong contract v0.3. Xem [roles-permissions.md](roles-permissions.md).
 
-BE kiểm tra phiên, trạng thái tài khoản, permission, ownership và trạng thái tài nguyên. FE dùng trạng thái quyền để dựng giao diện và bảo vệ route thư viện, đồng thời xử lý 401/403 từ BE. Khi đăng xuất hoặc đổi tài khoản, xóa cache dữ liệu cá nhân của phiên trước. FE đã có auth/comments demo; BE authorization chưa triển khai.
+BE kiểm tra phiên, trạng thái tài khoản, permission, ownership và trạng thái tài nguyên. FE dùng trạng thái quyền để dựng giao diện và bảo vệ route thư viện, đồng thời xử lý 401/403 từ BE. Khi đăng xuất hoặc đổi tài khoản, xóa cache dữ liệu cá nhân của phiên trước. BE authorization đã triển khai; FE hiện vẫn dùng mock, chưa kết nối.
 
 ## Tích hợp pnpm workspace hiện có
 
@@ -55,4 +55,8 @@ Giữ `packageManager: pnpm@11.10.0`, một `pnpm-lock.yaml` tại `SRC`, không
 
 ## Tài liệu backend
 
-Thiết kế BE chi tiết tập trung tại [docs-BE/readme.md](../../docs-BE/readme.md), cấu trúc C# tại [architecture.md](../../docs-BE/architecture.md). Stack đã chốt, chưa có code backend.
+Thiết kế BE chi tiết tập trung tại [docs-BE/readme.md](../../docs-BE/readme.md), cấu trúc C# tại [architecture.md](../../docs-BE/architecture.md). BE đã có API theo contract v0.3; tham chiếu endpoint/DTO tại feature-reference.md.
+
+## Tương thích API v0.3
+
+Áp dụng [backend-compatibility.md](../backend-compatibility.md) khi tạo hoặc sửa màn hình. DTO HTTP nằm ở lib/api/backend/types.ts, mapping/factory adapter nằm cùng thư mục; điểm chọn adapter vẫn là lib/api/repositories.ts. Không gọi API thật hoặc đổi mặc định mock chỉ vì thêm DTO. Dùng page/meta/summary từ repository; panel/edit tải detail theo ID, không tìm chỉ trong page hiện tại. Create gửi version 0, update/delete giữ version đã đọc; PATCH giữ đủ metadata, không tự tăng version client. Không serialize mock actor/session/permissions hoặc field giao diện.

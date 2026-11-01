@@ -3,7 +3,7 @@ export interface AdminUser {
   displayName: string;
   email: string;
   status: 'active' | 'blocked';
-  roles: 'member'[];
+  roles: ('user' | 'manage' | 'admin')[];
   createdAt: string;
 }
 export interface AdminUsersQuery {

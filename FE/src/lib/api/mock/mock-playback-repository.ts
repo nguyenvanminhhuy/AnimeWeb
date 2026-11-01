@@ -1,8 +1,26 @@
+const viewSessions = new Map<string, { startedAt: string; position: number }>();
 import type { PlaybackRepository } from '@/lib/api/contracts/playback-repository';
 import { anime } from '@/testing/mocks/fixtures/anime';
 import { createAnimeDetail } from '@/testing/mocks/fixtures/anime-details';
 
 export const mockPlaybackRepository: PlaybackRepository = {
+  async startView(_episodeId, input, signal) {
+    signal.throwIfAborted();
+    const id = crypto.randomUUID(),
+      startedAt = new Date().toISOString();
+    viewSessions.set(id, { startedAt, position: input.positionSeconds });
+    return { id, startedAt };
+  },
+  async confirmView(id, input, signal) {
+    signal.throwIfAborted();
+    const session = viewSessions.get(id);
+    const counted =
+      !!session &&
+      Date.now() - Date.parse(session.startedAt) >= 30000 &&
+      input.positionSeconds - session.position >= 30;
+    if (counted) viewSessions.delete(id);
+    return { counted };
+  },
   async getEpisode(id, state) {
     await new Promise((resolve) => setTimeout(resolve, 200));
     if (state === 'error') throw new Error('Không thể tải thông tin tập phim.');

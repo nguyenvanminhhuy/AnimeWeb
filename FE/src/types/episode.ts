@@ -11,7 +11,7 @@ export interface Episode {
   number: number;
   title: string;
   sortOrder: number;
-  durationSeconds: number;
+  durationSeconds: number | null;
   thumbnailUrl: string;
   publishedAt: string;
   status: 'published' | 'draft';

@@ -3,6 +3,7 @@ import type { DemoUser } from '@/types/auth';
 import type { Progress } from '@/types/progress';
 interface Account {
   version: 1;
+  library?: import('@/types/personal').LibraryEntry[];
   favorites: string[];
   progress: Progress[];
 }
@@ -38,13 +39,13 @@ export const demoAccount = {
             p &&
             typeof p.animeId === 'string' &&
             typeof p.episodeId === 'string' &&
-            Number.isInteger(p.episodeNumber) &&
-            p.episodeNumber > 0 &&
+            Number.isFinite(p.episodeNumber) &&
+            p.episodeNumber >= 0 &&
             Number.isFinite(p.positionSeconds) &&
             p.positionSeconds >= 0 &&
-            Number.isFinite(p.durationSeconds) &&
-            p.durationSeconds > 0 &&
-            p.durationSeconds >= p.positionSeconds &&
+            (p.durationSeconds === null || Number.isFinite(p.durationSeconds)) &&
+            (p.durationSeconds === null || p.durationSeconds > 0) &&
+            (p.durationSeconds === null || p.durationSeconds >= p.positionSeconds) &&
             (p.completed === undefined || typeof p.completed === 'boolean') &&
             (p.updatedAt === undefined ||
               (typeof p.updatedAt === 'string' && Number.isFinite(Date.parse(p.updatedAt)))),

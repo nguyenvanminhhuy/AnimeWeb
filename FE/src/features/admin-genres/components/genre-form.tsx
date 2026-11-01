@@ -23,6 +23,7 @@ export function GenreForm({
   onSaved: () => void;
 }) {
   const [value, setValue] = useState<AdminGenreInput>({
+    version: row?.version ?? 0,
     name: row?.name ?? '',
     slug: row?.slug ?? '',
   });

@@ -6,18 +6,14 @@ import { Selectbox } from '@/components/ui/selectbox';
 import { ContentState } from '@/components/common/content-state';
 import { Pagination } from '@/components/common/pagination';
 import { paths } from '@/config/paths';
-import { normalizeSearch } from '@/utils/search';
 import { useEpisodeCatalog } from '@/features/admin-episodes/hooks/use-episode-catalog';
 import { MetadataForm } from '@/features/admin-episodes/components/metadata-form';
 import { DeleteMetadataDialog } from '@/features/admin-episodes/components/delete-metadata-dialog';
-import type { Season } from '@/types/episode';
+import type { AdminSeason as Season } from '@/types/admin-episode';
 
 export function EpisodesScreen() {
   const [params, setParams] = useSearchParams();
   const mock = import.meta.env.DEV ? params.get('mock') : null;
-  const { data, loading, error, canRead, canWrite, session, refresh } = useEpisodeCatalog(
-    mock === 'error',
-  );
   const animeId = params.get('animeId') ?? '';
   const seasonId = params.get('seasonId') ?? '';
   const q = params.get('q') ?? '';
@@ -29,11 +25,16 @@ export function EpisodesScreen() {
     ? Number(params.get('pageSize'))
     : 10;
   const requestedPage = Math.max(1, Math.floor(Number(params.get('page')) || 1));
+  const { data, loading, error, canRead, canWrite, session, refresh } = useEpisodeCatalog(
+    mock === 'error',
+    { q, animeId, seasonId, status, sort, page: requestedPage, pageSize, empty: mock === 'empty' },
+  );
   const [search, setSearch] = useState(q);
   const [composing, setComposing] = useState(false);
   const [editor, setEditor] = useState<{ row: Season | null; revision: number } | null>(null);
   const [target, setTarget] = useState<{
     kind: 'season' | 'episode';
+    version: number;
     id: string;
     title: string;
   } | null>(null);
@@ -65,28 +66,9 @@ export function EpisodesScreen() {
   const seasons = (data?.seasons ?? [])
     .filter((s) => s.animeId === animeId)
     .sort((a, b) => a.sortOrder - b.sortOrder || a.id.localeCompare(b.id));
-  const ids = new Set(
-    (data?.seasons ?? []).filter((s) => !animeId || s.animeId === animeId).map((s) => s.id),
-  );
-  const seasonById = new Map((data?.seasons ?? []).map((s) => [s.id, s]));
-  const rows = (mock === 'empty' ? [] : (data?.episodes ?? []))
-    .filter(
-      (e) =>
-        ids.has(e.seasonId) &&
-        (!seasonId || e.seasonId === seasonId) &&
-        (!status || e.status === status) &&
-        (!q || normalizeSearch(`${e.title} ${e.number}`).includes(normalizeSearch(q))),
-    )
-    .sort((a, b) =>
-      sort === 'title'
-        ? a.title.localeCompare(b.title, 'vi') || a.id.localeCompare(b.id)
-        : seasonById.get(a.seasonId)!.animeId.localeCompare(seasonById.get(b.seasonId)!.animeId) ||
-          seasonById.get(a.seasonId)!.sortOrder - seasonById.get(b.seasonId)!.sortOrder ||
-          a.sortOrder - b.sortOrder ||
-          a.id.localeCompare(b.id),
-    );
-  const totalPages = Math.ceil(rows.length / pageSize);
-  const page = Math.min(requestedPage, Math.max(1, totalPages));
+  const rows = data?.episodes ?? [];
+  const totalPages = data?.meta?.totalPages ?? 0;
+  const page = data?.meta ? Math.min(requestedPage, Math.max(1, totalPages)) : requestedPage;
   useEffect(() => {
     if (!data) return;
     const next = new URLSearchParams(params);
@@ -277,7 +259,14 @@ export function EpisodesScreen() {
                           aria-label={`Xoá mùa ${s.title}`}
                           size="sm"
                           variant="quiet"
-                          onClick={() => setTarget({ kind: 'season', id: s.id, title: s.title })}
+                          onClick={() =>
+                            setTarget({
+                              kind: 'season',
+                              id: s.id,
+                              version: s.version,
+                              title: s.title,
+                            })
+                          }
                         />
                       </div>
                     )}
@@ -294,6 +283,7 @@ export function EpisodesScreen() {
               initial={
                 editor.row ?? {
                   animeId,
+                  version: 0,
                   title: '',
                   number: Math.max(0, ...seasons.map((s) => s.number)) + 1,
                   sortOrder: Math.max(0, ...seasons.map((s) => s.sortOrder)) + 1,
@@ -313,7 +303,7 @@ export function EpisodesScreen() {
           <section aria-labelledby="episodes-heading" className="tw:min-w-0">
             <div className="tw:flex tw:justify-between tw:items-center tw:gap-3 tw:flex-wrap tw:mb-4">
               <h2 id="episodes-heading" ref={heading} tabIndex={-1} className="tw:text-xl tw:mb-0">
-                Danh sách tập phim ({rows.length})
+                Danh sách tập phim ({data.meta?.total ?? rows.length})
               </h2>
               {canWrite && (
                 <Button
@@ -379,7 +369,7 @@ export function EpisodesScreen() {
                       </tr>
                     </thead>
                     <tbody>
-                      {rows.slice((page - 1) * pageSize, page * pageSize).map((e) => {
+                      {rows.map((e) => {
                         const season = data.seasons.find((s) => s.id === e.seasonId)!;
                         return (
                           <tr
@@ -401,8 +391,10 @@ export function EpisodesScreen() {
                             </td>
                             <td className="tw:p-4">{e.sortOrder}</td>
                             <td className="tw:p-4 tw:whitespace-nowrap">
-                              {Math.floor(e.durationSeconds / 60)} phút {e.durationSeconds % 60}{' '}
-                              giây
+                              {e.durationSeconds === null
+                                ? '—'
+                                : Math.floor(e.durationSeconds / 60)}{' '}
+                              phút {e.durationSeconds === null ? '—' : e.durationSeconds % 60} giây
                             </td>
                             <td className="tw:p-4 tw:whitespace-nowrap">
                               <span
@@ -435,7 +427,12 @@ export function EpisodesScreen() {
                                     size="sm"
                                     variant="quiet"
                                     onClick={() =>
-                                      setTarget({ kind: 'episode', id: e.id, title: e.title })
+                                      setTarget({
+                                        kind: 'episode',
+                                        id: e.id,
+                                        version: e.version,
+                                        title: e.title,
+                                      })
                                     }
                                   />
                                 </div>

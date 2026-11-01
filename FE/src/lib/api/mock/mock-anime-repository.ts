@@ -18,14 +18,18 @@ export const mockAnimeRepository: AnimeRepository = {
     if (state === 'error') throw new Error('Không thể tải thông tin trong thư viện demo.');
     return state === 'empty' ? [] : anime.filter((item) => ids.includes(item.id));
   },
-  async getHome(state) {
+  async getHome(state, genre) {
     await new Promise((resolve) => setTimeout(resolve, 250));
     if (state === 'error') throw new Error('Không thể tải danh sách anime demo.');
     if (state === 'empty') return { featured: [], updated: [], recommended: [], topViewed: [] };
     return {
       featured: [anime[0], anime[2], anime[4]],
       updated: anime.slice(0, 6),
-      recommended: [anime[5], anime[3], anime[6], anime[7]],
+      recommended: [anime[5], anime[3], anime[6], anime[7]].filter(
+        (item) =>
+          !genre ||
+          item.genres.includes(genreOptions.find((option) => option.value === genre)?.label ?? ''),
+      ),
       topViewed: getTopViewedAnime(),
     };
   },
@@ -37,7 +41,7 @@ export const mockAnimeRepository: AnimeRepository = {
     const items = (state === 'empty' ? [] : anime).filter(
       (item) =>
         (!search || normalizeSearch(`${item.title} ${item.subtitle}`).includes(search)) &&
-        (!genreLabel || item.genres.includes(genreLabel)) &&
+        (!query.genre || Boolean(genreLabel && item.genres.includes(genreLabel))) &&
         (!query.year || item.releaseYear === Number(query.year)) &&
         (!query.status || item.status === query.status) &&
         (!query.format || item.format === query.format),
@@ -52,6 +56,10 @@ export const mockAnimeRepository: AnimeRepository = {
     const page = Math.min(query.page, Math.max(1, totalPages));
     return {
       data: items.slice((page - 1) * query.pageSize, page * query.pageSize),
+      options: {
+        genres: [...genreOptions],
+        years: [...new Set(anime.map((row) => row.releaseYear))].sort((a, b) => b - a),
+      },
       meta: { page, pageSize: query.pageSize, total, totalPages },
     };
   },

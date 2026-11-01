@@ -29,6 +29,9 @@ window.verifyAdminAnimeRepository = async () => {
   const other = session(true);
   const signal = new AbortController().signal;
   const input = {
+    version: 0,
+    publicationStatus: 'draft',
+    alternativeTitles: [],
     title: 'Repository anime',
     slug: 'repository-anime',
     subtitle: '',
@@ -54,7 +57,7 @@ window.verifyAdminAnimeRepository = async () => {
   for (const task of [
     () => repository.create(input, signal, read),
     () => repository.update('anime-01', input, signal, read),
-    () => repository.remove('anime-08', signal, read),
+    () => repository.remove('anime-08', 1, signal, read),
   ]) {
     const error = await rejects(task, 'Read-only mutation succeeded');
     check(error.message.includes('quyền'), 'Read-only error missing');
@@ -70,7 +73,7 @@ window.verifyAdminAnimeRepository = async () => {
   );
   const updated = await repository.update(
     row.anime.id,
-    { ...input, title: 'Updated', id: 'replacement-id' },
+    { ...input, version: row.version, title: 'Updated', id: 'replacement-id' },
     signal,
     write,
   );
@@ -80,22 +83,32 @@ window.verifyAdminAnimeRepository = async () => {
     'Another session was changed',
   );
   const invalid = await rejects(
-    () =>
-      repository.create(
-        { ...input, slug: 'invalid', posterUrl: 'https://outside.invalid/image.png' },
-        signal,
-        write,
-      ),
-    'External artwork accepted',
+    () => repository.create({ ...input, slug: 'invalid', posterUrl: '' }, signal, write),
+    'Empty artwork accepted',
   );
   check(Boolean(invalid.fields.posterUrl), 'Artwork field error missing');
   const seeded = await repository.get('anime-01', signal, write);
   const invalidStatus = await rejects(
-    () => repository.update('anime-01', { ...seeded.anime, status: 'upcoming' }, signal, write),
+    () =>
+      repository.update(
+        'anime-01',
+        {
+          ...seeded.anime,
+          version: seeded.version,
+          publicationStatus: seeded.publicationStatus,
+          alternativeTitles: seeded.alternativeTitles,
+          status: 'upcoming',
+        },
+        signal,
+        write,
+      ),
     'Published relations ignored',
   );
   check(Boolean(invalidStatus.fields.status), 'Referenced status field error missing');
-  await rejects(() => repository.remove('anime-01', signal, write), 'Referenced anime deleted');
+  await rejects(
+    () => repository.remove('anime-01', seeded.version, signal, write),
+    'Referenced anime deleted',
+  );
   check(Boolean(await repository.get('anime-01', signal, write)), 'Referenced anime missing');
   const concurrent = await Promise.allSettled([
     repository.create({ ...input, slug: 'concurrent' }, signal, write),
@@ -114,23 +127,27 @@ window.verifyAdminAnimeRepository = async () => {
     (await repository.list(query, 'ready', signal, write)).meta.total === before,
     'Aborted mutation changed data',
   );
-  await repository.remove(row.anime.id, signal, write);
+  await repository.remove(row.anime.id, updated.version, signal, write);
   check((await repository.get(row.anime.id, signal, write)) === null, 'Delete did not remove row');
   await rejects(
-    () => genres.create({ name: 'Readonly', slug: 'readonly' }, signal, read),
+    () => genres.create({ version: 0, name: 'Readonly', slug: 'readonly' }, signal, read),
     'Read-only genre creation succeeded',
   );
-  const genre = await genres.create({ name: 'Mystery', slug: 'mystery' }, signal, write);
+  const genre = await genres.create(
+    { version: 0, name: 'Mystery', slug: 'mystery' },
+    signal,
+    write,
+  );
   check((await genres.options(signal, other)).length === 5, 'Another session taxonomy changed');
   const referenced = await repository.create(
     { ...input, slug: 'taxonomy-test', genres: ['Mystery'] },
     signal,
     write,
   );
-  await rejects(() => genres.remove(genre.id, signal, write), 'Used genre deleted');
+  await rejects(() => genres.remove(genre.id, genre.version, signal, write), 'Used genre deleted');
   await genres.update(
     genre.id,
-    { name: 'Mystery renamed', slug: 'mystery-renamed' },
+    { version: genre.version, name: 'Mystery renamed', slug: 'mystery-renamed' },
     signal,
     write,
   );
@@ -150,11 +167,11 @@ window.verifyAdminAnimeRepository = async () => {
       .total === 0,
     'Unknown genre leaked unfiltered catalog',
   );
-  await repository.remove(referenced.anime.id, signal, write);
-  await genres.remove(genre.id, signal, write);
+  await repository.remove(referenced.anime.id, referenced.version, signal, write);
+  await genres.remove(genre.id, genre.version + 1, signal, write);
   const genreController = new AbortController();
   const genrePending = genres.create(
-    { name: 'Cancelled genre', slug: 'cancelled-genre' },
+    { version: 0, name: 'Cancelled genre', slug: 'cancelled-genre' },
     genreController.signal,
     write,
   );
@@ -165,13 +182,13 @@ window.verifyAdminAnimeRepository = async () => {
     'Aborted genre mutation changed taxonomy',
   );
   const genreRace = await Promise.allSettled([
-    genres.create({ name: 'Concurrent genre', slug: 'genre-race' }, signal, write),
-    genres.create({ name: 'Concurrent genre', slug: 'genre-race' }, signal, write),
+    genres.create({ version: 0, name: 'Concurrent genre', slug: 'genre-race' }, signal, write),
+    genres.create({ version: 0, name: 'Concurrent genre', slug: 'genre-race' }, signal, write),
   ]);
   check(
     genreRace.filter((result) => result.status === 'fulfilled').length === 1,
     'Concurrent duplicate genres accepted',
   );
   check(JSON.stringify(anime) === snapshot, 'Public fixture changed');
-  return 'read-only anime/genre guards, isolated workspaces, stable IDs/field allowlist, local assets, references, genre assignment/rename/filter/delete rules, concurrent uniqueness, abort before commit and public fixture unchanged';
+  return 'read-only anime/genre guards, isolated workspaces, stable IDs/field allowlist, artwork validation, references, genre assignment/rename/filter/delete rules, concurrent uniqueness, abort before commit and public fixture unchanged';
 };

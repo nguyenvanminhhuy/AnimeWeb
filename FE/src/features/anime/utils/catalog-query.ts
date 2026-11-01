@@ -10,11 +10,12 @@ export function parseCatalogQuery(params: URLSearchParams): CatalogQuery {
   const pageValue = params.get('page') ?? '';
   const page = /^\d+$/.test(pageValue) ? Number(pageValue) : 1;
   return {
-    q: (params.get('q') ?? '').trim().slice(0, 100),
+    q: (params.get('q') ?? '').trim().slice(0, 200),
     // Older Home banners linked with the Vietnamese label; accept both forms.
     genre:
-      genreOptions.find((option) => option.value === genre || option.label === genre)?.value ?? '',
-    year: catalogYears.some((value) => String(value) === year) ? year : '',
+      genreOptions.find((option) => option.value === genre || option.label === genre)?.value ??
+      (genre && genre.length <= 100 && /^[a-z0-9]+(-[a-z0-9]+)*$/.test(genre) ? genre : ''),
+    year: /^\d{1,4}$/.test(year) && Number(year) >= 1 && Number(year) <= 9999 ? year : '',
     status: statusOptions.find((option) => option.value === status)?.value ?? '',
     format: formatOptions.find((option) => option.value === format)?.value ?? '',
     sort: params.get('sort') === 'title' ? 'title' : 'newest',

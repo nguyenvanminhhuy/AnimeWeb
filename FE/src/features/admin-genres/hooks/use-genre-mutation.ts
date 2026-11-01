@@ -1,3 +1,4 @@
+import { ApiError } from '@/lib/api/backend/error';
 import { useEffect, useRef, useState } from 'react';
 import { AdminGenreError } from '@/utils/admin-genre-validation';
 
@@ -18,13 +19,15 @@ export function useGenreMutation() {
     } catch (cause) {
       if (!controller.signal.aborted)
         setError(
-          cause instanceof AdminGenreError
-            ? cause
-            : new AdminGenreError(
-                cause instanceof Error
-                  ? cause.message
-                  : 'Thao tác chưa thành công. Vui lòng thử lại.',
-              ),
+          cause instanceof ApiError
+            ? new AdminGenreError(cause.message, cause.fields)
+            : cause instanceof AdminGenreError
+              ? cause
+              : new AdminGenreError(
+                  cause instanceof Error
+                    ? cause.message
+                    : 'Thao tác chưa thành công. Vui lòng thử lại.',
+                ),
         );
     } finally {
       if (!controller.signal.aborted) {

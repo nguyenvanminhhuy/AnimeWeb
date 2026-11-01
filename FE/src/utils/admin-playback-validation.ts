@@ -16,10 +16,7 @@ export function validMediaReference(value: string) {
       !url.username &&
       !url.password &&
       !url.hash &&
-      ((value.startsWith('/') &&
-        !value.startsWith('//') &&
-        url.origin === 'https://anime-web.invalid') ||
-        (/^https:\/\//i.test(value) && url.protocol === 'https:'))
+      (/^https:\/\//i.test(value) || (import.meta.env.DEV && /^http:\/\//i.test(value)))
     );
   } catch {
     return false;
@@ -29,22 +26,21 @@ export function validateAdminPlayback(input: AdminSourceInput | AdminSubtitleInp
   const fields: Record<string, string> = {};
   if (!input.label.trim() || input.label.trim().length > 100)
     fields.label = 'Nhập nhãn từ 1 đến 100 ký tự.';
-  try {
-    if (
-      !/^[a-z]{2,3}(?:-[a-z0-9]{2,8})*$/i.test(input.language) ||
-      !Intl.getCanonicalLocales(input.language).length
-    )
-      throw new Error();
-  } catch {
-    fields.language = 'Nhập mã ngôn ngữ hợp lệ, ví dụ vi, ja hoặc en-US.';
-  }
+  if (!input.language.trim() || input.language.trim().length > 30)
+    fields.language = 'Nhập ngôn ngữ từ 1 đến 30 ký tự.';
   if (!validMediaReference(input.url))
     fields.url =
-      'Nhập URL HTTPS hoặc đường dẫn nội bộ bắt đầu bằng /, không chứa tài khoản hoặc fragment.';
+      'Nhập URL HTTPS tuyệt đối (HTTP được phép ở dev), không chứa tài khoản hoặc fragment.';
   if ('episodeId' in input) {
+    if (
+      input.expiresAt &&
+      (!/^\d{4}-\d{2}-\d{2}T/.test(input.expiresAt) ||
+        !Number.isFinite(Date.parse(input.expiresAt)))
+    )
+      fields.expiresAt = 'Nhập thời điểm ISO 8601 hợp lệ.';
     if (!input.episodeId) fields.episodeId = 'Chọn tập phim.';
-    if (!/^[a-z0-9][a-z0-9-]{0,49}$/.test(input.providerKey))
-      fields.providerKey = 'Mã nhà cung cấp gồm chữ thường, số, dấu nối; tối đa 50 ký tự.';
+    if (input.providerKey !== 'direct')
+      fields.providerKey = 'API hiện chỉ hỗ trợ nhà cung cấp direct.';
     if (!['mp4', 'hls'].includes(input.type)) fields.type = 'Định dạng nguồn không hợp lệ.';
     if (typeof input.enabled !== 'boolean') fields.enabled = 'Trạng thái không hợp lệ.';
   } else {

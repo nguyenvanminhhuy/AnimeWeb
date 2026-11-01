@@ -6,6 +6,7 @@ import { Avatar } from '@/components/ui/avatar';
 import { PasswordField } from '@/features/auth/components/password-field';
 import { useChangePassword } from '@/features/auth/hooks/use-change-password';
 import { useSession } from '@/stores/session';
+import { authRepository } from '@/lib/api/repositories';
 import { paths } from '@/config/paths';
 
 export function ChangePasswordScreen() {
@@ -43,14 +44,16 @@ export function ChangePasswordScreen() {
               <span className="tw:block tw:break-all tw:text-[var(--aw-muted)]">{email}</span>
             </div>
           </div>
-          <div className="tw:border-t tw:border-[var(--aw-border)] tw:pt-5">
-            <h2 className="tw:text-lg">Chế độ mô phỏng</h2>
-            <p className="tw:text-[var(--aw-muted)] tw:mb-0 tw:leading-relaxed">
-              Dự án chưa có dịch vụ xác thực mật khẩu. Biểu mẫu chỉ kiểm tra dữ liệu nhập, không xác
-              minh mật khẩu hiện tại và chưa thay đổi mật khẩu đăng nhập. Chỉ dùng chuỗi giả để thử
-              giao diện.
-            </p>
-          </div>
+          {authRepository.mode === 'mock' && (
+            <div className="tw:border-t tw:border-[var(--aw-border)] tw:pt-5">
+              <h2 className="tw:text-lg">Chế độ mô phỏng</h2>
+              <p className="tw:text-[var(--aw-muted)] tw:mb-0 tw:leading-relaxed">
+                FE đang chạy mock, chưa kết nối dịch vụ xác thực mật khẩu. Biểu mẫu chỉ kiểm tra dữ
+                liệu nhập, không xác minh mật khẩu hiện tại và chưa thay đổi mật khẩu đăng nhập. Chỉ
+                dùng chuỗi giả để thử giao diện.
+              </p>
+            </div>
+          )}
           <ul className="tw:pl-5 tw:mb-0 tw:grid tw:gap-2 tw:text-[var(--aw-muted)]">
             <li>Mật khẩu mới từ 8 đến 128 ký tự.</li>
             <li>Khác mật khẩu hiện tại và khớp ô xác nhận.</li>

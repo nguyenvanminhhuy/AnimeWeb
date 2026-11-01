@@ -1,3 +1,4 @@
+import { ApiError } from '@/lib/api/backend/error';
 import { useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { Button } from '@/components/ui/button';
@@ -73,7 +74,8 @@ export function MediaForm({
     } catch (reason) {
       if (!controller.signal.aborted) {
         setError(reason instanceof Error ? reason.message : 'Không thể lưu.');
-        if (reason instanceof AdminPlaybackError) invalid(reason.fields);
+        if (reason instanceof AdminPlaybackError || reason instanceof ApiError)
+          invalid(reason.fields);
       }
     } finally {
       if (!controller.signal.aborted) {
@@ -119,16 +121,17 @@ export function MediaForm({
             <Input
               id={`media-${key}`}
               required
+              readOnly={key === 'providerKey'}
               type="text"
               maxLength={
-                key === 'url' ? 2048 : key === 'providerKey' ? 50 : key === 'language' ? 35 : 100
+                key === 'url' ? 2048 : key === 'providerKey' ? 50 : key === 'language' ? 30 : 100
               }
               value={String(value[key as keyof typeof value])}
               placeholder={
                 key === 'language'
                   ? 'vi, ja, en-US'
                   : key === 'url'
-                    ? '/media/... hoặc https://...'
+                    ? 'https://media.example.com/...'
                     : undefined
               }
               aria-invalid={Boolean(fields[key])}
@@ -144,6 +147,30 @@ export function MediaForm({
             )}
           </div>
         ))}
+        {source && (
+          <div className="tw:col-span-full">
+            <label htmlFor="media-expiry">Hết hạn (UTC ISO 8601, để trống nếu không có)</label>
+            <Input
+              id="media-expiry"
+              aria-invalid={Boolean(fields.expiresAt)}
+              aria-describedby={fields.expiresAt ? 'media-expiry-error' : undefined}
+              value={value.expiresAt ?? ''}
+              placeholder="2026-12-01T00:00:00Z"
+              onChange={(event) =>
+                setValue((current) =>
+                  'episodeId' in current
+                    ? { ...current, expiresAt: event.target.value || null }
+                    : current,
+                )
+              }
+            />
+          </div>
+        )}
+        {fields.expiresAt && (
+          <p id="media-expiry-error" className="tw:text-[#ffb4bc]">
+            {fields.expiresAt}
+          </p>
+        )}
         <p id="media-url-help" className="tw:col-span-full tw:text-[var(--aw-muted)] tw:mb-0">
           Chỉ lưu cấu hình. Không tải, kiểm tra hoặc phát tài nguyên khi nhập địa chỉ. Chỉ dùng tài
           nguyên bạn được phép sử dụng.
@@ -190,7 +217,7 @@ export function MediaForm({
           <p id="media-status-help" className="tw:text-[var(--aw-muted)] tw:mt-2 tw:mb-0">
             {source
               ? 'Bật/tắt chỉ thay đổi cấu hình quản trị mẫu. Nguồn chưa được kiểm chứng, không tự xuất hiện trong player.'
-              : 'Mỗi nguồn có tối đa một phụ đề mặc định. Chọn mục này sẽ bỏ mặc định của phụ đề khác trong cùng nguồn; SRT chưa được chuyển đổi sang WebVTT.'}
+              : 'Mỗi nguồn có tối đa một phụ đề mặc định. Chọn mục này sẽ bỏ mặc định của phụ đề khác trong cùng nguồn; player chuyển SRT sang WebVTT khi tải phụ đề.'}
           </p>
           {fields.enabled && (
             <p id="media-status-error" role="alert" className="tw:text-[#ffb4bc]">

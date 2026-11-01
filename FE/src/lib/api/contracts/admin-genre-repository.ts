@@ -30,6 +30,7 @@ export interface AdminGenreRepository {
   ): Promise<AdminGenre>;
   remove(
     id: string,
+    version: number,
     signal: AbortSignal,
     session: AdminPreviewSession,
     fail?: boolean,

@@ -1,3 +1,6 @@
+import { useNavigate } from 'react-router-dom';
+import { paths } from '@/config/paths';
+import { ApiError } from '@/lib/api/backend/error';
 import { useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -16,7 +19,8 @@ const emptyValues: ChangePasswordValues = {
   confirmation: '',
 };
 export function useChangePassword() {
-  const { user } = useSession();
+  const { user, invalidateSession } = useSession();
+  const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const [values, setValues] = useState({ ...emptyValues });
   const [errors, setErrors] = useState<ChangePasswordErrors>({});
@@ -46,23 +50,27 @@ export function useChangePassword() {
     setPending(true);
     const mock = import.meta.env.DEV ? params.get('mock') : null;
     try {
-      // Only the demo profile ID crosses this boundary; password fields stay in this form.
-      await authRepository.previewPasswordChange(
-        user,
+      // The adapter receives only the BE password payload; mock mode never stores it.
+      await authRepository.changePassword(
+        { currentPassword: values.currentPassword, newPassword: values.newPassword },
         mock === 'error' ? 'error' : mock === 'loading' ? 'slow' : 'ready',
         controller.signal,
       );
       if (!controller.signal.aborted) {
         setValues({ ...emptyValues });
-        setPreviewed(true);
+        if (authRepository.mode === 'backend') {
+          invalidateSession('Đã đổi mật khẩu. Vui lòng đăng nhập lại.');
+          navigate(paths.loginTo(paths.profile), { replace: true });
+        } else setPreviewed(true);
       }
     } catch (cause) {
       if (!controller.signal.aborted) {
         setError(
-          cause instanceof DemoAuthError
+          cause instanceof DemoAuthError || cause instanceof ApiError
             ? cause.message
             : 'Không thể kiểm tra biểu mẫu lúc này. Hãy thử lại.',
         );
+        if (cause instanceof ApiError) setErrors(cause.fields);
         if (mock === 'error') {
           const next = new URLSearchParams(params);
           next.delete('mock');

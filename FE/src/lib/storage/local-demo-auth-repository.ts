@@ -1,3 +1,29 @@
+import { demoAccount } from '@/lib/storage/demo-account';
+import type { DemoProfile as Profile } from '@/types/auth';
+import type { LoginDto } from '@/lib/api/backend/types';
+function demoLogin(profile: Profile): LoginDto {
+  return {
+    accessToken: `mock-${crypto.randomUUID()}`,
+    tokenType: 'Bearer',
+    expiresAt: new Date(Date.now() + 7 * 86400000).toISOString(),
+    profile: {
+      ...profile,
+      roles: ['user'],
+      permissions: [
+        'catalog:read',
+        'playback:read',
+        'comment:read',
+        'library:read:own',
+        'library:write:own',
+        'progress:read:own',
+        'progress:write:own',
+        'comment:create',
+        'comment:update:own',
+        'comment:delete:own',
+      ],
+    },
+  };
+}
 import { DemoAuthError } from '@/lib/api/contracts/auth-repository';
 import type { AuthRepository } from '@/lib/api/contracts/auth-repository';
 import { isDemoUser } from '@/utils/auth';
@@ -70,6 +96,19 @@ async function wait(state: AuthState, signal: AbortSignal) {
   if (state === 'error') throw new DemoAuthError('Thao tác demo tạm thời thất bại. Hãy thử lại.');
 }
 export const localDemoAuthRepository: AuthRepository = {
+  mode: 'mock',
+  async restore(signal) {
+    signal.throwIfAborted();
+    const id = demoAccount.readSession();
+    const profile = id ? localDemoAuthRepository.getProfile(id) : null;
+    return profile ? demoLogin(profile) : null;
+  },
+  async logout(signal) {
+    signal.throwIfAborted();
+  },
+  async changePassword(_input, state, signal) {
+    await wait(state, signal); /* Offline validation only; never store passwords. */
+  },
   getProfile(id) {
     const fixture = builtIn.find((profile) => profile.id === id);
     if (fixture) return fixture;
@@ -79,9 +118,9 @@ export const localDemoAuthRepository: AuthRepository = {
       return null;
     }
   },
-  async login(email, state, signal) {
+  async login(input, state, signal) {
     await wait(state, signal);
-    const normalized = email.trim().toLowerCase();
+    const normalized = input.email.trim().toLowerCase();
     const profile =
       builtIn.find((profile) => profile.email === normalized) ??
       readProfiles().find((profile) => profile.email === normalized);
@@ -90,7 +129,7 @@ export const localDemoAuthRepository: AuthRepository = {
         'Chưa có hồ sơ demo với email này. Hãy đăng ký hoặc chọn tài khoản mẫu.',
         'email',
       );
-    return profile;
+    return demoLogin(profile);
   },
   async previewPasswordChange(id, state, signal) {
     if (!isDemoUser(id) || !localDemoAuthRepository.getProfile(id))
@@ -119,6 +158,6 @@ export const localDemoAuthRepository: AuthRepository = {
         'Trình duyệt không lưu được hồ sơ demo. Hãy cho phép lưu trữ hoặc dùng tài khoản mẫu.',
       );
     }
-    return profile;
+    return demoLogin(profile);
   },
 };

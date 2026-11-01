@@ -34,6 +34,7 @@ export function WatchPage() {
   return (
     <WatchContent
       detail={data}
+      refreshPlayback={retry}
       theater={theater}
       autoNext={autoNext}
       toggleTheater={() => setTheater((value) => !value)}
@@ -48,12 +49,14 @@ function WatchContent({
   autoNext,
   toggleTheater,
   toggleAutoNext,
+  refreshPlayback,
 }: {
   detail: WatchDetail;
   theater: boolean;
   autoNext: boolean;
   toggleTheater: () => void;
   toggleAutoNext: () => void;
+  refreshPlayback: () => void;
 }) {
   const { user, progress } = useSession();
   const navigate = useNavigate();
@@ -124,10 +127,11 @@ function WatchContent({
       >
         <section aria-label="Trình phát" className="tw:min-w-0">
           <VideoPlayer
-            key={`${detail.episode.id}:${source?.id ?? 'none'}:${user ?? 'guest'}`}
+            key={`${detail.episode.id}:${JSON.stringify(source ?? null)}:${user ?? 'guest'}`}
             detail={detail}
             source={source}
             onEnded={onEnded}
+            onRefresh={refreshPlayback}
           />
           <div className="tw:flex tw:flex-wrap tw:gap-3 tw:items-center tw:justify-between tw:py-4">
             <nav aria-label="Chuyển tập" className="tw:flex tw:gap-2">
@@ -201,7 +205,7 @@ function WatchContent({
             {user ? (
               <p>
                 {saved
-                  ? `Tiến độ đã lưu: ${formatPlaybackTime(saved.positionSeconds)} / ${formatPlaybackTime(saved.durationSeconds)}${saved.completed ? ' · Đã xem xong' : ''}.`
+                  ? `Tiến độ đã lưu: ${formatPlaybackTime(saved.positionSeconds)} / ${saved.durationSeconds === null ? 'Chưa rõ thời lượng' : formatPlaybackTime(saved.durationSeconds)}${saved.completed ? ' · Đã xem xong' : ''}.`
                   : 'Tiến độ sẽ được lưu khi bạn phát video.'}
               </p>
             ) : (
@@ -268,7 +272,10 @@ function WatchContent({
                     <span className="tw:block">{episode.title}</span>
                     <span className="tw:block">
                       {episode.id === detail.episode.id ? 'Đang chọn · ' : ''}
-                      {Math.ceil(episode.durationSeconds / 60)} phút
+                      {episode.durationSeconds === null
+                        ? '—'
+                        : Math.ceil(episode.durationSeconds / 60)}{' '}
+                      phút
                     </span>
                   </span>
                 </Link>

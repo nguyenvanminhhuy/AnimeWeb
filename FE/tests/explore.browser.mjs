@@ -161,7 +161,8 @@ export async function verifyExplore(browser, baseURL) {
     assert.equal(normalized.get('page'), '1');
     assert.equal(normalized.get('pageSize'), '12');
     assert.equal(normalized.get('sort'), 'newest');
-    assert.equal(normalized.has('genre'), false);
+    assert.equal(normalized.get('genre'), 'bogus');
+    assert.equal(await cards().count(), 0);
     assert.equal(normalized.has('status'), false);
     assert.equal(normalized.has('format'), false);
     assert.equal(normalized.has('year'), false);

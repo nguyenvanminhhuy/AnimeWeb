@@ -1,12 +1,12 @@
 # Anime Web — Tổng quan tài liệu
 
-Trạng thái: **FE có các màn hình demo; BE đã có API catalog, tài khoản/phân quyền, thư viện/tiến độ, bình luận, playback metadata và quản trị theo contract v0.3. Chưa nối FE với BE hoặc có nguồn phim thật.**
+Trạng thái: **FE có các màn hình demo và lớp tương thích API v0.3; BE đã có API catalog, tài khoản/phân quyền, thư viện/tiến độ, bình luận, playback metadata và quản trị theo contract v0.3. Chưa nối FE với BE hoặc có nguồn phim thật.**
 
 Mục tiêu là web xem anime hoạt động thực tế. FE dùng mock và dữ liệu cục bộ; auth demo không lưu/xác thực mật khẩu. Trang xem đã có giao diện và native video, chưa có video để kiểm chứng playback. BE dùng C#/ASP.NET Core Controller, PostgreSQL và EF Core. Xem [hướng dẫn chạy](../BE/README.md), [hiện trạng BE](docs-BE/current-status.md) và [kết quả kiểm chứng](docs-BE/verification.md).
 
 ## FE đọc tài liệu API BE ở đâu?
 
-Điểm tra cứu API hiện có: **[DOC/docs-BE/feature-reference.md](docs-BE/feature-reference.md)**. Tài liệu mô tả từng feature, method/path, path/query/body, kiểu dữ liệu, response, validation và permission; dùng khi viết HTTP adapter thay repository mock FE.
+Điểm tra cứu API hiện có: **[DOC/docs-BE/feature-reference.md](docs-BE/feature-reference.md)**. Tài liệu mô tả từng feature, method/path, path/query/body, kiểu dữ liệu, response, validation và permission; dùng khi hoàn thiện HTTP transport và thay repository mock FE. FE đã có [lớp tương thích BE](docs-FE/backend-compatibility.md), chưa bật kết nối.
 
 | Cần tra cứu | Đường dẫn |
 | --- | --- |
@@ -21,7 +21,7 @@ Khi nối FE, gửi `Authorization: Bearer <accessToken>` cho API cần đăng n
 
 ## Cấu trúc
 
-FE bổ sung [quản lý Mùa/phần và tập phim](docs-FE/admin-episodes-screen.md) tại `/admin/episodes`: CRUD metadata trong phiên quản trị mẫu; chưa có API mùa/tập hoặc nguồn phát thật.
+FE bổ sung [quản lý Mùa/phần và tập phim](docs-FE/admin-episodes-screen.md) tại `/admin/episodes`: CRUD metadata trong phiên quản trị mẫu; chưa kết nối API mùa/tập hoặc có nguồn phát thật.
 
 [Nguồn phát và phụ đề](docs-FE/admin-playback-screen.md) tại `/admin/playback` đã có CRUD cấu hình nguồn theo tập và phụ đề theo nguồn trong FE mock; chưa fetch/kiểm chứng video hoặc nối player/API thật.
 
@@ -66,7 +66,7 @@ API/entity, roadmap và quyết định chung giữ tại DOC để FE và BE c�
 
 Từ SRC chạy `pnpm --filter anime-web-fe run dev`, hoặc chạy `pnpm dev` trong `Anime-Web/FE`. Route: `/`, `/anime`, `/anime/:slug`, `/watch/:episodeId`, `/library`, `/login`, `/register`; thư viện yêu cầu phiên demo.
 
-[Dashboard quản trị](docs-FE/admin-dashboard-screen.md) tại `/admin` đã có UI tổng hợp workspace mẫu; mở phiên quản trị riêng qua Login trong dev. Production từ chối khi chưa có auth/quyền thật; chưa có API quản trị.
+[Dashboard quản trị](docs-FE/admin-dashboard-screen.md) tại `/admin` đã có UI tổng hợp workspace mẫu; mở phiên quản trị riêng qua Login trong dev. Production từ chối khi chưa có auth/quyền thật; chưa kết nối API quản trị.
 
 [Quản lý anime](docs-FE/admin-anime-screen.md) tại `/admin/anime` đã có tìm/lọc/sort/phân trang, thêm/sửa/xoá và liên kết công khai hợp lệ. Chọn phiên có quyền chỉnh sửa tại Login để dùng CRUD; phiên chỉ đọc vẫn dùng được danh sách. Dữ liệu chỉ ở bộ nhớ theo phiên, không đổi fixture công khai; reload/đổi phiên đặt lại seed.
 

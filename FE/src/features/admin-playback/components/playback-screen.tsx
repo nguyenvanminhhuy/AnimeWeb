@@ -6,7 +6,6 @@ import { Selectbox } from '@/components/ui/selectbox';
 import { ContentState } from '@/components/common/content-state';
 import { Pagination } from '@/components/common/pagination';
 import { paths } from '@/config/paths';
-import { normalizeSearch } from '@/utils/search';
 import type { AdminSourceInput, AdminSubtitleInput } from '@/types/admin-playback';
 import { usePlaybackCatalog } from '@/features/admin-playback/hooks/use-playback-catalog';
 import { MediaForm } from '@/features/admin-playback/components/media-form';
@@ -26,6 +25,7 @@ export function PlaybackScreen() {
   const mock = import.meta.env.DEV ? params.get('mock') : null;
   const { data, loading, error, session, canRead, canWrite, refresh } = usePlaybackCatalog(
     mock === 'error',
+    { ...query, empty: mock === 'empty' },
   );
   const [editor, setEditor] = useState<Editor | null>(null);
   const [target, setTarget] = useState<MediaTarget | null>(null);
@@ -71,26 +71,19 @@ export function PlaybackScreen() {
   const episodeSources = (data?.sources ?? []).filter(
     (s) => s.episodeId === episodeId && Boolean(episode),
   );
-  const source = episodeSources.find((s) => s.id === sourceId);
-  const rows = (mock === 'empty' ? [] : episodeSources)
-    .filter(
-      (s) =>
-        (!q ||
-          normalizeSearch(`${s.label} ${s.providerKey} ${s.language}`).includes(
-            normalizeSearch(q),
-          )) &&
-        (!enabled || s.enabled === (enabled === 'yes')),
-    )
-    .sort((a, b) =>
-      sort === 'label' ? a.label.localeCompare(b.label, 'vi') || a.id.localeCompare(b.id) : 0,
-    );
-  const totalPages = Math.ceil(rows.length / pageSize);
-  const page = Math.min(query.page, Math.max(1, totalPages));
+  const source = data?.selectedSource ?? episodeSources.find((s) => s.id === sourceId);
+  const rows = episodeSources;
+  const totalPages = data?.meta?.totalPages ?? 0;
+  const page = data?.meta ? Math.min(query.page, Math.max(1, totalPages)) : query.page;
   useEffect(() => {
     if (!data) return;
     const next = new URLSearchParams(params);
     const selected = data.episodes.find(
-      (e) => e.id === (episodeId || data.sources.find((s) => s.id === sourceId)?.episodeId),
+      (e) =>
+        e.id ===
+        (episodeId ||
+          data.selectedSource?.episodeId ||
+          data.sources.find((s) => s.id === sourceId)?.episodeId),
     );
     const season = data.seasons.find((s) => s.id === selected?.seasonId);
     if (selected && season) {
@@ -295,7 +288,7 @@ export function PlaybackScreen() {
                       tabIndex={-1}
                       className="tw:text-xl tw:mb-1"
                     >
-                      Nguồn phát ({rows.length})
+                      Nguồn phát ({data.meta?.total ?? rows.length})
                     </h2>
                     <p className="tw:text-[var(--aw-muted)] tw:mb-0">
                       Tập {episode.number} · {episode.title}
@@ -307,7 +300,9 @@ export function PlaybackScreen() {
                       onClick={() =>
                         edit(null, {
                           episodeId,
-                          providerKey: 'local',
+                          providerKey: 'direct',
+                          version: 0,
+                          expiresAt: null,
                           label: '',
                           language: 'ja',
                           type: 'mp4',
@@ -370,7 +365,7 @@ export function PlaybackScreen() {
                           </tr>
                         </thead>
                         <tbody>
-                          {rows.slice((page - 1) * pageSize, page * pageSize).map((s) => (
+                          {rows.map((s) => (
                             <tr
                               key={s.id}
                               data-source-id={s.id}
@@ -429,7 +424,12 @@ export function PlaybackScreen() {
                                       size="sm"
                                       variant="quiet"
                                       onClick={() =>
-                                        setTarget({ kind: 'source', id: s.id, label: s.label })
+                                        setTarget({
+                                          kind: 'source',
+                                          id: s.id,
+                                          version: s.version,
+                                          label: s.label,
+                                        })
                                       }
                                     />
                                   </div>
@@ -470,6 +470,7 @@ export function PlaybackScreen() {
                       onClick={() =>
                         edit(null, {
                           playbackSourceId: source.id,
+                          version: 0,
                           label: '',
                           language: 'vi',
                           format: 'vtt',
@@ -523,7 +524,12 @@ export function PlaybackScreen() {
                                 size="sm"
                                 variant="quiet"
                                 onClick={() =>
-                                  setTarget({ kind: 'subtitle', id: s.id, label: s.label })
+                                  setTarget({
+                                    kind: 'subtitle',
+                                    id: s.id,
+                                    version: s.version,
+                                    label: s.label,
+                                  })
                                 }
                               />
                             </div>

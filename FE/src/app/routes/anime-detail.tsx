@@ -1,3 +1,4 @@
+import { animeFormatLabel } from '@/config/catalog';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
 import { Link, useLocation } from 'react-router-dom';
@@ -105,7 +106,7 @@ export function AnimeDetailPage() {
           <div className="aw-detail-meta tw:flex tw:flex-wrap tw:gap-y-2 tw:gap-x-5 tw:text-body tw:max-mobile:gap-y-1.75 tw:max-mobile:gap-x-3">
             <span>{status}</span>
             <span>{data.releaseYear}</span>
-            <span>{data.format === 'movie' ? 'Điện ảnh' : 'TV series'}</span>
+            <span>{animeFormatLabel(data.format)}</span>
             <span>{data.seasons.length} phần</span>
           </div>
           <div className="aw-detail-genres tw:gap-1.75 tw:flex tw:flex-wrap tw:mt-4">
@@ -174,8 +175,9 @@ export function AnimeDetailPage() {
                 role="status"
               >
                 Tiến độ mẫu của bạn: Tập {saved.episodeNumber} ·{' '}
-                {Math.floor(saved.positionSeconds / 60)}/{Math.ceil(saved.durationSeconds / 60)}{' '}
-                phút. Chưa có nguồn video để tiếp tục phát.
+                {Math.floor(saved.positionSeconds / 60)}/
+                {saved.durationSeconds === null ? '—' : Math.ceil(saved.durationSeconds / 60)} phút.
+                Chưa có nguồn video để tiếp tục phát.
               </div>
             )}
           </section>
@@ -191,7 +193,7 @@ export function AnimeDetailPage() {
           <dl>
             <div>
               <dt>Định dạng</dt>
-              <dd>{data.format === 'movie' ? 'Điện ảnh' : 'TV series'}</dd>
+              <dd>{animeFormatLabel(data.format)}</dd>
             </div>
             <div>
               <dt>Năm phát hành</dt>
