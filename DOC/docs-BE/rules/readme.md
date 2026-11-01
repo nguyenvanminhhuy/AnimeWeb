@@ -13,6 +13,7 @@
 | HTTP/DTO/lỗi | [api.md](../api.md), [api-contract.md](../../api-contract.md) |
 | Phiên, permission, ownership | [auth-permissions.md](../auth-permissions.md) |
 | Adapter và khoảng cách FE | [integration.md](../integration.md) |
+| Nhu cầu FE theo feature/repository | [fe-backend-handoff.md](../../fe-backend-handoff.md), [feature-api-review.md](../../feature-api-review.md) |
 | Nghiệm thu | [testing.md](../testing.md) |
 
 ## Cấu trúc và phạm vi
@@ -26,7 +27,8 @@
 ## HTTP và dữ liệu
 
 - Giữ prefix, method, DTO, pagination và mã lỗi theo contract. Validate params/query/body tại server; định nghĩa rõ trường được phép ghi để tránh nhận userId/role/status ngoài hợp đồng.
-- Không đổi contract âm thầm để khớp code. Khi thiếu hành vi ảnh hưởng FE, cập nhật đề xuất và nêu điểm cần quyết định trước phần code phụ thuộc; phần độc lập vẫn tiếp tục.
+- Không đổi contract âm thầm để khớp code. Với mỗi feature, đưa nhu cầu từ handoff vào API contract và chốt lựa chọn nghiệp vụ còn mở trước khi generate phần code phụ thuộc; phần khảo sát/tài liệu độc lập vẫn tiếp tục. Không coi endpoint đề xuất trong handoff là đã được duyệt hoặc tạo lại API đã có; không hỏi lại quyết định đã xác nhận.
+- Role chuẩn user/manage/admin theo [ma trận quyền](../../docs-FE/rules/roles-permissions.md): manage chỉ đọc quản trị; admin ghi theo permission, vẫn kiểm tra own/constraint; Users chỉ đọc. member/adminPreview là demo cũ, không phải auth runtime hoặc lý do tạo thêm role.
 - Common chỉ trả nội dung công khai, gồm kiểm tra tài nguyên cha. Anime.status là trạng thái phát hành, không thay cho publication.
 - Me lấy userId từ phiên đã xác thực, kiểm tra active/permission/ownership. Không tin actor hoặc quyền do FE cung cấp, không dùng auth demo làm xác thực thật.
 - Constraint duy nhất/khóa ngoại được thực thi tại database; transaction cho thao tác liên quan. Migration có phiên bản, seed giả lập tái lập được. Không tự reset/xóa dữ liệu thật.

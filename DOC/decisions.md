@@ -1,5 +1,9 @@
 # Quyết định và câu hỏi còn mở
 
+## Bộ mặc định BE xác nhận 2026-11-01
+
+Người dùng yêu cầu code toàn bộ feature BE còn thiếu và chọn “Dùng bộ mặc định đề xuất”: bearer opaque 7 ngày, PasswordHasher framework, logout/đổi mật khẩu thu hồi phiên; anime draft/publication riêng, ngày công bố tập do server gán và giữ khi tái xuất bản; comments hiện ngay; version/409 chống ghi đè; metadata direct MP4/HLS/VTT/SRT; view sau 30 giây đồng hồ server + delta vị trí, dedup anime/viewer/bucket30phút; ranking chung Home/Dashboard. Phạm vi endpoint/DTO và chi tiết tại [API contract v0.3](api-contract.md), hiện trạng tại [current-status](docs-BE/current-status.md). Các ghi chú còn đề xuất ở các mục lịch sử bên dưới không thay quyết định mới này. Chưa triển khai tích hợp FE, media thật hoặc deploy; Users vẫn chỉ đọc, không API cấp role/khóa/xóa/reset mật khẩu.
+
 ## Đã thống nhất theo trao đổi
 
 | Nội dung | Trạng thái |

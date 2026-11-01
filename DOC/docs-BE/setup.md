@@ -1,5 +1,7 @@
 # Thiết lập nền BE bằng C#
 
+**Cập nhật 2026-11-01:** không thiết lập lại nền. Các feature trong handoff đã có BE theo [contract v0.3](../api-contract.md), Auth dùng bearer/session DB, progress/mutation dùng version. Xem [hiện trạng](current-status.md) và BE README để migration/bootstrap explicit; không hỏi lại stack hoặc lựa chọn phiên đã được duyệt. Các hướng dẫn template bên dưới chỉ dùng khi thực sự cần dự án mới.
+
 Ngày 2026-10-30, người dùng chọn **C# + ASP.NET Core Web API dùng Controller, PostgreSQL và Entity Framework Core**, một backend tổ chức theo feature. Đã tạo nền BE trong repo `New folder/AnimeWeb` branch Be-Dev; xem [README chạy local](../../BE/README.md) và [kiểm chứng](verification.md). Không hỏi lại việc chọn C#/database/ORM khi generate module tiếp theo.
 
 ## Baseline triển khai
@@ -52,4 +54,10 @@ Test host cung cấp cấu hình giả, database PostgreSQL test riêng và fake
 3. DbContext, migration/seed theo đúng phạm vi, local tool manifest, cấu hình test và hướng dẫn chạy không chứa bí mật.
 4. Format/build và smoke/integration test chạy thật; ghi lệnh, kết quả và giới hạn vào verification BE.
 
-Cơ chế auth cookie/token, endpoint auth và xung đột progress vẫn cần đặc tả khi tới module liên quan. Publication anime và ba API đọc đã được triển khai trong feature Anime theo contract; InitialCatalog bổ sung schema, seed demo được gọi explicit bằng start-local.ps1 -InitializeCatalog trên dev.
+Cơ chế auth cookie/token, endpoint auth và xung đột progress vẫn cần đặc tả khi tới module liên quan. Publication anime và ba API đọc đã được triển khai trong feature Anime theo contract; InitialCatalog bổ sung schema. InitialEpisodes đã bổ sung mùa/tập và ba API đọc nữa; không tạo lại nền/schema từ ví dụ setup. Seed demo được gọi explicit bằng start-local.ps1 -InitializeCatalog trên dev.
+
+## Trước module tiếp theo (đồng bộ handoff 2026-11-01)
+
+Đọc [handoff FE](../fe-backend-handoff.md), chọn phạm vi tại [modules.md](modules.md), cập nhật/chốt mục tương ứng trong API contract trước generate. Stack và version hiện tại đã pin, không hỏi lại hoặc tự nâng để khớp đề xuất cũ. FE chưa nối HTTP; thêm Auth/Playback/admin không đồng nghĩa cần cài lại nền.
+
+Origin API CORS phải theo FE đang chạy (ví dụ 5173/4174 nếu thực tế dùng), không tự sửa sang wildcard. Nếu chọn cookie, đặc tả credentials/CSRF; nếu chọn bearer, đặc tả storage/vòng đời trước cấu hình. Media CORS/MIME/range và nguồn hợp lệ kiểm tra riêng, không cần upload/CDN thật trong lượt tài liệu hoặc test fake.

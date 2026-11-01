@@ -1,15 +1,19 @@
 # Review toàn bộ feature và API cần thiết cho Anime Web
 
+**Cập nhật sau triển khai BE 2026-11-01:** bản review bên dưới giữ baseline FE/mock và các phát hiện trước triển khai. BE đã bổ sung Auth/RBAC, cá nhân/comments, Playback metadata, admin và Home/related/ranking theo [contract v0.3](api-contract.md); xem [hiện trạng](docs-BE/current-status.md) và verification. Các nhãn Nháp/Đề xuất/trạng thái thiếu BE trong baseline không đại diện code mới; FE vẫn chưa nối HTTP/media thật.
+
 **Để code BE theo nhu cầu FE, đọc [fe-backend-handoff.md](fe-backend-handoff.md): mapping từng lời gọi repository/storage, input/output, query và HTTP thay thế.** Tài liệu này giữ phần review tổng quan.
 
 Ngày rà soát: **2026-11-01**. Baseline: nhánh **Fe-Dev**, commit **6a2d210** và source đang có trong workspace. Review tĩnh router, feature, repository, storage, BE controller/DTO và tài liệu; không chạy lại ứng dụng, API hoặc kiểm thử trong lượt review này.
 
+Đồng bộ tài liệu ngày **2026-11-01** tại repo `New folder/AnimeWeb`: giữ baseline FE ở trên, cập nhật hiện trạng BE theo controller/DTO hiện có và quy định quyền `user/manage/admin`. Đây là đối chiếu source, không phải kết quả chạy lại API/test. Không dùng baseline Fe-Dev để kết luận module BE chưa tồn tại.
+
 ## 1. Kết luận
 
-**FE đã có giao diện công khai, cá nhân và quản trị nhưng chưa tích hợp backend. BE mới triển khai ba API nghiệp vụ đọc danh mục anime.** Chạy bản demo FE được; vận hành trang với dữ liệu thật cần hoàn thiện API, media, xác thực và HTTP adapter.
+**FE đã có giao diện công khai, cá nhân và quản trị nhưng chưa tích hợp backend. BE đã triển khai sáu API nghiệp vụ đọc danh mục anime, mùa và tập.** Chạy bản demo FE được; vận hành trang với dữ liệu thật cần hoàn thiện API, media, xác thực và HTTP adapter.
 
 - [repositories.ts](../FE/src/lib/api/repositories.ts) vẫn chọn mock/local cho mọi nhóm chức năng. Yêu thích/tiến độ ở [demo-account.ts](../FE/src/lib/storage/demo-account.ts), comments cũng dùng kho local.
-- BE có list anime, detail theo slug và genres; có PostgreSQL/EF Core, migration, health/readiness và OpenAPI Development. Chưa có authentication/authorization, mùa/tập, dữ liệu cá nhân, playback, analytics hoặc API quản trị.
+- BE có list anime, detail theo slug, genres, mùa theo anime, tập theo mùa và chi tiết tập; có PostgreSQL/EF Core, migration, health/readiness và OpenAPI Development. Chưa có authentication/authorization, dữ liệu cá nhân, playback, analytics hoặc API quản trị. API đọc mùa/tập đã có không đồng nghĩa đã có CRUD quản trị hoặc nguồn video.
 - Player đã có giao diện/native video nhưng [mock playback](../FE/src/lib/api/mock/mock-playback-repository.ts) trả sources rỗng. Nguồn/phụ đề admin chỉ là cấu hình mẫu, chưa nối vào player.
 - Login/register không xác thực mật khẩu; đổi mật khẩu chỉ preview. AdminPreview chỉ bật chủ động trong dev, tách member, mất khi reload; không phải RBAC thật.
 - Top 10 Dashboard/Trang chủ dùng chung component và lượt xem fixture; không phải analytics thực tế. CRUD admin mock không cập nhật danh mục công khai.
@@ -70,6 +74,11 @@ Các common Button/Input/Combobox/Selectbox/Icon/Pagination/Avatar/Artwork/Conte
 | GET `/api/v1/common/anime` | Published; q/genre/status/year/format/sort/page/pageSize |
 | GET `/api/v1/common/anime/:slug` | Metadata; draft/không tồn tại cùng 404, chưa có seasons/episodes/related |
 | GET `/api/v1/common/genres` | Chỉ genres có anime published |
+| GET `/api/v1/common/anime/:animeId/seasons` | Mùa thuộc anime published, sortOrder/id; chưa có mùa trả mảng rỗng |
+| GET `/api/v1/common/seasons/:seasonId/episodes` | Tập published thuộc anime published, phân trang sortOrder/id |
+| GET `/api/v1/common/episodes/:episodeId` | Tập published và anime cha published; thêm animeId/animeSlug, chưa có nguồn phát |
+
+Bằng chứng mùa/tập: [EpisodesController](../BE/src/AnimeWeb.Api/Features/Episodes/EpisodesController.cs), [EpisodeDtos](../BE/src/AnimeWeb.Api/Features/Episodes/Dtos/EpisodeDtos.cs). `durationSeconds` có thể null; `hasPlayback=false` hiện tại. Không tạo lại các API đọc này khi triển khai admin hoặc Playback.
 
 Bằng chứng: [AnimeController](../BE/src/AnimeWeb.Api/Features/Anime/AnimeController.cs), [GenresController](../BE/src/AnimeWeb.Api/Features/Anime/GenresController.cs), [HealthController](../BE/src/AnimeWeb.Api/Features/Health/HealthController.cs), [AnimeService](../BE/src/AnimeWeb.Api/Features/Anime/AnimeService.cs), [DTO](../BE/src/AnimeWeb.Api/Features/Anime/Dtos/AnimeDtos.cs), [Program](../BE/src/AnimeWeb.Api/Program.cs).
 
@@ -86,9 +95,9 @@ Các path từ đây có prefix **`/api/v1`**. Tham số ID và slug phải phâ
 | GET `/common/genres` | Đã có | Filter public; không thay danh sách admin đầy đủ |
 | GET `/common/home` | Đề xuất | featured/updated/recommended/topViewed; chốt tiêu chí biên tập và mới cập nhật |
 | GET `/common/rankings/anime?metric=views&limit=10` | Đề xuất | Anime summary + viewCount dùng chung Home/Dashboard, sort giảm dần rồi ID, chỉ public |
-| GET `/common/anime/:animeId/seasons` | Nháp | Season id/animeId/number/title/sortOrder; kiểm tra cha công khai |
-| GET `/common/seasons/:seasonId/episodes` | Nháp | Tập published phân trang theo sortOrder; không bỏ sót trang khi dựng playlist |
-| GET `/common/episodes/:episodeId` | Nháp | Chi tiết tập, thời lượng, tham chiếu anime/mùa |
+| GET `/common/anime/:animeId/seasons` | Đã có | Season id/animeId/number/title/sortOrder; kiểm tra cha công khai |
+| GET `/common/seasons/:seasonId/episodes` | Đã có | Tập published phân trang theo sortOrder; không bỏ sót trang khi dựng playlist |
+| GET `/common/episodes/:episodeId` | Đã có | Chi tiết tập, thời lượng nullable, animeId/animeSlug/seasonId; chưa có playback |
 | GET `/common/episodes/:episodeId/playback` | Nháp | Sources/subtitles/expiresAt, previousEpisodeId/nextEpisodeId |
 | GET `/common/anime/:animeId/related` | Đề xuất | Phim liên quan; có thể gộp field trong detail thay endpoint riêng |
 | GET `/common/catalog/options` | Đề xuất nếu cần | Years/format/filter options toàn danh mục; có thể gộp vào metadata list/Home |
@@ -163,9 +172,9 @@ Nguồn chính: [roles-permissions.md](docs-FE/rules/roles-permissions.md).
 | manage | Có | Có | Theo permission | Không |
 | admin | Có | Có | Theo permission | Theo permission và ràng buộc |
 
-Permission hiện có: admin:dashboard:read, admin:anime:read/write, admin:genre:read/write, admin:episode:read/write, admin:playback:read/write, admin:comment:read/moderate, admin:user:read. **Users vẫn chỉ đọc cho cả manage/admin**; không tự thêm cấp role/khoá/xoá/reset mật khẩu người khác. Admin không bỏ ownership hoặc khôi phục comment deleted.
+Permission đã quy định trong tài liệu/FE mock: admin:dashboard:read, admin:anime:read/write, admin:genre:read/write, admin:episode:read/write, admin:playback:read/write, admin:comment:read/moderate, admin:user:read. Các ký hiệu read/write, read/moderate rút gọn hai mã permission riêng, không phải mã chứa dấu `/`. Chưa có policy thực thi các quyền này tại BE. **Users vẫn chỉ đọc cho cả manage/admin**; không tự thêm cấp role/khoá/xoá/reset mật khẩu người khác. Admin không bỏ ownership hoặc khôi phục comment deleted.
 
-FE runtime vẫn member/adminPreview; AdminUser.roles và ví dụ GET me còn member. Khi triển khai phải đồng bộ DB/DTO/session/guard về user/manage/admin, không chỉ đổi nhãn UI. BE Program chưa có authentication/authorization pipeline bảo vệ các API cá nhân/quản trị.
+FE runtime vẫn member/adminPreview; AdminUser.roles còn member. Ví dụ GET me trong contract đã đổi sang user ở lượt đồng bộ tài liệu; khi triển khai vẫn phải đồng bộ DB/DTO/session/guard về user/manage/admin, không chỉ đổi nhãn UI. BE Program chưa có authentication/authorization pipeline bảo vệ các API cá nhân/quản trị.
 
 ## 7. Phát hiện và khoảng cách tích hợp
 
@@ -196,7 +205,7 @@ P0 là điều kiện để các luồng tương ứng hoạt động thật; P1
 - Không gửi mockState/fail/adminPreview/actor/quyền client vào API thật. PageSize/list meta lấy server; đổi filter/sort/pageSize về trang 1, giữ điều kiện khi đổi trang. Các mức pageSize admin hiện có không vượt 50.
 - HTTP layer gom base URL, AbortSignal/timeout và xử lý 401/403/404/409/429/503. Huỷ/clear cache theo tài khoản khi logout/đổi user; không retry mutation mù gây tạo trùng.
 - CORS API theo origin FE thực tế (4174 nếu chạy port đó; BE README mặc định 5173), media CORS riêng. Cookie credentials/CSRF hoặc bearer storage chỉ cấu hình sau khi chốt auth.
-- Ngoài Anime/Genres/AnimeGenres đã có, cần mô hình seasons/episodes; user/credential/session/role-permission; library/progress; comments/moderation audit; sources/subtitles; view events/aggregates nếu tự thống kê. Tên bảng/schema cụ thể thiết kế theo module.
+- Anime/Genres/AnimeGenres/Seasons/Episodes đã có model/migration. Các phần còn thiếu: user/credential/session/role-permission; library/progress; comments/moderation audit; sources/subtitles; view events/aggregates nếu tự thống kê. Tên bảng/schema mới thiết kế theo module.
 - Publication draft/published khác status airing/completed/upcoming. Public list/detail/related/ranking/episodes/playback đều phải kiểm tra trạng thái công khai của tài nguyên và cha.
 
 ## 9. Thứ tự triển khai và điều kiện hoàn tất
@@ -204,7 +213,7 @@ P0 là điều kiện để các luồng tương ứng hoạt động thật; P1
 | Bước | Công việc | Kết quả cần đạt |
 | --- | --- | --- |
 | 1 | HTTP client, mapper và ba API danh mục đã có | Explore/detail metadata từ DB; query/DTO/meta/options/ảnh/404 đúng |
-| 2 | Mùa/tập/episode/playback và media | Guest phát/chuyển tập; không có nguồn/hết hạn/lỗi provider xử lý rõ |
+| 2 | Tích hợp API mùa/tập đã có; triển khai Playback và media | Guest phát/chuyển tập; không có nguồn/hết hạn/lỗi provider xử lý rõ |
 | 3 | Auth/RBAC/register/login/logout/me/change-password | Credential/phiên/quyền server, hết hạn/blocked/thu hồi phiên |
 | 4 | Library/progress/comments | Bền vững, nhiều user/thiết bị tách dữ liệu, own server-side, summary/paging |
 | 5 | Admin anime/genres→seasons/episodes→sources/subtitles→comments/users read→dashboard | Mutation DB theo quyền/ràng buộc, public đồng bộ theo publication |
@@ -212,10 +221,12 @@ P0 là điều kiện để các luồng tương ứng hoạt động thật; P1
 
 Home có thể tổng hợp sớm từ catalog; ranking thật phụ thuộc định nghĩa lượt xem. Auth và mùa/tập có thể phát triển độc lập về kế hoạch; bảng không yêu cầu sinh tất cả module trong một nhiệm vụ.
 
+Trước mỗi feature: đối chiếu source hiện có → lấy nhu cầu từ handoff → cập nhật mục feature trong [api-contract.md](api-contract.md) với endpoint/DTO/query/lỗi/permission và quyết định còn mở → chốt lựa chọn ảnh hưởng nghiệp vụ → mới chạy prompt generate cho feature đó. Không coi danh sách đề xuất trong review là hợp đồng đã duyệt; không hỏi lại quyết định đã xác nhận.
+
 ### Checklist nghiệm thu
 
 - [ ] Chọn HTTP adapter thật; mock chỉ dev/test, không che lỗi API bằng dữ liệu giả.
-- [ ] Public guest/member chạy đúng, URL/filter/paging/history/reload và season/episode/404 đúng.
+- [ ] Public guest/user chạy đúng, URL/filter/paging/history/reload và season/episode/404 đúng.
 - [ ] Auth/đổi mật khẩu/logout thật; user không vào admin, manage chỉ đọc, admin ghi đúng permission.
 - [ ] Favorite/history/progress bền vững, tách tài khoản; bỏ yêu thích không mất history; đồng bộ nhiều thiết bị theo chính sách.
 - [ ] Comments visible/own/moderation/deleted đúng; plain text, actor/permission server quyết định.

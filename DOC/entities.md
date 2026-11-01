@@ -1,6 +1,6 @@
 # Entity và quan hệ dữ liệu
 
-Anime, Genre, AnimeGenre, Season và Episode đã có model/configuration/migration BE. Người dùng đã xác nhận mô hình một anime nhiều mùa/phần và movie một mùa/một tập. Các entity còn lại vẫn là đề xuất.
+Anime, Genre, AnimeGenre, Season và Episode đã có model/configuration/migration BE. Người dùng đã xác nhận mô hình một anime nhiều mùa/phần và movie một mùa/một tập. CompleteBackendFeatures đã bổ sung account/session/RBAC, library/progress, comments/audit, sources/tracks và view sessions/events theo [contract v0.3](api-contract.md). Entity nội dung/personal/comment/source/track có version concurrency token; không serialize EF entity làm DTO.
 
 ## Danh mục nội dung
 
@@ -31,8 +31,8 @@ Tập đã xuất bản có thể chưa có nguồn phát khả dụng. FE cần
 
 | Entity | Trường chính | Ý nghĩa |
 | --- | --- | --- |
-| User | id, displayName, avatarUrl, status, createdAt | Tài khoản; DTO công khai chỉ trả trường cần thiết |
-| Role | id, code, name | Nhóm quyền, ví dụ member |
+| User | id, displayName, email, normalizedEmail, passwordHash, status, createdAt | Account BE; hash không nằm trong response DTO |
+| Role | code | AccessRole với user/manage/admin, không wildcard bypass |
 | Permission | id, code, description | Quyền hành động, ví dụ comment:create |
 | UserRole | userId, roleId | Gán role cho user |
 | RolePermission | roleId, permissionId | Gán permission cho role |

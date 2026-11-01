@@ -12,6 +12,17 @@ Chỉ cần tên module, dùng [module-generation.md](module-generation.md):
 
 Prompt nhận tên trong [modules.md](../modules.md), đọc đặc tả và kiểm tra phụ thuộc. Stack C#/ASP.NET Core Controller/PostgreSQL/EF Core đã chốt; khi BE chưa có nền, thiết lập theo [setup.md](../setup.md), không hỏi lại lựa chọn công nghệ này.
 
+Đồng bộ theo [handoff FE](../../fe-backend-handoff.md) ngày 2026-11-01: prompt phải đối chiếu API hiện có, đưa yêu cầu của feature vào API contract và chốt nghiệp vụ còn mở trước code. Nền/Anime/Mùa/tập public đã triển khai; không gọi generate lại để tạo trùng. Các tên admin, Home/related/ranking mới trong modules.md là phạm vi cần đặc tả, không là lệnh generate toàn bộ.
+
+Ví dụ cho module chưa có:
+
+```text
+Đọc DOC/docs-BE/prompts/module-generation.md và tạo module Xác thực.
+Lấy yêu cầu tại DOC/fe-backend-handoff.md, cập nhật contract cho Auth trước.
+Chuẩn bị lựa chọn phiên và thu hồi cụ thể để chốt trước phần code phụ thuộc.
+Áp dụng role user/manage/admin đã xác nhận; chỉ làm BE, chưa tích hợp FE.
+```
+
 ## Thiết lập nền
 
 ```text
@@ -24,7 +35,7 @@ Chỉ triển khai cục bộ, cập nhật tài liệu và ghi bằng chứng k
 ## Chỉ review trước khi code
 
 ```text
-Đọc DOC/docs-BE/readme.md, DOC/api-contract.md và DOC/entities.md.
+Đọc DOC/docs-BE/readme.md, DOC/fe-backend-handoff.md, DOC/api-contract.md và DOC/entities.md.
 Đối chiếu module [tên module] với code FE/BE hiện có.
 Chỉ rà soát tài liệu: liệt kê phần thiếu/mâu thuẫn, đề xuất contract và tiêu chí test.
 Chưa cài thư viện hoặc viết backend; không ghi đề xuất thành quyết định đã chốt.

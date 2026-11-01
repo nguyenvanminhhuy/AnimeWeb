@@ -1,5 +1,7 @@
 # Bàn giao yêu cầu dữ liệu FE để triển khai API BE
 
+**Cập nhật BE sau triển khai 2026-11-01:** các feature trong tài liệu đã có BE theo bộ mặc định người dùng duyệt tại [API contract v0.3](api-contract.md); xem [hiện trạng](docs-BE/current-status.md). Phần mô tả FE/repository bên dưới vẫn là baseline mock chưa nối HTTP. Những nhãn đề xuất/nháp của bản bàn giao được thay bằng contract v0.3 cho BE, không là yêu cầu generate lại. Adapter FE cần bổ sung token/version/publication/genreIds, đọc admin comments `{comment,lastModeration}`, library/progress rows phẳng và summary riêng. Chưa sửa FE trong lượt triển khai BE.
+
 Đối chiếu source Fe-Dev ngày **2026-11-01**. Mục tiêu: BE biết mỗi feature FE đang gọi hàm gì, gửi gì, cần nhận gì và endpoint nào sẽ thay lời gọi đó. Dùng tài liệu này khi triển khai từng module; [feature-api-review.md](feature-api-review.md) chỉ là review tổng quan.
 
 **FE hiện chưa gọi HTTP API thật.** Các “API FE đang dùng” là interface repository/mock/local storage tại [repositories.ts](../FE/src/lib/api/repositories.ts), [contracts](../FE/src/lib/api/contracts) và [SessionProvider](../FE/src/stores/session.tsx). Bảng dưới phân biệt **hàm thực tế** với **HTTP cần triển khai**. URL mới là đề xuất bàn giao, cần đưa vào [api-contract.md](api-contract.md) trước khi code; không xem như endpoint đã tồn tại.
@@ -11,7 +13,7 @@
 - Hàm FE hiện trả void có thể được HTTP adapter thay bằng POST/PATCH trả data rồi bỏ data, hoặc DELETE 204; không bắt BE trả void cho mọi mutation.
 - `state`, `mock`, `fail`, `shouldFail`, `AdminPreviewSession`, `CommentActor`, `AbortSignal` là tham số nội bộ/demo. Không serialize vào query/body. Signal dùng huỷ request; user/permission lấy từ phiên server.
 - Những schema ở mục 8 là **view model FE đang cần**, không bắt DB/DTO BE giống từng field. Mapper FE được đổi nhưng phải tạo đủ dữ liệu để UI hoạt động. Những API đã có giữ contract hiện hành, không sửa chỉ để giống fixture.
-- Có ba API BE đã triển khai: GET `/common/anime`, GET `/common/anime/:slug`, GET `/common/genres`. FE chưa sử dụng HTTP của cả ba. Những endpoint còn lại trong tài liệu này cần triển khai/đặc tả thêm.
+- Đồng bộ BE ngày 2026-11-01 theo source tại `New folder/AnimeWeb`: đã có sáu API đọc: GET `/common/anime`, `/common/anime/:slug`, `/common/genres`, `/common/anime/:animeId/seasons`, `/common/seasons/:seasonId/episodes`, `/common/episodes/:episodeId`. FE chưa tích hợp HTTP các API này. Các endpoint khác cần triển khai/đặc tả thêm; việc đối chiếu source không thay kiểm thử runtime.
 
 ## 2. Danh mục, Trang chủ, Chi tiết và Xem phim
 
@@ -23,13 +25,13 @@
 | Library/Profile: useLibrary, useProfileLibrary | `animeRepository.getByIds(ids,state)` | Mảng anime ID từ favorites/progress | `Anime[]` | Nếu giữ flow cũ: GET `/common/anime/by-ids?ids=...` với giới hạn batch được chốt; ưu tiên trả summary trực tiếp trong me/library và me/progress để bỏ lời gọi này |
 | Watch: useWatchEpisode | `playbackRepository.getEpisode(id,state)` | episodeId | `WatchDetail \| null` | Ghép GET `/common/episodes/:episodeId`, detail anime, mùa/tập và GET `/common/episodes/:episodeId/playback` |
 
-Các endpoint bổ sung để dựng AnimeDetail/WatchDetail theo contract nháp hiện tại:
+Các endpoint để dựng AnimeDetail/WatchDetail: ba API mùa/tập đã triển khai; Playback/related/options bổ sung vẫn là đề xuất hoặc nháp theo contract:
 
 | HTTP | Dữ liệu cần có | Điều FE cần lưu ý |
 | --- | --- | --- |
-| GET `/common/anime/:animeId/seasons` | `Season[]` có sortOrder | Mapper dùng ID từ detail, không dùng slug thay ID |
-| GET `/common/seasons/:seasonId/episodes` | `Episode[]` + meta, chỉ published | FE hiện nhận tất cả tập trong detail; phải tải đủ trang hoặc chuyển playlist sang paging/lazy |
-| GET `/common/episodes/:episodeId` | Episode và tham chiếu anime/season đủ dựng trang Watch | Không suy ra anime từ chuỗi ID fixture |
+| GET `/common/anime/:animeId/seasons` (đã có) | `Season[]` có sortOrder, không phân trang; anime cha phải published | Mapper dùng ID từ detail, không dùng slug thay ID |
+| GET `/common/seasons/:seasonId/episodes` (đã có) | `Episode[]` + meta, tập và anime cha published; sortOrder/id | FE hiện nhận tất cả tập trong detail; phải tải đủ trang hoặc chuyển playlist sang paging/lazy |
+| GET `/common/episodes/:episodeId` (đã có) | Episode cùng animeId/animeSlug/seasonId; chỉ tập và anime cha published | Không suy ra anime từ chuỗi ID fixture; hasPlayback=false hiện tại |
 | GET `/common/episodes/:episodeId/playback` | sources/subtitles, expiresAt, previousEpisodeId/nextEpisodeId | Adapter ghép vào WatchDetail; không có tập 404, chưa có nguồn 200 sources=[], provider lỗi 503 |
 | GET `/common/anime/:animeId/related` hoặc field trong detail | `Anime[]` hoặc summary map đủ card | Chọn một phương án; chưa có lời gọi related riêng trong FE |
 | GET `/common/genres` và metadata filter options | Genre id/slug/name; years cần cho bộ lọc | FE hiện còn options từ config/fixture; không suy ra tất cả options từ một page kết quả |
@@ -205,6 +207,8 @@ type WatchDetail = {
 
 Các field subtitle/episodeLabel là view model, có thể derive khi đủ dữ liệu; không bịa số tập. DTO BE đang có genres objects, banner nullable, format thêm ova/ona/special: mapper convert genres, fallback ảnh và chốt mở rộng type/UI. Không bắt BE trả entity EF hoặc cấu trúc DB như view model này.
 
+DTO mùa/tập đã có cho phép `durationSeconds=null` khi chưa biết, khác type `number` của FE ở trên. Khi tích hợp phải cập nhật type/render/logic progress để xử lý chưa biết thời lượng; không biến null thành thời lượng 0 đã biết. Public publishedAt luôn có UTC; admin draft có thể null. Form ghi tập hiện chưa gửi publishedAt: cần chốt server tự gán hay cho nhập, quy tắc giữ/đổi ngày khi xuất bản lại trước module quản trị tập.
+
 WatchDetail chưa chứa expiresAt và nguồn chỉ MP4/WebM; admin có HLS/SRT. Nối BE cần thêm model/logic nguồn hết hạn, hỗ trợ HLS thích hợp và chuyển SRT sang VTT hoặc giới hạn format. Published/hasPlayback/nguồn enabled là ba khái niệm cần kiểm chứng riêng. Playlist và tập trước/sau theo sortOrder xuyên mùa, không theo số/ID liên tiếp.
 
 ### Ví dụ HTTP và giá trị adapter trả cho FE
@@ -224,11 +228,11 @@ Lỗi dùng envelope contract `error.code/message/fields/requestId`; `fields` ma
 
 Theo [roles-permissions.md](docs-FE/rules/roles-permissions.md): user dùng public + own; manage thêm admin read; admin thêm write nội dung/moderate. Users chỉ read cho cả hai. BE kiểm tra permission cụ thể/ownership/trạng thái, không tin tên role client. Không wildcard admin bypass; guest đọc public published; không lộ draft qua related/ranking/tập/playback.
 
-Quyền theo nhóm: admin:dashboard:read; admin:anime:read/write; admin:genre:read/write; admin:episode:read/write; admin:playback:read/write; admin:user:read; admin:comment:read/moderate. Role mới đăng ký user; adminPreview/dev seed không là cơ chế login production.
+Quyền theo nhóm: admin:dashboard:read; admin:anime:read/write; admin:genre:read/write; admin:episode:read/write; admin:playback:read/write; admin:user:read; admin:comment:read/moderate. Ký hiệu read/write hoặc read/moderate rút gọn các mã riêng, không serialize nguyên chuỗi có dấu `/` thành permission. Role mới đăng ký user; adminPreview/dev seed không là cơ chế login production. Đây là quy định cần triển khai, chưa có authentication/authorization hoặc RolePermission thực thi tại BE.
 
 ### Trình tự dùng tài liệu này để code BE
 
-1. Chọn một feature; chốt request/response và endpoint trong API contract, giữ mapping repository ở đây.
+1. Chọn một feature, đối chiếu source BE hiện có; đưa yêu cầu tương ứng vào API contract (request/response/nullable, query, validation/lỗi, permission/ownership/publication và nghiệm thu), giữ mapping repository ở đây. Ghi rõ lựa chọn còn mở và chốt trước khi chạy prompt generate phần phụ thuộc. Không hỏi lại quyết định đã xác nhận hoặc tạo lại sáu API đọc đã có.
 2. Triển khai service/controller/DB/validation/permission và test; dùng source validators làm baseline UI, BE vẫn tự validate.
 3. Tạo HTTP adapter/mapper FE; với getCatalog/local storage cần sửa hook sang list/detail server như đã ghi, không chỉ thay URL.
 4. Kiểm tra form, list/meta/options, direct link edit/panel, filter/history, refresh sau mutation, hai user, quyền đọc/ghi và lỗi.

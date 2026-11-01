@@ -58,9 +58,20 @@ Shared chứa lỗi, cấu hình và kiểu phân trang; không giữ nghiệp v
 - File/type/namespace PascalCase; tham số/biến camelCase; interface có tiền tố I, method async có hậu tố Async. Không áp dụng kebab-case/alias @ của FE vào C#.
 - Dùng async/await, CancellationToken xuyên từ request tới EF/HTTP provider. Không dùng .Result/.Wait() hoặc DbContext singleton.
 - ControllerBase có ApiController và route rõ `/api/v1/common/...` hoặc `/api/v1/me/...`; dùng AddControllers/MapControllers. Xem [Microsoft Web API](https://learn.microsoft.com/en-us/aspnet/core/web-api/?view=aspnetcore-10.0).
+- Các feature Auth/admin sẽ có route riêng theo API contract được chốt; `/admin` không tự bảo vệ endpoint. Áp policy permission read/write/moderate cụ thể; không mở API ghi trong nhiệm vụ chỉ đọc/tích hợp public.
 - JSON camelCase; enum theo chuỗi đã định nghĩa trong API, không mặc định trả số/PascalCase. DTO thời gian UTC và ID string theo contract.
 - Tùy biến lỗi validation tự động, lỗi auth và exception để trả cùng envelope `error` của dự án; không để ProblemDetails mặc định làm lệch contract. 204 không có body.
 - Policy/authorization handler kiểm tra permission; lấy userId từ phiên/claims đã xác thực và kiểm tra trạng thái tài khoản. Common không bắt buộc đăng nhập nhưng phải lọc publication của cả cha/con.
+
+## Aggregate và ranh giới tích hợp FE (2026-11-01)
+
+Theo [handoff](../fe-backend-handoff.md), Home/WatchDetail/Dashboard là nhu cầu dữ liệu tổng hợp, không bắt controller hoặc entity giống interface mock. Chọn aggregate tại BE hoặc adapter ghép API đã chốt, không tạo cả hai dạng endpoint trùng trách nhiệm nếu không cần. Home/Dashboard dùng chung service/nguồn ranking; thống kê view chưa được triển khai.
+
+Giữ nghiệp vụ Anime/Mùa/tập/Playback tại feature tương ứng; màn quản trị có thể dùng action/controller/service trong feature khi có nhu cầu, không bắt tạo project hoặc sao chép model riêng cho admin. Dashboard aggregate qua service/query có trách nhiệm rõ, không gọi controller khác. Các thư mục Auth/Authorization/Library/Progress/Comments/Playback trong cây là thiết kế, không phải tất cả đã tồn tại.
+
+List quản trị xử lý filter/sort/paging ở database, lookup/detail riêng phục vụ form trực tiếp; không trả toàn DB để giữ mock getCatalog. DTO summary/options/count dùng query toàn scope phù hợp, không tính từ một page. Mapper FE unwrap envelope và map nullable/genres/format, không đưa React/UI state vào service BE. Chỉ refactor FE khi phạm vi nhiệm vụ bao gồm tích hợp.
+
+Role user/manage/admin là nhóm quyền đã quy định; policy/ownership/active kiểm tra server, không tin AdminPreviewSession hay role client. Không dùng wildcard admin để bỏ constraint/own; không thêm mutation người dùng ngoài nhu cầu Users chỉ đọc.
 
 ## Playback và vận hành
 

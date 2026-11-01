@@ -6,19 +6,21 @@ Cách gọi: **“Đọc DOC/docs-BE/prompts/module-generation.md và tạo modu
 
 1. Đọc AGENTS.md tại các cấp, [mục lục BE](../readme.md), [rules](../rules/readme.md), [quyết định chung](../../decisions.md) và [setup](../setup.md).
 2. Kiểm tra git status, source BE, solution/csproj, global.json, local tool manifest và test hiện có; giữ nguyên thay đổi của người dùng. Không đọc `.env`, cấu hình có bí mật hoặc credentials.
-3. Đọc [API contract](../../api-contract.md), [entity](../../entities.md), [kiến trúc](../architecture.md), [database](../database.md), [quyền](../auth-permissions.md), [tích hợp](../integration.md) và [kiểm thử](../testing.md). Đọc source FE liên quan để xác định DTO thực tế, không suy đoán chỉ từ giao diện.
+3. Đọc [API contract](../../api-contract.md), [handoff FE](../../fe-backend-handoff.md), [review phạm vi](../../feature-api-review.md), [entity](../../entities.md), [kiến trúc](../architecture.md), [database](../database.md), [quyền](../auth-permissions.md), [tích hợp](../integration.md) và [kiểm thử](../testing.md). Đọc source FE liên quan để xác định DTO thực tế, không suy đoán chỉ từ giao diện. Review có baseline FE riêng; đối chiếu controller/DTO hiện có trước khi kết luận API BE thiếu. Sáu API đọc Anime/Mùa/tập đã có, không tạo lại từ bảng đề xuất cũ.
 4. Xác định module, endpoint, phụ thuộc và tiêu chí nghiệm thu từ [modules.md](../modules.md). Nếu tên mơ hồ ảnh hưởng phạm vi, hỏi một câu ngắn; vẫn tiếp tục rà soát phần chung.
 
 ## 2. Xử lý nền và khoảng trống đặc tả
 
 - Dùng stack đã chốt: C#, ASP.NET Core Web API Controller, PostgreSQL, EF Core, tổ chức theo Features. Setup theo .NET 10 LTS/EF Core 10 và pin phiên bản tương thích; không hỏi lại việc chọn ngôn ngữ/framework/database. Nếu gặp code hiện có khác tài liệu, kiểm tra nguyên nhân trước khi đổi stack hoặc ghi đè code.
-- Tách điểm chưa chốt thực sự ảnh hưởng module khỏi phần có thể thực hiện. Ví dụ auth chưa có endpoint; progress chưa chốt xung đột; catalog chưa chốt publication. Chuẩn bị thay đổi contract/fixture cụ thể trước câu hỏi quyết định khi có thể.
+- Đưa yêu cầu của đúng feature từ handoff vào mục tương ứng của API contract trước khi generate: endpoint, DTO/nullable, query/default/sort/pagination, validation/lỗi, permission/ownership/publication, ràng buộc và nghiệm thu. Đánh dấu quyết định đã xác nhận/đề xuất/còn mở; chuẩn bị contract cụ thể để người dùng có thể duyệt.
+- Tách điểm chưa chốt thực sự ảnh hưởng thay đổi khỏi phần có thể thực hiện. Bộ mặc định Auth/bearer/version/publication/publishedAt/comments/view đã được người dùng xác nhận 2026-11-01 và triển khai trong v0.3; không hỏi lại hoặc generate trùng. Chỉ chốt lựa chọn nghiệp vụ mới còn mở trước code phụ thuộc, vẫn tiếp tục phần tài liệu/khảo sát độc lập.
+- Dùng ba role user/manage/admin theo ma trận nguồn. manage chỉ đọc admin, admin không bypass own/constraint, Users chỉ đọc. Auth/policy đã có trong v0.3; tái sử dụng runtime thay vì fake hoặc tạo cơ chế quyền thứ hai.
 - Không yêu cầu xác nhận lại các quyền người dùng đã cấp. Các lựa chọn triển khai thông thường trong stack/phạm vi đã chốt tự xử lý và ghi giả định nếu cần.
 - Nếu cần nền để module chạy, thực hiện phần nền tối thiểu trong phạm vi được giao; không generate các module nghiệp vụ không liên quan. Không dùng fake auth ở runtime để lấp thiếu xác thực.
 
 ## 3. Triển khai
 
-1. Cập nhật đặc tả endpoint/DTO/validation/lỗi được thống nhất trước hoặc cùng thay đổi code; giữ API/entity một bản dùng chung.
+1. Chỉ bắt đầu code khi contract của phạm vi được gọi đã đủ rõ và các lựa chọn nghiệp vụ ảnh hưởng phần code đó đã chốt. Giữ API/entity một bản dùng chung; không đưa thêm endpoint/feature chưa được duyệt từ handoff vào code.
 2. Tạo EF Core configuration/migration/seed theo phạm vi, service/policy, DTO/validation và ControllerBase + ApiController. Dùng DbContext scoped; repository riêng chỉ khi có trách nhiệm cần tách. Chuẩn hóa lỗi binding/validation, auth và exception theo envelope của contract.
 3. Áp dụng common/me, publication của cha/con và permission/ownership tại server. Không nhận userId/role/status ngoài trường hợp contract cho phép rõ.
 4. Tách provider adapter, fake cho test; xử lý sources rỗng, timeout/lỗi và URL hết hạn. Không gọi dịch vụ thật trong kiểm tra.
