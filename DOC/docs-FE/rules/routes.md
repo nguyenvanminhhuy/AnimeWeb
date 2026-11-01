@@ -84,7 +84,7 @@ Dashboard đã triển khai theo [admin-dashboard-screen.md](../admin-dashboard-
 ## Quyền và returnTo
 
 - Danh mục/chi tiết/playback công khai không bị chặn vì chưa đăng nhập. Route thư viện kiểm tra phiên rồi hiển thị lời mời hoặc chuyển login theo luồng hiện có. Khi nhiều route dùng chung guard, đặt guard trong routes.
-- Dùng paths.loginTo/registerTo và safeReturnTo. Chỉ nhận đường dẫn nội bộ, giữ query/hash; từ chối URL ngoài origin, protocol-relative và quay lại login/register gây vòng lặp. Hai trang auth giữ cùng returnTo khi chuyển qua lại. Form auth mock phải chặn submit HTTP, không đưa password lên URL hoặc truyền vào repository hồ sơ demo; xem [auth-screens.md](../auth-screens.md).
+- Dùng paths.loginTo/registerTo và safeReturnTo. Chỉ nhận đường dẫn nội bộ, giữ query/hash; từ chối URL ngoài origin, protocol-relative và quay lại login/register gây vòng lặp. Hai trang auth giữ cùng returnTo khi chuyển qua lại. Form auth mock phải chặn submit HTTP, không đưa password lên URL/lưu trữ/log; truyền payload qua auth repository theo contract BE, mock không lưu hoặc xác thực password; xem [auth-screens.md](../auth-screens.md).
 - Đăng xuất phải cập nhật route cá nhân ngay và xóa cache/state cá nhân. FE guard không thay kiểm tra quyền BE.
 
 ## Kiểm chứng

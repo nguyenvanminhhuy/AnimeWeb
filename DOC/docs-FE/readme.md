@@ -1,6 +1,6 @@
 # Tài liệu frontend
 
-FE dùng React + TypeScript + Vite, Tailwind CSS và Bootstrap 5. Trang chủ, Khám phá, Chi tiết anime, Thư viện và Đăng nhập/Đăng ký đã có bản demo; Xem phim đã có giao diện/chuyển tập, chưa có asset video hoặc kết nối backend. Dashboard quản trị đã có FE đọc dữ liệu mẫu với phiên dev riêng, chưa có auth/API quản trị thật.
+FE dùng React + TypeScript + Vite, Tailwind CSS và Bootstrap 5. Trang chủ, Khám phá, Chi tiết anime, Thư viện và Đăng nhập/Đăng ký đã có bản demo; Xem phim đã có giao diện/chuyển tập, chưa có asset video hoặc kết nối backend. Dashboard quản trị đã có FE đọc dữ liệu mẫu với phiên dev riêng, chưa kết nối auth/API quản trị BE. Lớp DTO/client/adapter đã được chuẩn bị theo BE v0.3, ứng dụng vẫn chạy mock.
 
 ## Thứ tự đọc
 
@@ -9,6 +9,7 @@ FE dùng React + TypeScript + Vite, Tailwind CSS và Bootstrap 5. Trang chủ, K
 | [Tổng quan dự án](../readme.md) | Trạng thái và tài liệu dùng chung |
 | [Quyết định](../decisions.md) | Yêu cầu đã xác nhận và đề xuất chưa duyệt |
 | [Rules](rules/readme.md) | Quy tắc tạo/sửa FE |
+| [Tương thích BE v0.3](backend-compatibility.md) | DTO, adapter, thay đổi màn hình và các bước kết nối còn lại |
 | [Kiến trúc](rules/architecture.md) | Repository, adapter và phụ thuộc |
 | [Cấu trúc FE](rules/fe-structure.md) | Source và pnpm |
 | [Style](rules/styling.md) | Tailwind, font và responsive |
@@ -17,7 +18,7 @@ FE dùng React + TypeScript + Vite, Tailwind CSS và Bootstrap 5. Trang chủ, K
 | [Role/permission](rules/roles-permissions.md) | Guest/member, ownership và cache |
 | [Wireframes](design/wireframes.md) | Luồng sử dụng và bố cục |
 | [Prompt](prompts/readme.md) | Quy trình sinh màn hình |
-| [Generate quản trị](prompts/admin-screen-generation.md) | Dashboard, CRUD anime/thể loại/mùa và tập/nguồn và phụ đề, Người dùng chỉ đọc đã có FE mock; API quản trị chưa triển khai |
+| [Generate quản trị](prompts/admin-screen-generation.md) | Dashboard, CRUD anime/thể loại/mùa và tập/nguồn và phụ đề, Người dùng chỉ đọc đã có FE mock; chưa kết nối API quản trị |
 | [Kiểm chứng](verification.md) | Bằng chứng thực tế, chỉ bổ sung lịch sử |
 
 ## Màn hình

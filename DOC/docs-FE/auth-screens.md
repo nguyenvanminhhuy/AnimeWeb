@@ -1,3 +1,5 @@
+> Cập nhật 2026-11-01: AuthRepository hiện nhận payload password tương thích BE v0.3 và trả LoginDto có token/expiry/profile. Ứng dụng vẫn chọn mock, không lưu/xác thực password hoặc gọi BE. Các mô tả baseline bên dưới phản ánh bản giao diện ban đầu; tham khảo [lớp tương thích BE](backend-compatibility.md) cho interface hiện tại.
+
 # Đăng nhập và Đăng ký
 
 Triển khai giao diện FE ngày 2026-10-28 theo screen-generation, giữ React Router và phiên demo hiện có. Chưa triển khai BE, đăng nhập thật, xác minh email, khôi phục mật khẩu hoặc OAuth.
