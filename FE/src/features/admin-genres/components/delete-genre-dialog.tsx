@@ -72,7 +72,8 @@ export function DeleteGenreDialog({
             const shouldFail = failOnce.current;
             failOnce.current = false;
             void run(
-              (signal) => adminGenreRepository.remove(row.id, signal, session, shouldFail),
+              (signal) =>
+                adminGenreRepository.remove(row.id, row.version, signal, session, shouldFail),
               onDeleted,
             );
           }}

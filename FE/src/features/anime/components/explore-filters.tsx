@@ -11,11 +11,12 @@ import type { CatalogQuery } from '@/types/catalog';
 
 interface ExploreFiltersProps {
   query: CatalogQuery;
+  options?: { genres: { value: string; label: string }[]; years: number[] };
   suggestions?: readonly string[];
 }
 export const exploreFormId = 'explore-search-form';
 
-export function ExploreFilters({ query, suggestions = [] }: ExploreFiltersProps) {
+export function ExploreFilters({ query, suggestions = [], options }: ExploreFiltersProps) {
   const location = useLocation();
   const navigationType = useNavigationType();
   const previousQuery = useRef(query.q);
@@ -104,7 +105,7 @@ export function ExploreFilters({ query, suggestions = [] }: ExploreFiltersProps)
               onChange={submitFilter}
             >
               <option value="">Tất cả thể loại</option>
-              {genreOptions.map((option) => (
+              {(options?.genres ?? genreOptions).map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
                 </option>
@@ -121,7 +122,7 @@ export function ExploreFilters({ query, suggestions = [] }: ExploreFiltersProps)
               onChange={submitFilter}
             >
               <option value="">Tất cả năm</option>
-              {catalogYears.map((year) => (
+              {(options?.years ?? catalogYears).map((year) => (
                 <option key={year} value={year}>
                   {year}
                 </option>

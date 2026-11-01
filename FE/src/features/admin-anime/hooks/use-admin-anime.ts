@@ -17,10 +17,7 @@ export function useAdminAnime() {
   const { adminPreview, permissions } = useSession();
   const mock = import.meta.env.DEV ? params.get('mock') : null;
   const canRead = Boolean(
-    import.meta.env.DEV &&
-    adminPreview &&
-    permissions.includes('admin:anime:read') &&
-    mock !== 'forbidden',
+    adminPreview && permissions.includes('admin:anime:read') && mock !== 'forbidden',
   );
   const queryKey = adminAnimeParams(parseAdminAnimeQuery(params)).toString();
   const query = useMemo(() => parseAdminAnimeQuery(new URLSearchParams(queryKey)), [queryKey]);
@@ -71,7 +68,10 @@ export function useAdminAnime() {
     return () => controller.abort();
   }, [canRead, key, query, state, attempt, response, adminPreview]);
 
-  const canonicalHref = result ? adminAnimeHref({ ...query, page: result.meta.page }, mock) : null;
+  const resolvedPage = result
+    ? Math.min(query.page, Math.max(1, result.meta.totalPages))
+    : query.page;
+  const canonicalHref = result ? adminAnimeHref({ ...query, page: resolvedPage }, mock) : null;
   useEffect(() => {
     if (canonicalHref && canonicalHref !== location.pathname + location.search)
       navigate(canonicalHref + location.hash, { replace: true, preventScrollReset: true });
@@ -79,7 +79,7 @@ export function useAdminAnime() {
 
   return {
     canRead,
-    query: { ...query, page: result?.meta.page ?? query.page },
+    query: { ...query, page: resolvedPage },
     result,
     error,
     mock,

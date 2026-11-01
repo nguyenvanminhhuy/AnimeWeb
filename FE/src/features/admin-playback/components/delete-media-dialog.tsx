@@ -5,6 +5,7 @@ import type { AdminPreviewSession } from '@/types/admin';
 
 export interface MediaTarget {
   kind: 'source' | 'subtitle';
+  version: number;
   id: string;
   label: string;
 }
@@ -50,6 +51,7 @@ export function DeleteMediaDialog({
       await adminPlaybackRepository.remove(
         target.kind,
         target.id,
+        target.version,
         controller.signal,
         session,
         shouldFail,

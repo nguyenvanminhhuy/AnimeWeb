@@ -11,6 +11,9 @@ export const statusOptions = [
   { value: 'upcoming', label: 'Sắp ra mắt' },
 ] as const;
 export const formatOptions = [
+  { value: 'ova', label: 'OVA' },
+  { value: 'ona', label: 'ONA' },
+  { value: 'special', label: 'Đặc biệt' },
   { value: 'tv', label: 'TV series' },
   { value: 'movie', label: 'Điện ảnh' },
 ] as const;
@@ -19,3 +22,6 @@ export const sortOptions = [
   { value: 'newest', label: 'Năm phát hành mới nhất' },
   { value: 'title', label: 'Tên A–Z' },
 ] as const;
+
+export const animeFormatLabel = (format: string) =>
+  formatOptions.find((option) => option.value === format)?.label ?? format.toUpperCase();

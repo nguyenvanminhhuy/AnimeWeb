@@ -50,32 +50,39 @@ window.verifyAdminCommentsRepository = async () => {
     'Forged role bypass',
   );
   await rejects(
-    () => repo.moderate('comment-fixture-01', 'hide', 'Reason', signal(), readOnly),
+    () => repo.moderate('comment-fixture-01', 'hide', 'Reason', 1, signal(), readOnly),
     'Read-only write',
   );
   await rejects(
     () =>
-      repo.moderate('comment-fixture-01', 'hide', 'Reason', signal(), {
+      repo.moderate('comment-fixture-01', 'hide', 'Reason', 1, signal(), {
         ...session,
         permissions: ['comment:update:own'],
       }),
     'Own permission bypass',
   );
   await rejects(
-    () => repo.moderate('comment-fixture-01', 'hide', 'x', signal(), session),
+    () => repo.moderate('comment-fixture-01', 'hide', 'x', 1, signal(), session),
     'Missing reason validation',
   );
   await rejects(
-    () => repo.moderate('missing', 'hide', 'Reason', signal(), session),
+    () => repo.moderate('missing', 'hide', 'Reason', 1, signal(), session),
     'Missing ID allowed',
   );
   for (const action of ['hide', 'restore'])
     await rejects(
-      () => repo.moderate('comment-fixture-deleted', action, 'Reason', signal(), session),
+      () => repo.moderate('comment-fixture-deleted', action, 'Reason', 1, signal(), session),
       'Deleted restored',
     );
   const controller = new AbortController();
-  const pending = repo.moderate('comment-fixture-01', 'hide', 'Reason', controller.signal, session);
+  const pending = repo.moderate(
+    'comment-fixture-01',
+    'hide',
+    'Reason',
+    1,
+    controller.signal,
+    session,
+  );
   controller.abort();
   await rejects(() => pending, 'Abort ignored');
   check(
@@ -83,8 +90,8 @@ window.verifyAdminCommentsRepository = async () => {
     'Aborted write committed',
   );
   const results = await Promise.allSettled([
-    repo.moderate('comment-fixture-01', 'hide', '  Review <b>reason</b>  ', signal(), session),
-    repo.moderate('comment-fixture-01', 'hide', 'Other reason', signal(), session),
+    repo.moderate('comment-fixture-01', 'hide', '  Review <b>reason</b>  ', 1, signal(), session),
+    repo.moderate('comment-fixture-01', 'hide', 'Other reason', 1, signal(), session),
   ]);
   check(
     results.filter((result) => result.status === 'fulfilled').length === 1,
@@ -104,7 +111,7 @@ window.verifyAdminCommentsRepository = async () => {
       row.lastModeration.reason === 'Review <b>reason</b>',
     'Last moderation metadata',
   );
-  await repo.moderate(row.id, 'restore', 'Reviewed', signal(), session);
+  await repo.moderate(row.id, 'restore', 'Reviewed', row.version, signal(), session);
   row = (await catalog()).comments.find((item) => item.id === row.id);
   check(row.status === 'visible' && row.lastModeration.action === 'restore', 'Restore failed');
   const cloned = await catalog();
@@ -121,12 +128,13 @@ window.verifyAdminCommentsRepository = async () => {
     'Session leakage',
   );
   const revoked = { ...session, permissions: [...session.permissions] };
-  const mutation = repo.moderate(row.id, 'hide', 'Reason', signal(), revoked);
+  const mutation = repo.moderate(row.id, 'hide', 'Reason', row.version, signal(), revoked);
   revoked.permissions = [];
   await rejects(() => mutation, 'Permission not rechecked');
   check(JSON.stringify(commentFixtures) === fixtureBefore, 'Public fixture mutated');
   check(
-    (await publicRepo.list('anime-01', 'ready', signal())).length === 2,
+    (await publicRepo.list('anime-01', { page: 1, pageSize: 5 }, 'ready', signal())).data.length ===
+      2,
     'Public comment adapter changed',
   );
   return 'read/moderate guards, role/own-permission rejection, reason and state validation, deleted redaction and non-restoration, concurrent stale action, abort/revocation, unchanged authors/content, audit metadata, cloned responses, session and public isolation';

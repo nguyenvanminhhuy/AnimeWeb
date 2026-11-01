@@ -16,6 +16,12 @@ export function EpisodeFormScreen() {
   const mock = import.meta.env.DEV ? params.get('mock') : null;
   const { data, loading, error, canWrite, session, refresh } = useEpisodeCatalog(
     mock === 'error' && !retry,
+    undefined,
+    {
+      episodeId,
+      animeId: params.get('animeId') ?? undefined,
+      seasonId: params.get('seasonId') ?? undefined,
+    },
   );
   const candidate = safeReturnTo(params.get('returnTo'));
   const returnTo =
@@ -75,6 +81,8 @@ export function EpisodeFormScreen() {
             current
               ? {
                   animeId,
+                  version: current.version,
+                  thumbnailUrl: current.thumbnailUrl,
                   seasonId: current.seasonId,
                   title: current.title,
                   number: current.number,
@@ -88,7 +96,9 @@ export function EpisodeFormScreen() {
                   title: '',
                   number: Math.max(0, ...peers.map((e) => e.number)) + 1,
                   sortOrder: Math.max(0, ...peers.map((e) => e.sortOrder)) + 10,
-                  durationSeconds: 1440,
+                  durationSeconds: null,
+                  version: 0,
+                  thumbnailUrl: '',
                   status: 'draft',
                 }
           }

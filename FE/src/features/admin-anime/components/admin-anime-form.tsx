@@ -13,6 +13,9 @@ import { useAdminAnimeMutation } from '@/features/admin-anime/hooks/use-admin-an
 import { useAnimeGenreOptions } from '@/features/admin-anime/hooks/use-anime-genre-options';
 
 const empty: AdminAnimeInput = {
+  version: 0,
+  publicationStatus: 'draft',
+  alternativeTitles: [],
   title: '',
   slug: '',
   subtitle: '',
@@ -38,7 +41,16 @@ export function AdminAnimeForm({
   fail: boolean;
   onSaved: () => void;
 }) {
-  const [value, setValue] = useState<AdminAnimeInput>(row?.anime ?? empty);
+  const [value, setValue] = useState<AdminAnimeInput>(
+    row
+      ? {
+          ...row.anime,
+          version: row.version,
+          publicationStatus: row.publicationStatus,
+          alternativeTitles: row.alternativeTitles,
+        }
+      : empty,
+  );
   const [validation, setValidation] = useState<AdminAnimeFields>({});
   const mutation = useAdminAnimeMutation();
   const taxonomy = useAnimeGenreOptions(session);
@@ -115,13 +127,13 @@ export function AdminAnimeForm({
                   {...fieldProps(name)}
                   value={value[name]}
                   onChange={(event) => update(name, event.currentTarget.value)}
-                  maxLength={200}
+                  maxLength={300}
                   required={name !== 'subtitle'}
                   autoComplete="off"
                 />
                 {errorMessage(name)}
                 {name === 'slug' && (
-                  <p className="tw:mt-2 tw:mb-0 tw:text-[var(--aw-muted)]">
+                  <p className="tw:mt-2 tw:mb-0 tw:text-(--aw-muted)">
                     Ví dụ: hanh-trinh-anh-sao. Slug độc lập với ID phim.
                   </p>
                 )}
@@ -137,7 +149,7 @@ export function AdminAnimeForm({
                 onChange={(event) => update('synopsis', event.currentTarget.value)}
                 rows={6}
                 required
-                maxLength={5000}
+                maxLength={10000}
                 className="aw-input tw:resize-y"
               />
               {errorMessage('synopsis')}
@@ -185,6 +197,35 @@ export function AdminAnimeForm({
                   }
                 />
                 {errorMessage('format')}
+              </div>
+            </div>
+            <div className="tw:grid tw:grid-cols-2 tw:gap-4 tw:mb-5 tw:max-phone:grid-cols-1">
+              <div>
+                <label htmlFor="anime-publication">Trạng thái công khai</label>
+                <Selectbox
+                  id="anime-publication"
+                  value={value.publicationStatus}
+                  options={[
+                    { value: 'draft', label: 'Bản nháp' },
+                    { value: 'published', label: 'Công khai' },
+                  ]}
+                  onChange={(event) =>
+                    update(
+                      'publicationStatus',
+                      event.target.value as AdminAnimeInput['publicationStatus'],
+                    )
+                  }
+                />
+              </div>
+              <div>
+                <label htmlFor="anime-alternative-titles">Tên khác (mỗi dòng một tên)</label>
+                <textarea
+                  id="anime-alternative-titles"
+                  className="form-control aw-input"
+                  rows={3}
+                  value={value.alternativeTitles.join('\n')}
+                  onChange={(event) => update('alternativeTitles', event.target.value.split('\n'))}
+                />
               </div>
             </div>
             <fieldset>
@@ -242,24 +283,24 @@ export function AdminAnimeForm({
               key={value.posterUrl}
               src={value.posterUrl}
               alt="Xem trước poster phim"
-              className="tw:w-full tw:max-w-45 tw:aspect-[2/3] tw:object-cover tw:rounded-xl tw:mb-5"
+              className="tw:w-full tw:max-w-45 tw:aspect-2/3 tw:object-cover tw:rounded-xl tw:mb-5"
             />
             {(['posterUrl', 'bannerUrl'] as const).map((name) => (
               <div key={name} className="tw:mb-4">
                 <label htmlFor={`anime-form-${name}`} className="tw:block tw:mb-2">
                   {name === 'posterUrl' ? 'Poster' : 'Banner'}
                 </label>
-                <Selectbox
+                <Input
                   {...fieldProps(name)}
                   value={value[name]}
-                  options={animeArtwork}
+                  maxLength={2048}
                   onChange={(event) => update(name, event.currentTarget.value)}
                 />
                 {errorMessage(name)}
               </div>
             ))}
-            <p className="tw:mb-0 tw:text-[var(--aw-muted)]">
-              Chọn ảnh có sẵn. Chưa hỗ trợ tải ảnh lên.
+            <p className="tw:mb-0 tw:text-(--aw-muted)">
+              Nhập địa chỉ ảnh. Chưa hỗ trợ tải ảnh lên.
             </p>
           </section>
         </div>
@@ -273,7 +314,7 @@ export function AdminAnimeForm({
         />
         <Button as="link" variant="quiet" to={returnTo} label="Huỷ" />
       </div>
-      <p className="tw:mt-4 tw:text-[var(--aw-muted)]">
+      <p className="tw:mt-4 tw:text-(--aw-muted)">
         Thay đổi chỉ lưu trong phiên quản trị mẫu và được đặt lại khi tải lại hoặc đổi phiên.
       </p>
     </form>

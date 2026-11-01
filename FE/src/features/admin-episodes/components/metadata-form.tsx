@@ -1,3 +1,4 @@
+import { ApiError } from '@/lib/api/backend/error';
 import { useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { Button } from '@/components/ui/button';
@@ -82,7 +83,8 @@ export function MetadataForm({
     } catch (reason) {
       if (!controller.signal.aborted) {
         setError(reason instanceof Error ? reason.message : 'Không thể lưu.');
-        if (reason instanceof AdminEpisodeError) showFields(reason.fields);
+        if (reason instanceof AdminEpisodeError || reason instanceof ApiError)
+          showFields(reason.fields);
       }
     } finally {
       if (!controller.signal.aborted) {
@@ -91,7 +93,7 @@ export function MetadataForm({
       }
     }
   }
-  const update = (key: string, next: string | number) => {
+  const update = (key: string, next: string | number | null) => {
     setValue((current) => ({
       ...current,
       [key]: next,
@@ -142,6 +144,24 @@ export function MetadataForm({
         </div>
         {episode && (
           <div className="tw:col-span-full">
+            <label htmlFor="metadata-thumbnail">Ảnh tập phim</label>
+            <Input
+              id="metadata-thumbnail"
+              maxLength={2048}
+              aria-invalid={Boolean(fields.thumbnailUrl)}
+              aria-describedby={fields.thumbnailUrl ? 'metadata-thumbnail-error' : undefined}
+              value={episode.thumbnailUrl}
+              onChange={(event) => update('thumbnailUrl', event.target.value)}
+            />
+            {fields.thumbnailUrl && (
+              <p id="metadata-thumbnail-error" className="tw:text-[#ffb4bc]">
+                {fields.thumbnailUrl}
+              </p>
+            )}
+          </div>
+        )}
+        {episode && (
+          <div className="tw:col-span-full">
             <label htmlFor="metadata-seasonId">Mùa/phần *</label>
             <Selectbox
               id="metadata-seasonId"
@@ -184,11 +204,11 @@ export function MetadataForm({
               <Input
                 id={`metadata-${key}`}
                 type={key === 'title' ? 'text' : 'number'}
-                required
-                min={key === 'title' ? undefined : 1}
-                max={key === 'durationSeconds' ? 86400 : 100000}
-                step={1}
-                maxLength={key === 'title' ? 200 : undefined}
+                required={key !== 'durationSeconds'}
+                min={key === 'title' ? undefined : 0}
+                max={key === 'number' && episode ? 999999.99 : 2147483647}
+                step={key === 'number' && episode ? 0.01 : 1}
+                maxLength={key === 'title' ? 300 : undefined}
                 value={
                   key === 'title'
                     ? value.title
@@ -204,7 +224,9 @@ export function MetadataForm({
                     key === 'title'
                       ? e.target.value
                       : e.target.value === ''
-                        ? NaN
+                        ? key === 'durationSeconds'
+                          ? null
+                          : NaN
                         : Number(e.target.value),
                   )
                 }
@@ -236,8 +258,8 @@ export function MetadataForm({
               ]}
             />
             <p id="metadata-status-help" className="tw:text-[var(--aw-muted)] tw:mt-2 tw:mb-0">
-              Công bố chỉ cập nhật metadata trong phiên quản trị, không tạo nguồn phát. Chưa hỗ trợ
-              thu hồi hoặc xoá tập đã công bố.
+              Công bố chỉ cập nhật metadata, không tạo nguồn phát. Chuyển về bản nháp trước khi xoá;
+              dữ liệu còn tham chiếu vẫn có thể chặn xoá.
             </p>
             {fields.status && (
               <p id="metadata-status-error" role="alert" className="tw:text-[#ffb4bc]">

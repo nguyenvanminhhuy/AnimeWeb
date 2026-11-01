@@ -16,7 +16,9 @@ export function ExplorePage() {
   const activeFilters = [
     {
       key: 'genre',
-      label: genreOptions.find((option) => option.value === query.genre)?.label ?? '',
+      label:
+        (result?.options?.genres ?? genreOptions).find((option) => option.value === query.genre)
+          ?.label ?? '',
     },
     { key: 'year', label: query.year },
     {
@@ -65,7 +67,11 @@ export function ExplorePage() {
         </div>
       </header>
 
-      <ExploreFilters query={query} suggestions={result?.data.map((anime) => anime.title) ?? []} />
+      <ExploreFilters
+        options={result?.options}
+        query={query}
+        suggestions={result?.data.map((anime) => anime.title) ?? []}
+      />
       <div
         className="aw-explore-active tw:py-3.75 tw:gap-2.25 tw:min-h-15 tw:flex tw:flex-wrap tw:items-center tw:text-body"
         aria-label="Bộ lọc đang chọn"

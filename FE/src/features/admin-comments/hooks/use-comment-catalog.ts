@@ -1,36 +1,42 @@
+import type { AdminListQuery } from '@/types/admin-query';
 import { useEffect, useState } from 'react';
 import { useSession } from '@/stores/session';
 import { adminCommentRepository } from '@/lib/api/repositories';
-import type { AdminCommentCatalog } from '@/types/admin-comment';
+import type { AdminCommentCatalog, AdminCommentPage } from '@/types/admin-comment';
 
-export function useCommentCatalog(fail: boolean) {
+export function useCommentCatalog(fail: boolean, query?: AdminListQuery) {
   const { adminPreview, permissions } = useSession();
-  const canRead = Boolean(
-    import.meta.env.DEV && adminPreview && permissions.includes('admin:comment:read'),
-  );
+  const canRead = Boolean(adminPreview && permissions.includes('admin:comment:read'));
   const canModerate = canRead && permissions.includes('admin:comment:moderate');
+  const queryKey = JSON.stringify(query);
   const [revision, setRevision] = useState(0);
+  const requestKey = JSON.stringify([adminPreview?.id, queryKey, revision, fail]);
   const [state, setState] = useState<{
-    data?: AdminCommentCatalog;
+    key?: string;
+    data?: AdminCommentCatalog & Partial<AdminCommentPage>;
     error?: string;
     loading: boolean;
   }>({ loading: true });
   useEffect(() => {
     const controller = new AbortController();
     if (!canRead || !adminPreview) return;
-    setState({ loading: true });
-    adminCommentRepository.getCatalog(controller.signal, adminPreview, fail).then(
+    setState({ key: requestKey, loading: true });
+    const request = query
+      ? adminCommentRepository.list(query, controller.signal, adminPreview, fail)
+      : adminCommentRepository.getCatalog(controller.signal, adminPreview, fail);
+    request.then(
       (data) => {
-        if (!controller.signal.aborted) setState({ data, loading: false });
+        if (!controller.signal.aborted) setState({ key: requestKey, data, loading: false });
       },
       (error: Error) => {
-        if (!controller.signal.aborted) setState({ error: error.message, loading: false });
+        if (!controller.signal.aborted)
+          setState({ key: requestKey, error: error.message, loading: false });
       },
     );
     return () => controller.abort();
-  }, [adminPreview, canRead, revision, fail]);
+  }, [adminPreview, canRead, revision, fail, queryKey]);
   return {
-    ...state,
+    ...(state.key === requestKey ? state : { loading: canRead, data: undefined, error: undefined }),
     session: adminPreview,
     canRead,
     canModerate,

@@ -1,4 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { SubtitleTrack } from '@/features/player/components/subtitle-track';
+import { playbackRepository } from '@/lib/api/repositories';
+import { scheduleDeadline } from '@/utils/deadline';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
 import { useSession } from '@/stores/session';
@@ -13,10 +16,12 @@ export function VideoPlayer({
   detail,
   source,
   onEnded,
+  onRefresh,
 }: {
   detail: WatchDetail;
   source: PlaybackSource | undefined;
   onEnded: () => void;
+  onRefresh?: () => void;
 }) {
   const { user, progress, permissions, saveProgress } = useSession();
   const saved = progress.find((entry) => entry.episodeId === detail.episode.id);
@@ -28,6 +33,48 @@ export function VideoPlayer({
   const hasPlayed = useRef(false);
   const [failed, setFailed] = useState(false);
   const [attempt, setAttempt] = useState(0);
+  const [expired, setExpired] = useState(
+    !!source?.expiresAt &&
+      (!Number.isFinite(Date.parse(source.expiresAt)) ||
+        Date.parse(source.expiresAt) <= Date.now()),
+  );
+  const [subtitleFailed, setSubtitleFailed] = useState(false);
+  const trackFailure = useCallback(() => setSubtitleFailed(true), []);
+  useEffect(() => {
+    if (!source?.expiresAt) return;
+    return scheduleDeadline(Date.parse(source.expiresAt), () => setExpired(true));
+  }, [source?.expiresAt]);
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !source || expired || source.type !== 'application/vnd.apple.mpegurl') return;
+    if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      video.src = source.url;
+      return;
+    }
+    let cancelled = false;
+    let player: import('hls.js').default | undefined;
+    import('hls.js')
+      .then(({ default: Hls }) => {
+        if (cancelled) return;
+        if (!Hls.isSupported()) {
+          setFailed(true);
+          return;
+        }
+        player = new Hls();
+        player.on(Hls.Events.ERROR, (_event, data) => {
+          if (data.fatal) setFailed(true);
+        });
+        player.loadSource(source.url);
+        player.attachMedia(video);
+      })
+      .catch(() => {
+        if (!cancelled) setFailed(true);
+      });
+    return () => {
+      cancelled = true;
+      player?.destroy();
+    };
+  }, [source, expired, attempt]);
   const canSave = !!user && permissions.includes('progress:write:own');
 
   // This component is keyed by episode/source/account by WatchPage.
@@ -85,6 +132,73 @@ export function VideoPlayer({
     };
   }, [detail, source, user, canSave, onEnded, attempt]);
 
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !source || expired) return;
+    const controller = new AbortController();
+    let session: { id: string; startedAt: string } | null = null;
+    let counted = false;
+    let busy = false;
+    let lastAttempt = 0;
+    const start = () => {
+      if (session || busy) return;
+      busy = true;
+      void playbackRepository
+        .startView(
+          detail.episode.id,
+          { positionSeconds: Math.floor(video.currentTime) },
+          controller.signal,
+        )
+        .then((value) => {
+          session = value;
+        })
+        .catch(() => {})
+        .finally(() => {
+          busy = false;
+        });
+    };
+    const confirm = () => {
+      if (
+        !session ||
+        counted ||
+        busy ||
+        video.paused ||
+        Date.now() - Date.parse(session.startedAt) < 30000 ||
+        Date.now() - lastAttempt < 5000
+      )
+        return;
+      busy = true;
+      lastAttempt = Date.now();
+      void playbackRepository
+        .confirmView(
+          session.id,
+          { positionSeconds: Math.floor(video.currentTime) },
+          controller.signal,
+        )
+        .then((value) => {
+          counted = value.counted;
+        })
+        .catch(() => {})
+        .finally(() => {
+          busy = false;
+        });
+    };
+    video.addEventListener('playing', start);
+    video.addEventListener('timeupdate', confirm);
+    return () => {
+      controller.abort();
+      video.removeEventListener('playing', start);
+      video.removeEventListener('timeupdate', confirm);
+    };
+  }, [detail.episode.id, source, expired, attempt]);
+  if (expired)
+    return (
+      <div role="status" className="tw:p-6 tw:text-center">
+        <p>Nguồn phát đã hết hạn. Tải lại để lấy nguồn mới.</p>
+        <Button label="Tải lại nguồn" onClick={onRefresh} disabled={!onRefresh} />
+      </div>
+    );
+
   if (!source)
     return (
       <div
@@ -119,18 +233,22 @@ export function VideoPlayer({
         }}
         onError={() => setFailed(true)}
       >
-        <source src={source.url} type={source.type} onError={() => setFailed(true)} />
+        {source.type !== 'application/vnd.apple.mpegurl' ? (
+          <source src={source.url} type={source.type} onError={() => setFailed(true)} />
+        ) : null}
         {source.subtitles.map((track) => (
-          <track
-            key={track.id}
-            kind="subtitles"
-            src={track.url}
-            srcLang={track.language}
-            label={track.label}
-            default={track.isDefault}
+          <SubtitleTrack
+            key={`${track.id}:${track.url}:${track.format}`}
+            track={track}
+            onFailure={trackFailure}
           />
         ))}
       </video>
+      {subtitleFailed && (
+        <p role="status" className="tw:p-4">
+          Không tải được phụ đề. Bạn vẫn có thể xem video hoặc chọn nguồn khác.
+        </p>
+      )}
       {failed && (
         <div role="alert" className="tw:p-5">
           <p>Không thể phát video. Hãy thử lại hoặc chọn nguồn khác.</p>

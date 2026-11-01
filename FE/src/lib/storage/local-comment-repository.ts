@@ -1,3 +1,5 @@
+import { pageRows } from '@/lib/api/mock/page';
+import { assertVersion } from '@/lib/api/backend/error';
 import type { CommentRepository } from '@/lib/api/contracts/comment-repository';
 import type { Comment, CommentActor, CommentState } from '@/types/comment';
 import { isDemoUser } from '@/utils/auth';
@@ -74,9 +76,9 @@ async function wait(signal: AbortSignal, state: CommentState = 'ready') {
   if (state === 'error') throw new Error('Không thể tải bình luận demo. Vui lòng thử lại.');
 }
 export const localCommentRepository: CommentRepository = {
-  async list(animeId, state, signal) {
+  async list(animeId, query, state, signal) {
     await wait(signal, state);
-    if (state === 'empty') return [];
+    if (state === 'empty') return { data: [], meta: { ...query, total: 0, totalPages: 0 } };
     const stored: Comment[] = [];
     try {
       for (let index = 0; index < localStorage.length; index++) {
@@ -87,9 +89,15 @@ export const localCommentRepository: CommentRepository = {
     } catch (error) {
       throw new Error(error instanceof Error ? error.message : 'Không đọc được bình luận cục bộ.');
     }
-    return [...commentFixtures, ...stored]
+    const rows = [...commentFixtures, ...stored]
       .filter((item) => item.animeId === animeId && item.status === 'visible')
       .sort((a, b) => b.createdAt.localeCompare(a.createdAt) || a.id.localeCompare(b.id));
+    const page = pageRows(
+      rows.map((row) => ({ ...row, version: row.version ?? 1 })),
+      query.page,
+      query.pageSize,
+    );
+    return { data: page.rows, meta: page.meta };
   },
   async create(actor, animeId, body, signal) {
     authorize(actor, 'comment:create');
@@ -110,7 +118,7 @@ export const localCommentRepository: CommentRepository = {
     });
     save(actor.id, comments);
   },
-  async update(actor, id, body, signal) {
+  async update(actor, id, body, version, signal) {
     authorize(actor, 'comment:update:own');
     const value = bodyValue(body);
     await wait(signal);
@@ -123,7 +131,7 @@ export const localCommentRepository: CommentRepository = {
     item.updatedAt = new Date().toISOString();
     save(actor.id, comments);
   },
-  async remove(actor, id, signal) {
+  async remove(actor, id, version, signal) {
     authorize(actor, 'comment:delete:own');
     await wait(signal);
     const comments = read(actor.id);
@@ -131,6 +139,8 @@ export const localCommentRepository: CommentRepository = {
       (comment) => comment.id === id && comment.userId === actor.id && comment.status === 'visible',
     );
     if (!item) throw new Error('Không thể xóa bình luận không thuộc bạn hoặc không còn hiển thị.');
+    assertVersion(item.version ?? 1, version);
+    item.version = version + 1;
     item.status = 'deleted';
     item.updatedAt = new Date().toISOString();
     save(actor.id, comments);

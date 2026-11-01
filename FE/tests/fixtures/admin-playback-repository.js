@@ -35,10 +35,12 @@ window.verifyAdminPlaybackRepository = async () => {
   const source = {
     episodeId: episode.id,
     label: 'Primary',
-    providerKey: 'local',
+    version: 0,
+    expiresAt: null,
+    providerKey: 'direct',
     type: 'mp4',
     language: 'ja',
-    url: '/media/test.mp4',
+    url: 'https://media.example.invalid/test.mp4',
     enabled: false,
   };
   await rejects(
@@ -83,7 +85,7 @@ window.verifyAdminPlaybackRepository = async () => {
   check(!('hasPlayback' in saved), 'Extra source fields persisted');
   await repo.saveSource(
     saved.id,
-    { ...source, label: 'Edited source', enabled: true },
+    { ...source, version: saved.version, label: 'Edited source', enabled: true },
     signal(),
     session,
   );
@@ -98,11 +100,12 @@ window.verifyAdminPlaybackRepository = async () => {
     'Source reassigned',
   );
   const track = {
+    version: 0,
     playbackSourceId: saved.id,
     label: 'Vietnamese',
     language: 'vi',
     format: 'vtt',
-    url: '/media/vi.vtt',
+    url: 'https://media.example.invalid/vi.vtt',
     isDefault: true,
   };
   await rejects(
@@ -113,7 +116,7 @@ window.verifyAdminPlaybackRepository = async () => {
   await rejects(() => repo.saveSubtitle(null, track, signal(), session), 'Duplicate subtitle');
   await repo.saveSubtitle(
     null,
-    { ...track, label: 'English', language: 'en', url: '/media/en.vtt' },
+    { ...track, label: 'English', language: 'en', url: 'https://media.example.invalid/en.vtt' },
     signal(),
     session,
   );
@@ -128,22 +131,28 @@ window.verifyAdminPlaybackRepository = async () => {
     english.id,
     {
       ...track,
+      version: english.version,
       label: 'English edited',
       language: 'en',
       format: 'srt',
-      url: '/media/en.srt',
+      url: 'https://media.example.invalid/en.srt',
       isDefault: false,
     },
     signal(),
     session,
   );
   check(!(await catalog()).subtitles.some((t) => t.isDefault), 'Default removal');
-  await rejects(() => repo.remove('source', saved.id, signal(), session), 'Source cascade delete');
+  await rejects(
+    () => repo.remove('source', saved.id, saved.version + 1, signal(), session),
+    'Source cascade delete',
+  );
   // A draft episode with configured media also cannot be removed through the episode repository.
   const season = initial.seasons[0];
   await episodes.saveEpisode(
     null,
     {
+      version: 0,
+      thumbnailUrl: '',
       animeId: season.animeId,
       seasonId: season.id,
       title: 'Draft with source',
@@ -158,7 +167,7 @@ window.verifyAdminPlaybackRepository = async () => {
   const draft = (await catalog()).episodes.find((e) => e.title === 'Draft with source');
   await repo.saveSource(null, { ...source, episodeId: draft.id }, signal(), session);
   await rejects(
-    () => episodes.remove('episode', draft.id, signal(), session),
+    () => episodes.remove('episode', draft.id, draft.version, signal(), session),
     'Episode cascade delete',
   );
   check(
@@ -169,9 +178,9 @@ window.verifyAdminPlaybackRepository = async () => {
     (await playbackRepository.getEpisode(episode.id, 'normal')).sources.length === 0,
     'Public player mutated',
   );
-  for (const subtitle of state.subtitles)
-    await repo.remove('subtitle', subtitle.id, signal(), session);
-  await repo.remove('source', saved.id, signal(), session);
+  for (const subtitle of (await catalog()).subtitles)
+    await repo.remove('subtitle', subtitle.id, subtitle.version, signal(), session);
+  await repo.remove('source', saved.id, saved.version + 1, signal(), session);
   check(!(await catalog()).sources.some((s) => s.id === saved.id), 'Delete failed');
   state.sources.length = 0;
   check((await catalog()).sources.length === 1, 'Snapshot leaked references');

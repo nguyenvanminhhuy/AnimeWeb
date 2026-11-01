@@ -15,7 +15,7 @@ export function AdminAnimeFormPage() {
   const location = useLocation();
   const [params] = useSearchParams();
   const returnTo = adminAnimeReturnTo(params.get('returnTo'));
-  if (!import.meta.env.DEV || !adminPreview || !permissions.includes('admin:anime:write'))
+  if (!adminPreview || !permissions.includes('admin:anime:write'))
     return (
       <>
         <h1 className="tw:text-2xl">Bạn chưa có quyền chỉnh sửa phim</h1>

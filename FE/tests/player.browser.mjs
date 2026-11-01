@@ -94,11 +94,37 @@ export async function verifyPlayer(browser, baseURL) {
     });
     await event('pause', 800);
     await page.waitForFunction(() =>
-      document.querySelector('#notice').textContent.includes('trình duyệt không lưu được'),
+      document.querySelector('#notice').textContent.includes('Không lưu được dữ liệu mẫu'),
     );
+    // Simulate transport latency: pause and ended must use successive server versions.
+    await page.reload();
+    await video.waitFor();
+    await page.getByRole('button', { name: 'Viewer', exact: true }).click();
+    await page.evaluate(async () => {
+      const { personalRepository } = await import('/src/lib/api/repositories.ts');
+      const original = personalRepository.saveProgress;
+      window.progressVersions = [];
+      personalRepository.saveProgress = async (...args) => {
+        window.progressVersions.push(args[1].version);
+        await new Promise((resolve) => setTimeout(resolve, 75));
+        return original(...args);
+      };
+    });
+    await event('playing');
+    await event('pause', 300);
+    await event('ended', 1440);
+    await page.waitForFunction(() => {
+      const record = JSON.parse(localStorage.getItem('aw:account:v1:viewer'));
+      const entry = record?.progress.find((row) => row.episodeId === 'episode-01-03');
+      return (
+        entry?.completed && entry.positionSeconds === 1440 && window.progressVersions.length >= 2
+      );
+    });
+    const versions = await page.evaluate(() => window.progressVersions);
+    assert.equal(versions[1], versions[0] + 1);
     assert.deepEqual(errors, []);
     console.log(
-      'PASS Player event contract: resume, no writes before playing, throttle/pause/ended, per-episode progress, account switch/logout isolation, guest no writes. Synthetic media events only; no playback claim.',
+      'PASS Player event contract: resume, no writes before playing, throttle/pause/ended, per-episode progress, account switch/logout isolation, guest no writes. Queued writes under simulated latency; synthetic media events only; no playback claim.',
     );
   } finally {
     await context.close();

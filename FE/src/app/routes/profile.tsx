@@ -10,10 +10,10 @@ import { ProfileInfo, ProfileOverview } from '@/features/profile/components/prof
 import { useProfileLibrary } from '@/features/profile/hooks/use-profile-library';
 import { libraryHref } from '@/features/library/utils/library-query';
 import type { LibraryTab } from '@/features/library/types/library';
-import { isCompleted } from '@/utils/progress';
 
 export function ProfilePage() {
-  const { user } = useSession();
+  const { user, initializing } = useSession();
+  if (initializing) return <p role="status">Đang khôi phục phiên…</p>;
   if (!user)
     return (
       <section className="aw-shell tw:mx-auto tw:py-12">
@@ -28,16 +28,24 @@ export function ProfilePage() {
 }
 
 function ProfileContent() {
-  const { displayName, email, favorites, progress } = useSession();
-  const { data, loading, error, canRead, retry } = useProfileLibrary();
+  const { displayName, email } = useSession();
+  const { loading, error, canRead, retry, summary } = useProfileLibrary();
   const toLibrary = (tab: LibraryTab) => libraryHref({ tab, q: '', sort: 'recent', page: 1 });
-  const completed = progress.filter(isCompleted).length;
-  const favoriteAnime = data.filter((anime) => favorites.includes(anime.id)).slice(0, 4);
+  const completed = summary?.completedEpisodeCount ?? 0;
+  const favoriteAnime = summary?.favoriteAnime ?? [];
   const stats = [
-    { label: 'Phim yêu thích', value: favorites.length, to: toLibrary('favorites') },
-    { label: 'Tập đang xem', value: progress.length - completed, to: toLibrary('watching') },
+    {
+      label: 'Phim yêu thích',
+      value: summary?.favoriteAnimeCount ?? 0,
+      to: toLibrary('favorites'),
+    },
+    {
+      label: 'Tập đang xem',
+      value: summary?.inProgressEpisodeCount ?? 0,
+      to: toLibrary('watching'),
+    },
     { label: 'Tập đã xem xong', value: completed, to: toLibrary('history') },
-    { label: 'Tập có lịch sử', value: progress.length, to: toLibrary('history') },
+    { label: 'Tập có lịch sử', value: summary?.historyEpisodeCount ?? 0, to: toLibrary('history') },
   ];
   return (
     <div className="aw-shell aw-profile tw:mx-auto tw:py-8 tw:max-phone:py-6">
@@ -113,10 +121,8 @@ function ProfileContent() {
                   </div>
                 )}
               </section>
-              <ContinueWatching items={data} />
-              {!data.some((anime) =>
-                progress.some((entry) => entry.animeId === anime.id && !isCompleted(entry)),
-              ) && (
+              <ContinueWatching items={summary?.preview ?? []} />
+              {!summary?.preview.length && (
                 <section className="aw-surface tw:rounded-xl tw:p-6 tw:mt-6">
                   <h2 className="tw:text-xl tw:mb-3">Tiếp tục xem</h2>
                   <p className="tw:text-[var(--aw-muted)] tw:mb-0">

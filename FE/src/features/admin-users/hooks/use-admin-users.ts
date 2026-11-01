@@ -13,10 +13,7 @@ export function useAdminUsers() {
   const mock = import.meta.env.DEV ? params.get('mock') : null;
   const userId = params.get('userId')?.slice(0, 100) || null;
   const canRead = Boolean(
-    import.meta.env.DEV &&
-    adminPreview &&
-    permissions.includes('admin:user:read') &&
-    mock !== 'forbidden',
+    adminPreview && permissions.includes('admin:user:read') && mock !== 'forbidden',
   );
   const queryKey = usersParams(parseUsersQuery(params)).toString();
   const query = useMemo(() => parseUsersQuery(new URLSearchParams(queryKey)), [queryKey]);
@@ -64,7 +61,10 @@ export function useAdminUsers() {
     );
     return () => controller.abort();
   }, [canRead, adminPreview, mock, response, key, query, state, revision]);
-  const canonical = result ? usersHref({ ...query, page: result.meta.page }, mock, userId) : null;
+  const resolvedPage = result
+    ? Math.min(query.page, Math.max(1, result.meta.totalPages))
+    : query.page;
+  const canonical = result ? usersHref({ ...query, page: resolvedPage }, mock, userId) : null;
   useEffect(() => {
     if (canonical && canonical !== location.pathname + location.search)
       navigate(canonical + location.hash, { replace: true, preventScrollReset: true });
@@ -73,7 +73,7 @@ export function useAdminUsers() {
     canRead,
     userId,
     mock,
-    query: { ...query, page: result?.meta.page ?? query.page },
+    query: { ...query, page: resolvedPage },
     result,
     error,
     loading: canRead && !result && !error,

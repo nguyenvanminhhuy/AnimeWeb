@@ -1,3 +1,4 @@
+import { ApiError } from '@/lib/api/backend/error';
 import { useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -48,17 +49,27 @@ export function useAuthForm(mode: AuthMode) {
       const profile =
         mode === 'register'
           ? await authRepository.register(
-              { displayName: values.displayName, email: values.email },
+              { displayName: values.displayName, email: values.email, password: values.password },
               state,
               abort.signal,
             )
-          : await authRepository.login(values.email, state, abort.signal);
+          : await authRepository.login(
+              { email: values.email, password: values.password },
+              state,
+              abort.signal,
+            );
       if (abort.signal.aborted) return;
-      if (!login(profile.id)) throw new DemoAuthError('Không thể mở phiên demo. Hãy thử lại.');
+      if (!login(profile)) throw new DemoAuthError('Không thể mở phiên demo. Hãy thử lại.');
       setValues((current) => ({ ...current, password: '', confirmation: '' }));
     } catch (failure) {
       if (abort.signal.aborted) return;
-      if (failure instanceof DemoAuthError && failure.field) {
+      if (failure instanceof ApiError) {
+        setError(failure.message);
+        setErrors(failure.fields);
+        const first = Object.keys(failure.fields)[0];
+        if (first)
+          requestAnimationFrame(() => document.getElementById(`${mode}-${first}`)?.focus());
+      } else if (failure instanceof DemoAuthError && failure.field) {
         setErrors({ [failure.field]: failure.message });
         requestAnimationFrame(() => document.getElementById(`${mode}-${failure.field}`)?.focus());
       } else

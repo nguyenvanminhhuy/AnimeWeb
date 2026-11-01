@@ -1,4 +1,5 @@
 export interface AdminGenre {
+  version: number;
   id: string;
   name: string;
   slug: string;
@@ -6,7 +7,7 @@ export interface AdminGenre {
 export interface AdminGenreRow extends AdminGenre {
   animeCount: number;
 }
-export type AdminGenreInput = Pick<AdminGenre, 'name' | 'slug'>;
+export type AdminGenreInput = Pick<AdminGenre, 'name' | 'slug' | 'version'>;
 export type AdminGenreFields = Partial<Record<keyof AdminGenreInput, string>>;
 export interface AdminGenreQuery {
   q: string;

@@ -3,6 +3,9 @@ import type { CatalogQuery } from '@/types/catalog';
 
 export type AdminAnimeQuery = CatalogQuery;
 export interface AdminAnimeRow {
+  version: number;
+  publicationStatus: 'draft' | 'published';
+  alternativeTitles: string[];
   anime: Anime;
   publishedEpisodes: number;
   publicSlug: string | null;
@@ -14,7 +17,11 @@ export interface AdminAnimeResult {
   meta: CatalogResult['meta'];
 }
 
-export type AdminAnimeInput = Pick<
+export type AdminAnimeInput = {
+  version: number;
+  publicationStatus: 'draft' | 'published';
+  alternativeTitles: string[];
+} & Pick<
   Anime,
   | 'title'
   | 'slug'

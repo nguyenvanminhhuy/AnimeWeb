@@ -1,5 +1,6 @@
 import type { DemoUser } from '@/types/auth';
 export interface Comment {
+  version?: number;
   id: string;
   animeId: string;
   userId: string;

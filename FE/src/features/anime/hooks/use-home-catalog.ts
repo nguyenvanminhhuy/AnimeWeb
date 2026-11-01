@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { genreOptions } from '@/config/catalog';
 import type { HomeCatalog } from '@/types/anime';
 import type { MockState } from '@/lib/api/contracts/anime-repository';
 import { animeRepository } from '@/lib/api/repositories';
@@ -9,8 +10,9 @@ export function useHomeCatalog() {
   const mock = import.meta.env.DEV ? searchParams.get('mock') : null;
   const state: MockState =
     mock === 'error' || mock === 'empty' || mock === 'loading' ? mock : 'ready';
+  const genre = genreOptions.find((option) => option.label === searchParams.get('genre'))?.value;
   const [attempt, setAttempt] = useState(0);
-  const key = `${state}:${attempt}`;
+  const key = `${state}:${attempt}:${genre ?? ''}`;
   const [response, setResponse] = useState<{
     key: string;
     data: HomeCatalog | null;
@@ -20,7 +22,7 @@ export function useHomeCatalog() {
     let active = true;
     if (state !== 'loading')
       animeRepository
-        .getHome(state)
+        .getHome(state, genre)
         .then((data) => {
           if (active) setResponse({ key, data, error: '' });
         })
@@ -31,7 +33,7 @@ export function useHomeCatalog() {
     return () => {
       active = false;
     };
-  }, [key, state]);
+  }, [key, state, genre]);
   return {
     data: response?.key === key ? response.data : null,
     error: response?.key === key ? response.error : '',

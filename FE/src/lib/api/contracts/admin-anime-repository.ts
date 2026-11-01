@@ -35,6 +35,7 @@ export interface AdminAnimeRepository {
   ): Promise<AdminAnimeRow>;
   remove(
     id: string,
+    version: number,
     signal: AbortSignal,
     session: AdminPreviewSession,
     fail?: boolean,

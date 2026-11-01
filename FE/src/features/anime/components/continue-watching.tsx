@@ -1,17 +1,37 @@
-import type { Anime } from '@/types/anime';
+import { useEffect, useState } from 'react';
+import { personalRepository } from '@/lib/api/repositories';
+import type { LibraryItem } from '@/types/personal';
 import { useSession } from '@/stores/session';
 import { Artwork } from '@/components/common/artwork';
 import { Link } from 'react-router-dom';
 import { Icon } from '@/components/ui/icon';
 import { paths } from '@/config/paths';
 import { isCompleted } from '@/utils/progress';
-export function ContinueWatching({ items }: { items: Anime[] }) {
-  const { user, progress } = useSession();
-  const entries = progress.flatMap((entry) => {
-    if (isCompleted(entry)) return [];
-    const anime = items.find((item) => item.id === entry.animeId);
-    return anime ? [{ ...entry, anime }] : [];
-  });
+export function ContinueWatching({ items }: { items?: LibraryItem[] }) {
+  const supplied = items !== undefined;
+  const { user, progress, permissions } = useSession();
+  const key = JSON.stringify([user, progress, permissions]);
+  const [response, setResponse] = useState<{ key: string; items: LibraryItem[] } | null>(null);
+  useEffect(() => {
+    if (supplied || !user || !permissions.includes('progress:read:own')) return;
+    const controller = new AbortController();
+    personalRepository
+      .list(
+        { id: user, permissions },
+        { tab: 'watching', q: '', sort: 'recent', page: 1, pageSize: 6 },
+        controller.signal,
+      )
+      .then((data) => {
+        if (!controller.signal.aborted) setResponse({ key, items: data.items });
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setResponse({ key, items: [] });
+      });
+    return () => controller.abort();
+  }, [key, supplied]);
+  const entries = (items ?? (response?.key === key ? response.items : [])).flatMap((item) =>
+    item.progress && !isCompleted(item.progress) ? [{ ...item.progress, anime: item.anime }] : [],
+  );
   if (!user || !entries.length) return null;
   return (
     <section className="aw-section tw:mt-10.5 tw:max-phone:mt-7.5" aria-labelledby="continue-title">
@@ -38,11 +58,14 @@ export function ContinueWatching({ items }: { items: Anime[] }) {
               <h3>{entry.anime.title}</h3>
               <p>
                 Tập {entry.episodeNumber} · Còn{' '}
-                {Math.ceil((entry.durationSeconds - entry.positionSeconds) / 60)} phút
+                {entry.durationSeconds === null
+                  ? '—'
+                  : Math.ceil((entry.durationSeconds - entry.positionSeconds) / 60)}{' '}
+                phút
               </p>
               <progress
-                value={entry.positionSeconds}
-                max={entry.durationSeconds}
+                value={entry.durationSeconds === null ? undefined : entry.positionSeconds}
+                max={entry.durationSeconds ?? undefined}
                 aria-label={`Tiến độ tập ${entry.episodeNumber} của ${entry.anime.title}`}
               />
               <span>

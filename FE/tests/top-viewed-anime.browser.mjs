@@ -70,11 +70,11 @@ export async function verifyTopViewedAnime(browser, baseURL) {
       };
     });
     assert.equal(isolated.clean, true);
-    assert.equal(isolated.upcoming, false);
+    assert.equal(isolated.upcoming, true);
     assert.equal(isolated.seed, 'anime-01');
     assert.deepEqual(errors, []);
     console.log(
-      'PASS Top Viewed Anime: shared top 10 order/counts/links, public/admin guards, filter independence, responsive, cloned results and upcoming exclusion.',
+      'PASS Top Viewed Anime: shared top 10 order/counts/links, public/admin guards, filter independence, responsive, cloned results and public anime eligibility.',
     );
   } finally {
     await context.close();

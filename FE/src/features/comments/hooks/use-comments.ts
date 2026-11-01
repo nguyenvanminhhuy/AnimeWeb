@@ -8,14 +8,21 @@ export function useComments(animeId: string) {
   const { user, displayName, permissions } = useSession();
   const [params, setParams] = useSearchParams();
   const mock = import.meta.env.DEV ? params.get('comments') : null;
+  const rawPage = params.get('commentPage');
+  const value = rawPage && /^\d+$/.test(rawPage) ? Number(rawPage) : 1;
+  const requested = Number.isSafeInteger(value) && value > 0 ? value : 1;
+
   const state: CommentState =
     mock === 'error' || mock === 'empty' || mock === 'loading' ? mock : 'ready';
   const canCreate = Boolean(user && permissions.includes('comment:create') && mock !== 'forbidden');
   const [revision, setRevision] = useState(0);
-  const key = `${animeId}:${user}:${state}:${revision}`;
-  const [response, setResponse] = useState<{ key: string; items: Comment[]; error: string } | null>(
-    null,
-  );
+  const key = `${animeId}:${user}:${state}:${revision}:${requested}`;
+  const [response, setResponse] = useState<{
+    key: string;
+    items: Comment[];
+    meta?: import('@/lib/api/backend/types').PageMeta;
+    error: string;
+  } | null>(null);
   const current = response?.key === key ? response : null;
   const [pending, setPending] = useState(false);
   const [actionError, setActionError] = useState('');
@@ -34,9 +41,10 @@ export function useComments(animeId: string) {
     if (state === 'loading') return;
     const controller = new AbortController();
     commentRepository
-      .list(animeId, state, controller.signal)
-      .then((items) => {
-        if (!controller.signal.aborted) setResponse({ key, items, error: '' });
+      .list(animeId, { page: requested, pageSize: 5 }, state, controller.signal)
+      .then((result) => {
+        if (!controller.signal.aborted)
+          setResponse({ key, items: result.data, meta: result.meta, error: '' });
       })
       .catch((error) => {
         if (!controller.signal.aborted)
@@ -49,12 +57,9 @@ export function useComments(animeId: string) {
     return () => controller.abort();
   }, [animeId, key, state]);
 
-  const rawPage = params.get('commentPage');
-  const value = rawPage && /^\d+$/.test(rawPage) ? Number(rawPage) : 1;
-  const requested = Number.isSafeInteger(value) && value > 0 ? value : 1;
-  const total = current?.items.length ?? 0;
-  const totalPages = Math.ceil(total / 5);
-  const page = Math.min(requested, Math.max(totalPages, 1));
+  const total = current?.meta?.total ?? 0;
+  const totalPages = current?.meta?.totalPages ?? 0;
+  const page = current?.meta ? Math.min(requested, Math.max(1, totalPages)) : requested;
   useEffect(() => {
     if (current && !current.error && rawPage !== null && rawPage !== String(page)) {
       const next = new URLSearchParams(params);
@@ -85,8 +90,20 @@ export function useComments(animeId: string) {
       if (action === 'create')
         await commentRepository.create(actor, animeId, body, controller.signal);
       else if (action === 'update')
-        await commentRepository.update(actor, id, body, controller.signal);
-      else await commentRepository.remove(actor, id, controller.signal);
+        await commentRepository.update(
+          actor,
+          id,
+          body,
+          current?.items.find((row) => row.id === id)?.version ?? 0,
+          controller.signal,
+        );
+      else
+        await commentRepository.remove(
+          actor,
+          id,
+          current?.items.find((row) => row.id === id)?.version ?? 0,
+          controller.signal,
+        );
       if (controller.signal.aborted) return false;
       const next = new URLSearchParams(params);
       next.delete('comments');
@@ -121,8 +138,8 @@ export function useComments(animeId: string) {
     page,
     totalPages,
     total,
-    items: current?.items.slice((page - 1) * 5, page * 5) ?? [],
-    loading: !current,
+    items: current?.items ?? [],
+    loading: !current || page !== requested,
     error: current?.error ?? '',
     retry: () => {
       const next = new URLSearchParams(params);

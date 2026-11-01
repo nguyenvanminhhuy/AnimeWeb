@@ -68,7 +68,7 @@ export function HomePage() {
           Nội dung mẫu, cảm hứng không giới hạn <span aria-hidden="true">✧</span>
         </span>
       </div>
-      <ContinueWatching items={[...data.updated, ...data.recommended]} />
+      <ContinueWatching />
       <div className="tw:mt-8">
         <TopViewedAnime items={data.topViewed} />
       </div>

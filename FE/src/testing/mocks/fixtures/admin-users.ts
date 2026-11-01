@@ -32,6 +32,6 @@ export const adminUsers: AdminUser[] = names.map(([displayName, email], index) =
   displayName,
   email: `${email}@anime.test`,
   status: (index + 1) % 4 === 0 ? 'blocked' : 'active',
-  roles: ['member'],
+  roles: ['user'],
   createdAt: `2026-10-${String(index + 1).padStart(2, '0')}T08:00:00Z`,
 }));

@@ -1,7 +1,7 @@
 import type { AdminPreviewSession } from '@/types/admin';
 import type { AdminAnimeRow } from '@/types/admin-anime';
 import type { AdminGenre } from '@/types/admin-genre';
-import type { Season } from '@/types/episode';
+import type { AdminSeason } from '@/types/admin-episode';
 import type { AdminEpisode } from '@/types/admin-episode';
 import type { AdminSource, AdminSubtitle } from '@/types/admin-playback';
 import { anime } from '@/testing/mocks/fixtures/anime';
@@ -13,7 +13,7 @@ const workspaces = new WeakMap<
   {
     anime: AdminAnimeRow[];
     genres: AdminGenre[];
-    seasons: Season[];
+    seasons: AdminSeason[];
     episodes: AdminEpisode[];
     sources: AdminSource[];
     subtitles: AdminSubtitle[];
@@ -28,14 +28,22 @@ export function adminCatalogWorkspace(session: AdminPreviewSession) {
     workspace = {
       sources: [],
       subtitles: [],
-      seasons: anime.flatMap((item) => structuredClone(createAnimeDetail(item).seasons)),
-      episodes: anime.flatMap((item) => structuredClone(createAnimeDetail(item).episodes)),
+      seasons: anime.flatMap((item) =>
+        structuredClone(createAnimeDetail(item).seasons).map((row) => ({ ...row, version: 1 })),
+      ),
+      episodes: anime.flatMap((item) =>
+        structuredClone(createAnimeDetail(item).episodes).map((row) => ({ ...row, version: 1 })),
+      ),
       anime: anime.map((item) => ({
+        version: 1,
+        publicationStatus: 'published',
+        alternativeTitles: [],
         anime: structuredClone(item),
         publicSlug: item.slug,
         publishedEpisodes: createAnimeDetail(item).episodes.length,
       })),
       genres: genreOptions.map((item) => ({
+        version: 1,
         id: `genre-${item.value}`,
         name: item.label,
         slug: item.value,

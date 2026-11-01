@@ -10,13 +10,14 @@ import { AuthForm } from '@/features/auth/components/auth-form';
 export function AuthScreen({ mode }: { mode: AuthMode }) {
   const [params] = useSearchParams();
   const returnTo = safeReturnTo(params.get('returnTo'));
-  const { user, displayName, logout, adminPreview, openAdminPreview } = useSession();
+  const { user, displayName, logout, adminPreview, openAdminPreview, notice } = useSession();
   const requestedPath = returnTo.split(/[?#]/, 1)[0];
   const adminRequested =
     requestedPath === paths.admin || requestedPath.startsWith(paths.admin + '/');
   const register = mode === 'register';
   return (
     <div className="aw-shell aw-auth tw:mx-auto tw:pt-6.25 tw:max-mobile:pt-5">
+      {notice && <p role="status">{notice}</p>}
       <Link className="aw-auth-back tw:text-body" to={paths.home}>
         <Icon name="arrow-left" size="sm" /> Về Trang chủ
       </Link>

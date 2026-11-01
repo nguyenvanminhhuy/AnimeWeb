@@ -7,7 +7,6 @@ import { Avatar } from '@/components/ui/avatar';
 import { ContentState } from '@/components/common/content-state';
 import { Pagination } from '@/components/common/pagination';
 import { paths } from '@/config/paths';
-import { normalizeSearch } from '@/utils/search';
 import type { AdminComment, ModerationAction } from '@/types/admin-comment';
 import { useCommentCatalog } from '@/features/admin-comments/hooks/use-comment-catalog';
 import { ModerationDialog } from '@/features/admin-comments/components/moderation-dialog';
@@ -26,6 +25,7 @@ export function CommentsScreen() {
   const mock = import.meta.env.DEV ? params.get('mock') : null;
   const { data, loading, error, canRead, canModerate, session, refresh } = useCommentCatalog(
     mock === 'error',
+    { ...query, empty: mock === 'empty' },
   );
   const [search, setSearch] = useState(q);
   const [composing, setComposing] = useState(false);
@@ -56,27 +56,10 @@ export function CommentsScreen() {
     );
     return () => clearTimeout(timer);
   }, [composing, search, q, setParams]);
-  const selected = data?.comments.find((row) => row.id === commentId);
-  const items = mock === 'empty' ? [] : (data?.comments ?? []);
-  const rows = items
-    .filter(
-      (row) =>
-        (!animeId || row.animeId === animeId) &&
-        (!status || row.status === status) &&
-        (!q ||
-          normalizeSearch(`${row.body ?? ''} ${row.authorName} ${row.userId} ${row.id}`).includes(
-            normalizeSearch(q),
-          )),
-    )
-    .sort((a, b) => {
-      const field = sort === 'updated' ? 'updatedAt' : 'createdAt';
-      return (
-        (sort === 'oldest' ? 1 : -1) * (Date.parse(a[field]) - Date.parse(b[field])) ||
-        a.id.localeCompare(b.id)
-      );
-    });
-  const totalPages = Math.ceil(rows.length / pageSize);
-  const page = Math.min(query.page, Math.max(1, totalPages));
+  const selected = data?.selectedComment ?? null;
+  const rows = data?.comments ?? [];
+  const totalPages = data?.meta?.totalPages ?? 0;
+  const page = data?.meta ? Math.min(query.page, Math.max(1, totalPages)) : query.page;
   useEffect(() => {
     if (!data) return;
     const next = new URLSearchParams(params);
@@ -97,7 +80,12 @@ export function CommentsScreen() {
     if (commentId) panelHeading.current?.focus();
     else if (previousSelection.current) {
       if (returnFocus.current?.isConnected) returnFocus.current.focus();
-      else listHeading.current?.focus();
+      else {
+        const link = document.querySelector<HTMLElement>(
+          `[data-comment-id="${previousSelection.current}"] a`,
+        );
+        (link ?? listHeading.current)?.focus();
+      }
     }
     previousSelection.current = commentId;
   }, [commentId, data]);
@@ -158,11 +146,11 @@ export function CommentsScreen() {
         <div data-admin-comments="ready" className="tw:grid tw:gap-6 tw:min-w-0">
           <div className="tw:grid tw:grid-cols-4 tw:gap-4 tw:max-phone:grid-cols-2">
             {[
-              { key: 'total', label: 'Tổng bình luận', count: items.length },
+              { key: 'total', label: 'Tổng bình luận', count: data.summary?.total ?? 0 },
               ...(['visible', 'hidden', 'deleted'] as const).map((key) => ({
                 key,
                 label: commentStatusLabels[key],
-                count: items.filter((row) => row.status === key).length,
+                count: data.summary?.[key] ?? 0,
               })),
             ].map((item) => (
               <div key={item.key} className="aw-surface tw:rounded-xl tw:p-4">
@@ -246,7 +234,7 @@ export function CommentsScreen() {
                   tabIndex={-1}
                   className="tw:text-xl tw:mb-0"
                 >
-                  Danh sách bình luận ({rows.length})
+                  Danh sách bình luận ({data.meta?.total ?? rows.length})
                 </h2>
               </div>
               <Pagination
@@ -296,7 +284,7 @@ export function CommentsScreen() {
                         </tr>
                       </thead>
                       <tbody>
-                        {rows.slice((page - 1) * pageSize, page * pageSize).map((row) => (
+                        {rows.map((row) => (
                           <tr
                             key={row.id}
                             data-comment-id={row.id}

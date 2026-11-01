@@ -1,9 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useSession } from '@/stores/session';
-import { animeRepository } from '@/lib/api/repositories';
-import type { Anime } from '@/types/anime';
-
+import { personalRepository } from '@/lib/api/repositories';
+import type { ProfileSummary } from '@/types/personal';
 export function useProfileLibrary() {
   const { user, permissions, favorites, progress } = useSession();
   const [params, setParams] = useSearchParams();
@@ -14,34 +13,57 @@ export function useProfileLibrary() {
     permissions.includes('progress:read:own') &&
     mock !== 'forbidden';
   const [attempt, setAttempt] = useState(0);
-  const idsKey = JSON.stringify(
-    [...new Set([...favorites, ...progress.map((entry) => entry.animeId)])].sort(),
-  );
-  const ids = useMemo<string[]>(() => JSON.parse(idsKey), [idsKey]);
-  const key = `${user}:${canRead}:${idsKey}:${mock}:${attempt}`;
-  const [response, setResponse] = useState<{ key: string; data: Anime[]; error: string } | null>(
-    null,
-  );
+  const key = JSON.stringify([user, canRead, favorites, progress, mock, attempt]);
+  const [response, setResponse] = useState<{
+    key: string;
+    summary?: ProfileSummary;
+    error: string;
+  } | null>(null);
   useEffect(() => {
-    if (!canRead || mock === 'loading') return;
-    let active = true;
-    animeRepository
-      .getByIds(ids, mock === 'error' || mock === 'empty' ? mock : 'ready')
-      .then((data) => {
-        if (active) setResponse({ key, data, error: '' });
+    if (!user || !canRead || mock === 'loading') return;
+    const controller = new AbortController();
+    personalRepository
+      .summary({ id: user, permissions }, controller.signal)
+      .then((summary) => {
+        if (mock === 'error') throw new Error('Không thể tải nội dung thư viện. Hãy thử lại.');
+        if (!controller.signal.aborted)
+          setResponse({
+            key,
+            summary:
+              mock === 'empty'
+                ? {
+                    ...summary,
+                    favoriteAnimeCount: 0,
+                    inProgressEpisodeCount: 0,
+                    completedEpisodeCount: 0,
+                    historyEpisodeCount: 0,
+                    favoriteAnime: [],
+                    preview: [],
+                  }
+                : summary,
+            error: '',
+          });
       })
-      .catch(() => {
-        if (active)
-          setResponse({ key, data: [], error: 'Không thể tải nội dung thư viện. Hãy thử lại.' });
+      .catch((error) => {
+        if (!controller.signal.aborted) setResponse({ key, error: error.message });
       });
-    return () => {
-      active = false;
-    };
-  }, [key, ids, canRead, mock]);
+    return () => controller.abort();
+  }, [key]);
   const current = response?.key === key ? response : null;
+  const summary = current?.summary;
   return {
     canRead,
-    data: current?.data ?? [],
+    summary,
+    data: summary
+      ? [
+          ...new Map(
+            [...summary.favoriteAnime, ...summary.preview.map((row) => row.anime)].map((row) => [
+              row.id,
+              row,
+            ]),
+          ).values(),
+        ]
+      : [],
     loading: canRead && !current,
     error: current?.error ?? '',
     retry: () => {

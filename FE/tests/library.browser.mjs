@@ -96,6 +96,7 @@ export async function verifyLibrary(browser, baseURL) {
         { length: 12 },
         (_, index) => `anime-${String(index + 1).padStart(2, '0')}`,
       );
+      delete account.library; // Exercise migration of the legacy favorites-only schema.
       account.progress = account.progress.map((entry, index) => ({
         ...entry,
         updatedAt: `2026-10-${String(25 - index).padStart(2, '0')}T10:00:00Z`,
@@ -146,7 +147,7 @@ export async function verifyLibrary(browser, baseURL) {
     assert.equal(await cards().count(), 2);
     await page
       .getByRole('searchbox', { name: 'Tìm trong bộ sưu tập', exact: true })
-      .fill('hanh trinh anh sao');
+      .fill('Hành trình ánh sao');
     await page.getByRole('searchbox', { name: 'Tìm trong bộ sưu tập', exact: true }).press('Enter');
     await ready();
     assert.equal(await cards().count(), 1);
@@ -226,11 +227,8 @@ export async function verifyLibrary(browser, baseURL) {
       .getByRole('button', { name: /^Bỏ yêu thích/ })
       .click();
     await ready();
-    assert.equal(await cards().count(), before - 1);
-    await page
-      .getByRole('status')
-      .filter({ hasText: 'trình duyệt không lưu được dữ liệu' })
-      .waitFor();
+    assert.equal(await cards().count(), before);
+    await page.getByRole('status').filter({ hasText: 'Không lưu được dữ liệu mẫu' }).waitFor();
     await page.reload();
     await ready();
     await page.evaluate(() => {

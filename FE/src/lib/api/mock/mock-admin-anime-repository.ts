@@ -1,3 +1,5 @@
+import { anime as publicAnime } from '@/testing/mocks/fixtures/anime';
+import { assertVersion } from '@/lib/api/backend/error';
 import type { AdminAnimeRepository } from '@/lib/api/contracts/admin-anime-repository';
 import type { AdminAnimeInput, AdminAnimeRow } from '@/types/admin-anime';
 import { adminAnimeWorkspace, waitForAdminMock } from '@/lib/api/mock/admin-anime-workspace';
@@ -13,6 +15,9 @@ function validated(
   id?: string,
 ): AdminAnimeInput {
   const clean: AdminAnimeInput = {
+    version: input.version,
+    publicationStatus: input.publicationStatus,
+    alternativeTitles: input.alternativeTitles,
     title: input.title.trim(),
     subtitle: input.subtitle.trim(),
     synopsis: input.synopsis.trim(),
@@ -82,7 +87,11 @@ export const mockAdminAnimeRepository: AdminAnimeRepository = {
     adminAnimeWorkspace(session, true);
     await waitForAdminMock(signal, fail);
     const rows = adminAnimeWorkspace(session, true);
+    assertVersion(0, input.version);
     const row: AdminAnimeRow = {
+      version: 1,
+      publicationStatus: input.publicationStatus,
+      alternativeTitles: [...input.alternativeTitles],
       anime: {
         ...validated(input, rows, session),
         id: `admin-anime-${crypto.randomUUID()}`,
@@ -100,15 +109,27 @@ export const mockAdminAnimeRepository: AdminAnimeRepository = {
     const rows = adminAnimeWorkspace(session, true);
     const row = rows.find((item) => item.anime.id === id);
     if (!row) throw new AdminAnimeError('Phim không còn tồn tại trong phiên mẫu.');
-    row.anime = { ...row.anime, ...validated(input, rows, session, id) };
+    assertVersion(row.version, input.version);
+    const clean = validated(input, rows, session, id);
+    row.version++;
+    row.publicationStatus = input.publicationStatus;
+    row.publicSlug =
+      input.publicationStatus === 'published'
+        ? (publicAnime.find((item) => item.id === id)?.slug ?? null)
+        : null;
+    row.alternativeTitles = [...input.alternativeTitles];
+    row.anime = { ...row.anime, ...clean };
     return structuredClone(row);
   },
-  async remove(id, signal, session, fail) {
+  async remove(id, version, signal, session, fail) {
     adminAnimeWorkspace(session, true);
     await waitForAdminMock(signal, fail);
     const rows = adminAnimeWorkspace(session, true);
     const index = rows.findIndex((row) => row.anime.id === id);
     if (index < 0) throw new AdminAnimeError('Phim không còn tồn tại trong phiên mẫu.');
+    assertVersion(rows[index].version, version);
+    if (rows[index].publicationStatus === 'published')
+      throw new AdminAnimeError('Chuyển phim về bản nháp trước khi xoá.');
     if (rows[index].publishedEpisodes > 0)
       throw new AdminAnimeError(
         'Không thể xoá phim đã có tập công khai. Không xoá dây chuyền các tập hoặc lịch sử.',

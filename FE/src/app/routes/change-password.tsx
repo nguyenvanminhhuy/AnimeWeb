@@ -5,8 +5,9 @@ import { useSession } from '@/stores/session';
 import { paths } from '@/config/paths';
 
 export function ChangePasswordPage() {
-  const { user } = useSession();
+  const { user, initializing } = useSession();
   const location = useLocation();
+  if (initializing) return <p role="status">Đang khôi phục phiên…</p>;
   if (!user)
     return (
       <section className="aw-shell tw:mx-auto tw:py-12">

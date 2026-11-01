@@ -62,6 +62,7 @@ export function ModerationDialog({
         comment.id,
         action,
         reason,
+        comment.version,
         controller.signal,
         session,
         shouldFail,
