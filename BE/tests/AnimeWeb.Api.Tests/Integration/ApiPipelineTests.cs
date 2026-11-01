@@ -52,7 +52,8 @@ public sealed class ApiPipelineTests : IDisposable
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         var json = await response.Content.ReadFromJsonAsync<JsonElement>();
         Assert.Equal("VALIDATION_ERROR", json.GetProperty("error").GetProperty("code").GetString());
-        Assert.True(json.GetProperty("error").GetProperty("fields").TryGetProperty("Name", out _));
+        var fields = json.GetProperty("error").GetProperty("fields");
+        Assert.Equal(new[] { "name" }, fields.EnumerateObject().Select(field => field.Name));
     }
 
     [Fact]
@@ -94,6 +95,33 @@ public sealed class ApiPipelineTests : IDisposable
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var json = await response.Content.ReadFromJsonAsync<JsonElement>();
         Assert.True(json.GetProperty("paths").TryGetProperty("/api/v1/health", out _));
+    }
+
+    [Theory]
+    [InlineData("/api/v1/common/anime", new[] { "q", "genre", "status", "year", "format", "sort", "page", "pageSize" })]
+    [InlineData("/api/v1/common/seasons/{seasonId}/episodes", new[] { "page", "pageSize" })]
+    public async Task OpenApiQueryNamesMatchHttpContractAsync(string path, string[] expectedNames)
+    {
+        var json = await client.GetFromJsonAsync<JsonElement>("/openapi/v1.json");
+        var parameters = json.GetProperty("paths").GetProperty(path).GetProperty("get").GetProperty("parameters");
+        var queryNames = parameters.EnumerateArray()
+            .Where(parameter => parameter.GetProperty("in").GetString() == "query")
+            .Select(parameter => parameter.GetProperty("name").GetString()).ToArray();
+        Assert.Equal(expectedNames.Order(), queryNames.Order());
+    }
+
+    [Theory]
+    [InlineData("/api/v1/common/anime/{slug}")]
+    [InlineData("/api/v1/common/anime/{animeId}/seasons")]
+    [InlineData("/api/v1/common/seasons/{seasonId}/episodes")]
+    [InlineData("/api/v1/common/episodes/{episodeId}")]
+    public async Task OpenApiDocumentsValidationErrorEnvelopeAsync(string path)
+    {
+        var json = await client.GetFromJsonAsync<JsonElement>("/openapi/v1.json");
+        var response = json.GetProperty("paths").GetProperty(path).GetProperty("get")
+            .GetProperty("responses").GetProperty("400");
+        var schema = response.GetProperty("content").GetProperty("application/json").GetProperty("schema");
+        Assert.EndsWith("/ApiErrorResponse", schema.GetProperty("$ref").GetString());
     }
 
     [Fact]

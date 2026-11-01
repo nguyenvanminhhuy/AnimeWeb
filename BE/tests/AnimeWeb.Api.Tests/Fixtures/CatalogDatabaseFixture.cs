@@ -15,6 +15,7 @@ public sealed class CatalogDatabaseFixture : IAsyncLifetime
     private bool schemaCreated;
     public ApiFactory Factory { get; private set; } = null!;
     public HttpClient Client { get; private set; } = null!;
+    public ManualTimeProvider Clock { get; } = new();
 
     public async Task InitializeAsync()
     {
@@ -36,7 +37,7 @@ public sealed class CatalogDatabaseFixture : IAsyncLifetime
         schemaCreated = true;
 
         parsed.SearchPath = schema;
-        Factory = new ApiFactory(parsed.ConnectionString);
+        Factory = new ApiFactory(parsed.ConnectionString, clock: Clock);
         Client = Factory.CreateClient();
         await using var scope = Factory.Services.CreateAsyncScope();
         var database = scope.ServiceProvider.GetRequiredService<AnimeWebDbContext>();
@@ -46,11 +47,21 @@ public sealed class CatalogDatabaseFixture : IAsyncLifetime
         Assert.Single(await database.Database.GetAppliedMigrationsAsync());
         var catalogMigration = database.Database.GetMigrations().Single(migration => migration.EndsWith("_InitialCatalog"));
         await database.GetService<IMigrator>().MigrateAsync(catalogMigration);
+        // Insert using the old wire-independent schema, before the new Version/Subtitle columns exist.
+        await database.Database.ExecuteSqlRawAsync("""
+            INSERT INTO "Anime" ("Id","Slug","Title","AlternativeTitles","Synopsis","PosterUrl","Status","Format","ReleaseYear","PublicationStatus")
+            VALUES ('upgrade_fixture','upgrade-fixture','Existing catalog',ARRAY[]::text[],'Preserved synopsis','/fixture.webp','upcoming','tv',2026,'published')
+            """);
+        await database.Database.MigrateAsync();
+        Assert.Equal(4, (await database.Database.GetAppliedMigrationsAsync()).Count());
+        var upgraded = await database.Anime.SingleAsync(x => x.Id == "upgrade_fixture");
+        Assert.Equal("Preserved synopsis", upgraded.Synopsis);
+        Assert.Equal(1, upgraded.Version);
+        Assert.Equal("", upgraded.Subtitle);
+        database.Remove(upgraded);
+        await database.SaveChangesAsync();
         Assert.True(await CatalogDemoSeeder.SeedAsync(database));
         Assert.False(await CatalogDemoSeeder.SeedAsync(database));
-        // Upgrade a populated catalog; the episode migration must preserve existing anime.
-        await database.Database.MigrateAsync();
-        Assert.Equal(3, (await database.Database.GetAppliedMigrationsAsync()).Count());
         Assert.Equal(7, await database.Anime.CountAsync());
     }
 

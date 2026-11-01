@@ -2,7 +2,7 @@ using AnimeEntity = AnimeWeb.Api.Features.Anime.Anime;
 
 namespace AnimeWeb.Api.Features.Episodes;
 
-public sealed class Season
+public sealed class Season : global::AnimeWeb.Api.Shared.VersionedEntity
 {
     public required string Id { get; set; }
     public required string AnimeId { get; set; }

@@ -8,16 +8,31 @@ namespace AnimeWeb.Api.Tests.Integration;
 public sealed class AnimeValidationHttpTests
 {
     [Theory]
-    [InlineData("?page=0")]
-    [InlineData("?page=oops")]
-    [InlineData("?pageSize=51")]
-    [InlineData("?year=0")]
-    [InlineData("?status=deleted")]
-    [InlineData("?status=1")]
-    [InlineData("?format=unknown")]
-    [InlineData("?sort=popular")]
-    [InlineData("?genre=Invalid%20Slug")]
-    public async Task InvalidQueryFailsBeforeDatabaseAccessAsync(string query)
+    [InlineData("Invalid-Slug")]
+    [InlineData("invalid%20slug")]
+    public async Task InvalidSlugReturnsFieldErrorBeforeDatabaseAccessAsync(string slug)
+    {
+        await using var factory = new ApiFactory();
+        using var client = factory.CreateClient();
+        var response = await client.GetAsync("/api/v1/common/anime/" + slug);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        var json = await response.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal("VALIDATION_ERROR", json.GetProperty("error").GetProperty("code").GetString());
+        Assert.Equal(new[] { "slug" },
+            json.GetProperty("error").GetProperty("fields").EnumerateObject().Select(field => field.Name));
+    }
+
+    [Theory]
+    [InlineData("?page=0", "page")]
+    [InlineData("?page=oops", "page")]
+    [InlineData("?pageSize=51", "pageSize")]
+    [InlineData("?year=0", "year")]
+    [InlineData("?status=deleted", "status")]
+    [InlineData("?status=1", "status")]
+    [InlineData("?format=unknown", "format")]
+    [InlineData("?sort=popular", "sort")]
+    [InlineData("?genre=Invalid%20Slug", "genre")]
+    public async Task InvalidQueryFailsBeforeDatabaseAccessAsync(string query, string expectedField)
     {
         await using var factory = new ApiFactory();
         using var client = factory.CreateClient();
@@ -25,6 +40,7 @@ public sealed class AnimeValidationHttpTests
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         var json = await response.Content.ReadFromJsonAsync<JsonElement>();
         Assert.Equal("VALIDATION_ERROR", json.GetProperty("error").GetProperty("code").GetString());
-        Assert.NotEmpty(json.GetProperty("error").GetProperty("fields").EnumerateObject());
+        Assert.Equal(new[] { expectedField },
+            json.GetProperty("error").GetProperty("fields").EnumerateObject().Select(field => field.Name));
     }
 }

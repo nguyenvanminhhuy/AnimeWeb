@@ -15,6 +15,7 @@ public sealed class EpisodesController(EpisodeService service) : ControllerBase
 {
     [HttpGet("anime/{animeId}/seasons")]
     [ProducesResponseType<ApiResponse<List<SeasonDto>>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ApiErrorResponse>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ApiErrorResponse>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ApiResponse<List<SeasonDto>>>> ListSeasonsAsync(
         [StringLength(100, MinimumLength = 1)] string animeId, CancellationToken cancellationToken)
@@ -45,6 +46,7 @@ public sealed class EpisodesController(EpisodeService service) : ControllerBase
 
     [HttpGet("episodes/{episodeId}")]
     [ProducesResponseType<ApiResponse<EpisodeDetailDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ApiErrorResponse>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ApiErrorResponse>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ApiResponse<EpisodeDetailDto>>> GetEpisodeAsync(
         [StringLength(100, MinimumLength = 1)] string episodeId, CancellationToken cancellationToken)

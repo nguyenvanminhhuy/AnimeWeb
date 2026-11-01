@@ -10,6 +10,7 @@ public sealed class EpisodeDatabaseFixture : IAsyncLifetime
     private readonly CatalogDatabaseFixture catalog = new();
     public ApiFactory Factory => catalog.Factory;
     public HttpClient Client => catalog.Client;
+    public ManualTimeProvider Clock => catalog.Clock;
 
     public async Task InitializeAsync()
     {

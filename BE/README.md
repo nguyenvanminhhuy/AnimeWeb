@@ -1,6 +1,6 @@
 # AnimeWeb backend
 
-BE C#/.NET 10, ASP.NET Core Controller, EF Core và PostgreSQL. Đã có nền vận hành, Anime và Mùa/tập: API đọc, migration và seed demo explicit. Chưa có auth, library, comments, playback hoặc progress.
+BE C#/.NET 10, ASP.NET Core Controller, EF Core và PostgreSQL. Đã có nền, Anime/Mùa/tập, Auth/RBAC, thư viện/tiến độ/bình luận, Playback metadata, Home/related/ranking và API quản trị theo [hiện trạng](../DOC/docs-BE/current-status.md). FE chưa nối HTTP; không có video thật trong seed.
 
 ## Yêu cầu
 
@@ -46,7 +46,7 @@ Anime cha phải published; draft/không tồn tại trả 404 tương ứng ANI
 
 Nếu đã chạy catalog từ trước, gọi lại start-local.ps1 -InitializeCatalog để chủ động apply InitialEpisodes và bổ sung demo mùa/tập. Seeder mùa/tập chỉ thêm khi hai bảng đang rỗng và có đúng các ID/slug demo cần thiết; không sửa dữ liệu đã có. Nếu dùng catalog tự quản lý, seed không tự gán mùa/tập demo vào anime khác.
 
-Cấu hình `ConnectionStrings:AnimeWeb` bắt buộc; thiếu/sai làm host dừng ngay. Các origin CORS local mặc định là http://localhost:5173 và http://127.0.0.1:5173, có thể override bằng `Cors__AllowedOrigins__0`. Hiện chưa bật credentials hoặc auth scheme. JSON camelCase, enum snake_case string, lỗi theo [contract](../DOC/api-contract.md).
+Cấu hình `ConnectionStrings:AnimeWeb` bắt buộc; thiếu/sai làm host dừng ngay. Các origin CORS local mặc định là http://localhost:5173 và http://127.0.0.1:5173, có thể override bằng `Cors__AllowedOrigins__0`. Dùng bearer token, không bật CORS credentials. JSON camelCase, enum snake_case string, lỗi theo [contract](../DOC/api-contract.md).
 
 Dừng database dev khi không dùng:
 
@@ -68,7 +68,7 @@ Test thường không cần Docker: ca PostgreSQL được ghi rõ skipped khi c
 
 ## Migration
 
-Local tool dotnet-ef đã pin. InitialInfrastructure là baseline; InitialCatalog tạo Anime/Genres/AnimeGenres; InitialEpisodes tạo Seasons/Episodes với FK restrict, index sort và check metadata. Không chèn dữ liệu demo qua migration.
+Local tool dotnet-ef đã pin. InitialInfrastructure là baseline; InitialCatalog tạo catalog; InitialEpisodes tạo mùa/tập. CompleteBackendFeatures bổ sung auth/quyền, dữ liệu cá nhân, comments/audit, nguồn/subtitle/view, version và subtitle anime; seed role/permission cấu hình, không seed tài khoản/mật khẩu hoặc dữ liệu demo. Trước apply, xử lý genre name trùng không phân biệt hoa/thường nếu DB cũ có để unique index được tạo.
 
 Khi cần tạo/apply migration, cấp `ConnectionStrings__AnimeWeb` cho database local/test đích đã xác định, rồi dùng:
 
@@ -86,4 +86,24 @@ dotnet run --project src/AnimeWeb.Api --no-launch-profile -- --seed-demo
 
 Lệnh seed không chạy HTTP server, từ chối môi trường khác Development, không thay catalog đã có dữ liệu. Không seed tài khoản/mật khẩu.
 
-Không apply migration bằng connection string của môi trường chưa xác minh. Không dùng EnsureCreated thay migration. Xem [workflow generate](../DOC/docs-BE/prompts/module-generation.md) để thêm từng module; auth/progress còn cần đặc tả riêng.
+Không apply migration bằng connection string của môi trường chưa xác minh. Không dùng EnsureCreated thay migration. Xem [workflow generate](../DOC/docs-BE/prompts/module-generation.md) trước thay đổi contract/code.
+
+## Admin đầu tiên và xác thực
+
+Sau migration, người vận hành tự cấp cấu hình Bootstrap__Email, Bootstrap__DisplayName và Bootstrap__Password bằng cơ chế bí mật phù hợp. Không ghi mật khẩu vào file source hoặc đối số command line. Khi đã cấp ConnectionStrings__AnimeWeb và các biến Bootstrap, chạy explicit từ BE:
+
+```powershell
+dotnet run --project src/AnimeWeb.Api --no-launch-profile -- --bootstrap-admin
+```
+
+CLI tạo admin đầu tiên nếu chưa có, không tạo lại khi đã tồn tại và không chạy HTTP server; không tự apply migration. Xóa cấu hình bootstrap khỏi phiên/môi trường sau sử dụng. Không có admin/password mặc định; đăng ký HTTP luôn role user. Users API chỉ đọc, không endpoint cấp quyền.
+
+POST `/api/v1/auth/login` body `{email,password}` trả `{data:{accessToken,tokenType,expiresAt,profile}}`. Gửi `Authorization: Bearer <accessToken>` cho `/me` và `/admin`. Token tuyệt đối 7 ngày, không refresh; logout thu hồi phiên hiện tại, đổi mật khẩu thu hồi mọi phiên. Role/permission và blocked đọc lại từ DB mỗi request; production dùng HTTPS.
+
+## Version, nguồn và thống kê
+
+Create/upsert mới gửi version=0; update/progress/comment/moderation gửi version từ response trước. PATCH admin gửi đủ form và version; DELETE dùng `?version=...`; stale trả 409. List server có meta/summary/options theo contract; không tải toàn DB để mô phỏng getCatalog FE.
+
+Source hiện chỉ providerKey=direct; admin cấu hình URL HTTP(S), HTTPS ngoài Development. API không tải/proxy/chuyển mã video hoặc SRT. Nguồn enabled hết hạn bị loại khỏi Playback/hasPlayback. FE cần mapper/player riêng cho HLS/SRT.
+
+POST `/common/episodes/:id/view-sessions` với positionSeconds khi bắt đầu phát; sau ít nhất 30 giây và vị trí tăng 30 giây, POST `/common/view-sessions/:id/confirm`. View được chống trùng theo anime/viewer/bucket30phút, dùng chung Home/Dashboard; GET playback không tăng view. Guest giữ cookie viewer; dữ liệu này không phải hệ chống gian lận hoàn chỉnh. Các path có prefix `/api/v1`.

@@ -1,10 +1,11 @@
 namespace AnimeWeb.Api.Features.Anime;
 
-public sealed class Anime
+public sealed class Anime : global::AnimeWeb.Api.Shared.VersionedEntity
 {
     public required string Id { get; set; }
     public required string Slug { get; set; }
     public required string Title { get; set; }
+    public string Subtitle { get; set; } = "";
     public string[] AlternativeTitles { get; set; } = [];
     public string Synopsis { get; set; } = string.Empty;
     public required string PosterUrl { get; set; }

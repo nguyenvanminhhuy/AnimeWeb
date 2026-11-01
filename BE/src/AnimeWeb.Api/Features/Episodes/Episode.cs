@@ -1,6 +1,6 @@
 namespace AnimeWeb.Api.Features.Episodes;
 
-public sealed class Episode
+public sealed class Episode : global::AnimeWeb.Api.Shared.VersionedEntity
 {
     public required string Id { get; set; }
     public required string SeasonId { get; set; }

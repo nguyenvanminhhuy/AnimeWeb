@@ -1,10 +1,20 @@
 using System.Text.Json.Serialization;
+using System.Threading.RateLimiting;
 using AnimeWeb.Api.Features.Anime;
+using AnimeWeb.Api.Features.Auth;
+using AnimeWeb.Api.Features.Comments;
 using AnimeWeb.Api.Features.Episodes;
+using AnimeWeb.Api.Features.Library;
+using AnimeWeb.Api.Features.Playback;
 using AnimeWeb.Api.Infrastructure.Persistence;
 using AnimeWeb.Api.Infrastructure.Persistence.Seeding;
 using AnimeWeb.Api.Shared.Configuration;
 using AnimeWeb.Api.Shared.Errors;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -22,10 +32,18 @@ builder.Services.AddOptions<CorsOptions>()
     .ValidateOnStart();
 builder.Services.AddDbContext<AnimeWebDbContext>((services, options) =>
     options.UseNpgsql(services.GetRequiredService<IOptions<DatabaseOptions>>().Value.AnimeWeb));
-builder.Services.AddControllers()
+builder.Services.AddControllers(options =>
+    {
+        options.ModelMetadataDetailsProviders.Add(new SystemTextJsonValidationMetadataProvider());
+        options.Conventions.Add(new ApiContractConvention());
+    })
     .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.DictionaryKeyPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+        options.JsonSerializerOptions.UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow;
         options.JsonSerializerOptions.Converters.Add(
-            new JsonStringEnumConverter(System.Text.Json.JsonNamingPolicy.SnakeCaseLower, allowIntegerValues: false)))
+            new JsonStringEnumConverter(System.Text.Json.JsonNamingPolicy.SnakeCaseLower, allowIntegerValues: false));
+    })
     .ConfigureApiBehaviorOptions(options =>
     {
         options.SuppressMapClientErrors = true;
@@ -42,8 +60,61 @@ builder.Services.AddCors();
 builder.Services.AddScoped<AnimeService>();
 builder.Services.AddScoped<EpisodeService>();
 builder.Services.AddOpenApi();
+builder.Services.AddSingleton(TimeProvider.System);
+builder.Services.AddScoped<IPasswordHasher<Account>, PasswordHasher<Account>>();
+builder.Services.AddScoped<AccountService>();
+builder.Services.AddScoped<AdminBootstrap>();
+builder.Services.AddScoped<PersonalService>();
+builder.Services.AddScoped<CommentService>();
+builder.Services.AddScoped<AdminCatalogService>();
+builder.Services.AddScoped<AdminEpisodeService>();
+builder.Services.AddScoped<AdminPlaybackService>();
+builder.Services.AddScoped<PlaybackService>();
+builder.Services.AddScoped<CatalogAggregateService>();
+builder.Services.AddScoped<AdminUserService>();
+builder.Services.AddScoped<IPlaybackProvider, DirectPlaybackProvider>();
+builder.Services.AddAuthentication(SessionAuthentication.SchemeName)
+    .AddScheme<AuthenticationSchemeOptions, SessionAuthentication>(SessionAuthentication.SchemeName, _ => { });
+builder.Services.AddAuthorization(options =>
+{
+    options.DefaultPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().RequireClaim("accountStatus", "active").Build();
+    foreach (var permission in Permissions.All)
+        options.AddPolicy(permission, policy => policy.RequireAuthenticatedUser()
+            .RequireClaim("accountStatus", "active").RequireClaim("permission", permission));
+});
+builder.Services.AddRateLimiter(options =>
+{
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+        RateLimitPartition.GetFixedWindowLimiter(context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            _ => new FixedWindowRateLimiterOptions { PermitLimit = builder.Configuration.GetValue("RateLimits:Global", 120), Window = TimeSpan.FromMinutes(1), QueueLimit = 0 }));
+    options.AddPolicy("auth", context => RateLimitPartition.GetFixedWindowLimiter(
+        context.Connection.RemoteIpAddress?.ToString() ?? "unknown", _ => new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = builder.Configuration.GetValue("RateLimits:Auth", 10),
+            Window = TimeSpan.FromMinutes(1),
+            QueueLimit = 0
+        }));
+    options.OnRejected = async (context, ct) =>
+    {
+        context.HttpContext.Response.StatusCode = 429;
+        await context.HttpContext.Response.WriteAsJsonAsync(ApiErrors.Create(context.HttpContext, 429), ct);
+    };
+});
 
 var app = builder.Build();
+
+if (args.Contains("--bootstrap-admin"))
+{
+    await using var scope = app.Services.CreateAsyncScope();
+    var created = await scope.ServiceProvider.GetRequiredService<AdminBootstrap>().CreateAsync(new RegisterInput
+    {
+        Email = app.Configuration["Bootstrap:Email"] ?? "",
+        DisplayName = app.Configuration["Bootstrap:DisplayName"] ?? "Administrator",
+        Password = app.Configuration["Bootstrap:Password"] ?? ""
+    });
+    app.Logger.LogInformation(created ? "Bootstrap administrator created." : "An administrator already exists; no changes.");
+    return;
+}
 
 if (args.Contains("--seed-demo"))
 {
@@ -79,6 +150,9 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+app.UseRateLimiter();
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 app.Run();
 

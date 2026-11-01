@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AnimeWeb.Api.Features.Episodes;
 
-public sealed class EpisodeService(AnimeWebDbContext database)
+public sealed class EpisodeService(AnimeWebDbContext database, TimeProvider time)
 {
     public async Task<List<SeasonDto>?> ListSeasonsAsync(string animeId, CancellationToken cancellationToken)
     {
@@ -41,7 +41,9 @@ public sealed class EpisodeService(AnimeWebDbContext database)
             .Skip((int)offset).Take(pagination.PageSize)
             .Select(episode => new EpisodeDto(
                 episode.Id, episode.SeasonId, episode.Number, episode.Title, episode.SortOrder,
-                episode.DurationSeconds, episode.ThumbnailUrl, episode.PublishedAt!.Value, episode.Status, false))
+                episode.DurationSeconds, episode.ThumbnailUrl, episode.PublishedAt!.Value, episode.Status,
+                database.PlaybackSources.Any(source => source.EpisodeId == episode.Id && source.Enabled
+                    && (source.ExpiresAt == null || source.ExpiresAt > time.GetUtcNow()))))
             .ToListAsync(cancellationToken);
         return new(data, meta);
     }
@@ -53,6 +55,8 @@ public sealed class EpisodeService(AnimeWebDbContext database)
             .Select(episode => new EpisodeDetailDto(
                 episode.Id, episode.Season.AnimeId, episode.Season.Anime.Slug,
                 episode.SeasonId, episode.Number, episode.Title, episode.SortOrder,
-                episode.DurationSeconds, episode.ThumbnailUrl, episode.PublishedAt!.Value, episode.Status, false))
+                episode.DurationSeconds, episode.ThumbnailUrl, episode.PublishedAt!.Value, episode.Status,
+                database.PlaybackSources.Any(source => source.EpisodeId == episode.Id && source.Enabled
+                    && (source.ExpiresAt == null || source.ExpiresAt > time.GetUtcNow()))))
             .SingleOrDefaultAsync(cancellationToken);
 }

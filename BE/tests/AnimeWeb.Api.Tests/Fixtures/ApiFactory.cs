@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace AnimeWeb.Api.Tests.Fixtures;
 
-public sealed class ApiFactory(string? connectionString = null) : WebApplicationFactory<Program>
+public sealed class ApiFactory(string? connectionString = null, int authLimit = 1000, TimeProvider? clock = null) : WebApplicationFactory<Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -18,8 +18,16 @@ public sealed class ApiFactory(string? connectionString = null) : WebApplication
                     ?? "Host=127.0.0.1;Port=1;Database=unavailable_test;Username=test;Password=fixture;Timeout=1",
                 ["Cors:AllowedOrigins:0"] = "http://localhost:5173",
                 ["Cors:AllowedOrigins:1"] = "http://127.0.0.1:5173"
+                ,
+                ["RateLimits:Auth"] = authLimit.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                ["RateLimits:Global"] = "10000"
+                ,
+                ["Logging:LogLevel:Default"] = "Warning"
             }));
-        builder.ConfigureServices(services => services.AddControllers()
-            .AddApplicationPart(typeof(PipelineProbeController).Assembly));
+        builder.ConfigureServices(services =>
+        {
+            if (clock is not null) services.AddSingleton(clock);
+            services.AddControllers().AddApplicationPart(typeof(PipelineProbeController).Assembly);
+        });
     }
 }
