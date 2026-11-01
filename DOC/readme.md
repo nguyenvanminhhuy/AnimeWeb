@@ -1,8 +1,23 @@
 # Anime Web — Tổng quan tài liệu
 
-Trạng thái: **FE có các màn hình demo; BE đã có nền ASP.NET Core, API Anime và Mùa/tập. Chưa nối FE với BE hoặc có nguồn phim thật.**
+Trạng thái: **FE có các màn hình demo; BE đã có API catalog, tài khoản/phân quyền, thư viện/tiến độ, bình luận, playback metadata và quản trị theo contract v0.3. Chưa nối FE với BE hoặc có nguồn phim thật.**
 
-Mục tiêu là web xem anime hoạt động thực tế. FE dùng mock và dữ liệu cục bộ; auth demo không lưu/xác thực mật khẩu. Trang xem đã có giao diện và native video, chưa có video để kiểm chứng playback. BE dùng C#/ASP.NET Core Controller, PostgreSQL và EF Core; Anime và Mùa/tập có migration, seed demo và API công khai. Xem [hướng dẫn chạy](../BE/README.md); các feature nghiệp vụ còn lại chưa triển khai.
+Mục tiêu là web xem anime hoạt động thực tế. FE dùng mock và dữ liệu cục bộ; auth demo không lưu/xác thực mật khẩu. Trang xem đã có giao diện và native video, chưa có video để kiểm chứng playback. BE dùng C#/ASP.NET Core Controller, PostgreSQL và EF Core. Xem [hướng dẫn chạy](../BE/README.md), [hiện trạng BE](docs-BE/current-status.md) và [kết quả kiểm chứng](docs-BE/verification.md).
+
+## FE đọc tài liệu API BE ở đâu?
+
+Điểm tra cứu API hiện có: **[DOC/docs-BE/feature-reference.md](docs-BE/feature-reference.md)**. Tài liệu mô tả từng feature, method/path, path/query/body, kiểu dữ liệu, response, validation và permission; dùng khi viết HTTP adapter thay repository mock FE.
+
+| Cần tra cứu | Đường dẫn |
+| --- | --- |
+| Endpoint, DTO, tham số và quy tắc dữ liệu đã code | [Tham chiếu API BE](docs-BE/feature-reference.md) |
+| Quyết định nghiệp vụ, auth, version và hợp đồng chung | [API contract v0.3](api-contract.md) |
+| Flow màn hình, repository mock và nhu cầu mapping của FE | [Bàn giao FE/BE](fe-backend-handoff.md) |
+| Cách chạy API và cấu hình môi trường local | [BE/README.md](../BE/README.md) |
+
+API local theo script setup dùng `http://localhost:5200`, prefix `/api/v1`. Khi API chạy ở Development, đọc schema tại [OpenAPI JSON](http://localhost:5200/openapi/v1.json); chưa có Swagger UI. Xem hướng dẫn chạy nếu đổi host/port.
+
+Khi nối FE, gửi `Authorization: Bearer <accessToken>` cho API cần đăng nhập, unwrap `{data}`/`{data,meta}` và xử lý lỗi `{error:{code,message,requestId,fields?}}`. Gắn `fields` vào form khi lỗi `400`, xử lý phiên ở `401`, quyền ở `403`, tải lại dữ liệu khi `409`. Mutation dùng `version` theo từng endpoint; PATCH quản trị gửi đủ form. Phần baseline mock trong handoff có các đề xuất cũ: đối chiếu tham chiếu API và quyết định v0.3 trước khi tích hợp, không mặc định mọi endpoint trong bảng handoff đều tồn tại.
 
 ## Cấu trúc
 
@@ -32,6 +47,7 @@ Anime-Web/
 
 | Tài liệu | Nội dung |
 | --- | --- |
+| [docs-BE/feature-reference.md](docs-BE/feature-reference.md) | FE tra cứu API BE đã code: feature, field, path/query/body, response, validation và quyền |
 | [fe-backend-handoff.md](fe-backend-handoff.md) | Bàn giao BE: feature → lời gọi FE thực tế → input/output → HTTP API thay thế |
 | [feature-api-review.md](feature-api-review.md) | Review toàn bộ feature, API đã có/còn thiếu, khoảng cách FE/BE và checklist triển khai — 2026-11-01 |
 | [roadmap.md](roadmap.md) | Phạm vi và các giai đoạn toàn dự án |
@@ -42,7 +58,7 @@ Anime-Web/
 | [entities.md](entities.md) | Entity, quan hệ và ràng buộc dữ liệu |
 | [api-contract.md](api-contract.md) | API common/me, DTO và lỗi |
 
-API/entity, roadmap và quyết định chung giữ một bản tại DOC để FE và BE cùng tham chiếu. Tài liệu BE là thiết kế cho giai đoạn tiếp theo, chưa phải bằng chứng server chạy được.
+API/entity, roadmap và quyết định chung giữ tại DOC để FE và BE cùng tham chiếu. Tham chiếu API mô tả code hiện có; kết quả kiểm chứng và giới hạn triển khai nằm trong [verification](docs-BE/verification.md) và [current-status](docs-BE/current-status.md), không suy ra đã deploy hoặc đã tích hợp FE.
 
 ## Chạy FE hiện có
 

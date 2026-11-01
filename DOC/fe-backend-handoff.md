@@ -1,5 +1,15 @@
 # Bàn giao yêu cầu dữ liệu FE để triển khai API BE
 
+## Đường dẫn API BE dành cho FE
+
+**Đọc [DOC/docs-BE/feature-reference.md](docs-BE/feature-reference.md) để tích hợp API BE đã code**: danh sách endpoint theo feature, method/path, path/query/body, field/kiểu dữ liệu, response, validation và permission. [API contract v0.3](api-contract.md) giữ các quyết định nghiệp vụ; tài liệu handoff này giữ flow và baseline repository mock FE.
+
+- Chạy API theo [BE/README.md](../BE/README.md). Local mặc định theo script: `http://localhost:5200`; prefix `/api/v1`.
+- Schema khi chạy Development: [OpenAPI JSON](http://localhost:5200/openapi/v1.json), không có Swagger UI.
+- Request cần đăng nhập gửi bearer token; response thành công dùng `{data}`/`{data,meta}`, một số thao tác trả `204` không có body. Lỗi dùng `{error:{code,message,requestId,fields?}}`; `400` cho validation, `401` cho phiên không hợp lệ, `403` cho quyền, `409` cho xung đột dữ liệu/version.
+- Khi thay mock bằng HTTP, bổ sung `version` theo endpoint và gửi đủ form cho PATCH quản trị. Dùng `providerKey=direct` cho nguồn phát; đọc đúng DTO thực tế thay vì gửi nguyên view model/mock actor.
+- Các bảng baseline bên dưới có đề xuất và payload trước v0.3. Không dùng chúng làm danh sách API đã có; đối chiếu [tham chiếu API](docs-BE/feature-reference.md) và [hiện trạng BE](docs-BE/current-status.md). Các khác biệt chưa giải quyết cần thống nhất contract và cập nhật tài liệu trước khi đổi API.
+
 **Cập nhật BE sau triển khai 2026-11-01:** các feature trong tài liệu đã có BE theo bộ mặc định người dùng duyệt tại [API contract v0.3](api-contract.md); xem [hiện trạng](docs-BE/current-status.md). Phần mô tả FE/repository bên dưới vẫn là baseline mock chưa nối HTTP. Những nhãn đề xuất/nháp của bản bàn giao được thay bằng contract v0.3 cho BE, không là yêu cầu generate lại. Adapter FE cần bổ sung token/version/publication/genreIds, đọc admin comments `{comment,lastModeration}`, library/progress rows phẳng và summary riêng. Chưa sửa FE trong lượt triển khai BE.
 
 Đối chiếu source Fe-Dev ngày **2026-11-01**. Mục tiêu: BE biết mỗi feature FE đang gọi hàm gì, gửi gì, cần nhận gì và endpoint nào sẽ thay lời gọi đó. Dùng tài liệu này khi triển khai từng module; [feature-api-review.md](feature-api-review.md) chỉ là review tổng quan.
