@@ -1,17 +1,44 @@
 # AnimeWeb backend
 
-BE C#/.NET 10, ASP.NET Core Controller, EF Core và PostgreSQL. Đã có nền, Anime/Mùa/tập, Auth/RBAC, thư viện/tiến độ/bình luận, Playback metadata, Home/related/ranking và API quản trị theo [hiện trạng](../DOC/docs-BE/current-status.md). FE chưa nối HTTP; không có video thật trong seed.
+BE C#/.NET 10, ASP.NET Core Controller, EF Core và PostgreSQL. Đã có nền, Anime/Mùa/tập, Auth/RBAC, thư viện/tiến độ/bình luận, Playback metadata, Home/related/ranking và API quản trị theo [hiện trạng](../DOC/docs-BE/current-status.md). FE mặc định nối HTTP qua Vite /api proxy; không có video thật trong seed.
 
 ## Yêu cầu
 
 - .NET SDK 10.0.403 (global.json cho phép patch cùng feature band).
-- Docker Desktop chạy Linux engine, Docker Compose.
-- PostgreSQL image pin `postgres:18.6-bookworm`; dev dùng port 54329, test dùng 54330, chỉ bind 127.0.0.1.
+- Chạy không Docker: PostgreSQL 18 cài trực tiếp trên Windows, port mặc định 5432; dùng setup.ps1/start.ps1 theo phần bên dưới.
+- Chạy bằng Docker (tuỳ chọn): Docker Desktop Linux engine/Compose, image `postgres:18.6-bookworm`; dev port 54329, test port 54330, chỉ bind 127.0.0.1.
 - NuGet restore cần mạng lần đầu. BE không dùng pnpm hoặc workspace SRC.
 
-Mọi lệnh dưới chạy từ folder `BE` của repo `New folder/AnimeWeb` trên branch Be-Dev.
+Mọi lệnh dưới chạy từ folder `Anime-Web/BE`. Hướng dẫn cả hai phía nằm tại [SETUP.md](../SETUP.md).
 
-## Restore và chạy local
+## Chạy hằng ngày với Docker Desktop
+
+Mở Docker Desktop và đợi engine sẵn sàng, sau đó tại BE chạy:
+
+```powershell
+dotnet run
+```
+
+Project `AnimeWeb.Local.csproj` là launcher Windows, gọi `scripts/start-local.ps1` để bật PostgreSQL rồi chạy project API tại http://localhost:5200. Không cần nhập lại mật khẩu đã lưu cục bộ, không hardcode mật khẩu vào source. Launcher không thuộc runtime triển khai API; production/Linux vẫn chạy project `src/AnimeWeb.Api` trực tiếp với cấu hình được cấp từ môi trường.
+
+Lần đầu clone hoặc cần chủ động cập nhật schema và catalog mẫu: `dotnet run -- -InitializeCatalog`. Chạy hằng ngày không migrate/seed/reset database. Ctrl+C dừng API; container database vẫn chạy, dừng riêng bằng `docker compose stop` nếu cần. Launcher không tự mở ứng dụng Docker Desktop.
+
+Terminal khác tại `Anime-Web/FE` chạy `pnpm run dev`, mở http://127.0.0.1:5173. Dependencies FE cài một lần bằng `pnpm install --frozen-lockfile` tại SRC.
+
+## Chạy không Docker Desktop trên Windows
+
+Cài PostgreSQL Windows một lần, bật service và nhớ mật khẩu user postgres. Từ BE chạy:
+
+```powershell
+.\setup.ps1 -SeedDemo
+.\start.ps1
+```
+
+Setup tạo database nếu thiếu, restore và apply migration vào PostgreSQL local; seed chỉ chạy khi có -SeedDemo. Start chỉ chạy API, không tự migrate/seed. Mật khẩu nhập ẩn, không lưu file. Cấu hình không bí mật nằm tại .local/native-settings.json (gitignore). Có thể đổi -DbPort/-DbName/-DbUser/-PgBin khi setup; -Check chỉ kiểm tra dependency, không kết nối DB. Chi tiết DBeaver/FE ở SETUP.md. Native DB không tự nhập dữ liệu từ Docker volume cũ.
+
+## Restore và chạy local bằng Docker (tuỳ chọn)
+
+Trên Windows có thể chạy ngay `.\scripts\start-local.ps1 -InitializeCatalog`. Khi chưa có volume dev và chưa cấp ANIMEWEB_DB_PASSWORD, script tự tạo mật khẩu ngẫu nhiên, lưu bằng Windows DPAPI tại .local/docker-password.dpapi (gitignore). Những lần sau dùng lại cùng Windows account. Xem mật khẩu để kết nối DBeaver bằng `.\scripts\show-database-password.ps1` trong terminal cá nhân. Nếu volume đã tồn tại mà chưa có file mật khẩu, script yêu cầu mật khẩu hiện tại, không reset dữ liệu. Các lệnh bên dưới vẫn cho phép tự cấp mật khẩu qua environment.
 
 ```powershell
 dotnet restore AnimeWeb.slnx --locked-mode
@@ -20,13 +47,17 @@ $env:ANIMEWEB_DB_PASSWORD = Read-Host 'Mat khau PostgreSQL local'
 .\scripts\start-local.ps1 -InitializeCatalog
 ```
 
-Script tạo/khởi động đúng Compose project `animeweb-be`, dựng connection string có escape ký tự đặc biệt và chạy API tại **http://localhost:5200**. Mật khẩu chỉ truyền qua environment, không ghi file. Dùng lại cùng mật khẩu nếu volume dev đã tồn tại; đổi biến môi trường không đổi mật khẩu của database đã khởi tạo. Cờ -InitializeCatalog là yêu cầu explicit để apply migration vào database dev do script cấu hình và seed khi catalog rỗng; bỏ cờ này khi chỉ muốn khởi động, không migrate/seed. Script không xóa dữ liệu hoặc ghi đè catalog có sẵn. Ctrl+C dừng API; database dev được giữ.
+Script tạo/khởi động đúng Compose project `animeweb-be`, dựng connection string có escape ký tự đặc biệt và chạy API tại **http://localhost:5200**. Connection string được truyền qua environment; mật khẩu tự tạo chỉ lưu mã hóa DPAPI trong .local, không ghi plaintext vào source. Dùng lại cùng mật khẩu nếu volume dev đã tồn tại; đổi biến môi trường không đổi mật khẩu của database đã khởi tạo. Cờ -InitializeCatalog là yêu cầu explicit để apply migration vào database dev do script cấu hình và seed khi catalog rỗng; bỏ cờ này khi chỉ muốn khởi động, không migrate/seed. Script không xóa dữ liệu hoặc ghi đè catalog có sẵn. Ctrl+C dừng API; database dev được giữ.
 
 - GET `/api/v1/health`: 200, `{ "data": { "status": "ok" } }`, không truy cập database.
 - GET `/api/v1/health/ready`: 200 khi kết nối PostgreSQL được; 503 dạng error khi không kết nối được. Chưa kiểm tra schema nghiệp vụ.
 - GET `/openapi/v1.json`: chỉ Development. Không cài Swagger UI.
 
 ## API Anime
+
+Để bổ sung anime thật vào database local thay vì chỉ catalog hư cấu, xem [nhập dữ liệu công khai](../DOC/docs-BE/public-catalog.md). Script `scripts/import-public-catalog.ps1` nhập metadata từ snapshot có checksum, giữ dữ liệu cũ và có thể chạy lại; không thêm video/phụ đề.
+
+Để có một phim xem được ngay trong local, xem [Big Buck Bunny và setup nguồn phát](../DOC/docs-BE/open-movie.md); chạy `scripts/setup-open-movie.ps1` trong PowerShell. Đây là phim riêng có giấy phép mở, không phải nguồn video của các anime đã nhập.
 
 - GET `/api/v1/common/anime?q=star&genre=adventure&year=2026&status=airing&format=tv&sort=newest&page=1&pageSize=20`.
 - GET `/api/v1/common/anime/hanh-trinh-anh-sao`.

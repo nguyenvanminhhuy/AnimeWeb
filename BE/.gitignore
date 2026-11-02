@@ -7,3 +7,4 @@ TestResults/
 .env.*
 !.env.example
 **/appsettings.Local.json
+.local/

@@ -1,9 +1,11 @@
 param([switch]$InitializeCatalog)
 
 $ErrorActionPreference = 'Stop'
-if ([string]::IsNullOrWhiteSpace($env:ANIMEWEB_DB_PASSWORD)) {
-    throw 'Set ANIMEWEB_DB_PASSWORD before starting the local database.'
-}
+& docker info --format '{{.ServerVersion}}' *> $null
+if ($LASTEXITCODE -ne 0) { throw 'Start Docker Desktop, wait until its engine is ready, then run dotnet run again.' }
+. (Join-Path $PSScriptRoot 'docker-password.ps1')
+$previousDatabasePassword = $env:ANIMEWEB_DB_PASSWORD
+$env:ANIMEWEB_DB_PASSWORD = Get-DockerDevelopmentPassword
 $beDirectory = Split-Path -Parent $PSScriptRoot
 $previousConnectionString = $env:ConnectionStrings__AnimeWeb
 Push-Location -LiteralPath $beDirectory
@@ -29,6 +31,7 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'The API exited with an error.' }
 }
 finally {
+    $env:ANIMEWEB_DB_PASSWORD = $previousDatabasePassword
     $env:ConnectionStrings__AnimeWeb = $previousConnectionString
     Pop-Location
 }
