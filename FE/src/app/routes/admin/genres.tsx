@@ -76,9 +76,8 @@ function GenresContent() {
       ) : (
         <>
           <p className="tw:p-4 tw:mb-6 tw:rounded-xl tw:bg-[#a697ff0d] tw:border tw:border-[var(--aw-border)] tw:text-[var(--aw-muted)]">
-            Dữ liệu mẫu ·{' '}
             {canWrite
-              ? 'Thay đổi chỉ lưu trong phiên này; tải lại hoặc đổi phiên sẽ đặt lại dữ liệu.'
+              ? 'Bạn được thêm, sửa và xoá thể loại. Thể loại đang có phim sử dụng sẽ không được xoá.'
               : 'Phiên chỉ đọc. Đổi sang phiên có quyền chỉnh sửa để thêm, sửa hoặc xoá thể loại.'}
           </p>
           {notice && (
@@ -153,9 +152,7 @@ function GenresContent() {
                     className="aw-surface tw:rounded-xl tw:overflow-x-auto tw:border tw:border-[var(--aw-border)]"
                   >
                     <table className="tw:w-full tw:min-w-140 tw:mb-0 tw:text-left tw:align-middle">
-                      <caption className="visually-hidden">
-                        Thể loại và số phim sử dụng trong phiên quản trị mẫu
-                      </caption>
+                      <caption className="visually-hidden">Thể loại và số phim sử dụng</caption>
                       <thead className="tw:bg-[#ffffff04] tw:text-[var(--aw-muted)]">
                         <tr>
                           {[
@@ -253,11 +250,7 @@ function GenresContent() {
                 fail={mock === 'save-error'}
                 onCancel={() => resetEditor()}
                 onSaved={() => {
-                  setNotice(
-                    editor.row
-                      ? 'Đã lưu thay đổi thể loại trong phiên mẫu.'
-                      : 'Đã thêm thể loại trong phiên mẫu.',
-                  );
+                  setNotice(editor.row ? 'Đã lưu thay đổi thể loại.' : 'Đã thêm thể loại.');
                   resetEditor();
                   refresh();
                 }}
@@ -276,7 +269,7 @@ function GenresContent() {
           onDeleted={() => {
             if (editor.row?.id === selected.id) resetEditor();
             setSelected(null);
-            setNotice('Đã xoá thể loại khỏi phiên mẫu.');
+            setNotice('Đã xoá thể loại.');
             focusResults.current = true;
             refresh();
           }}

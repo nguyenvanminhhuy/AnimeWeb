@@ -1,5 +1,7 @@
 # Prompt thực thi: tạo màn hình từ tên
 
+Khi generate Profile/avatar, áp dụng [contract ảnh đại diện](../../docs-BE/account-avatar.md) và [Avatar chung](../rules/common/avatar.md): upload/xoá own ở Profile, Input/Button chung, preview và xác nhận xoá; Header nhận avatarUrl từ session. Không tự thêm upload video/file chung hoặc sửa tên/email. Phiên mock không giả lập upload server thành công.
+
 Người dùng chỉ cần yêu cầu: **“Đọc Anime-Web/DOC/docs-FE/prompts/screen-generation.md và tạo màn hình [tên màn hình].”** Không yêu cầu họ điền template hoặc cung cấp thêm ảnh UI. Khi chỉ được yêu cầu đọc/review tài liệu, không tự triển khai màn hình.
 
 ## Nhiệm vụ
@@ -46,9 +48,9 @@ Không phân biệt hoa/thường. Chấp nhận các tên tiếng Việt hoặc
 | Quản lý nguồn phát và phụ đề / Nguồn phát / Phụ đề / Playback sources / Subtitles | AdminPlaybackPage | /admin/playback | CRUD nguồn theo tập và phụ đề theo nguồn, enabled/mặc định và quan hệ; xem [admin-playback-screen.md](../admin-playback-screen.md) |
 | Thể loại / Quản lý thể loại / Genres | AdminGenresPage | /admin/genres | Danh sách/tìm/lọc/sort/phân trang, form tên/slug và xoá theo quyền; xem admin-genres-screen.md |
 | Comment / Comments / Bình luận / Quản lý bình luận / Kiểm duyệt bình luận | AdminCommentsPage | /admin/comments | Tìm/lọc/sort/phân trang, panel commentId, ẩn/hiện lại theo quyền; xem [admin-comments-screen.md](../admin-comments-screen.md) |
-| User / Users / Người dùng / Quản lý người dùng | AdminUsersPage | /admin/users | Danh sách/tìm/lọc/sort/phân trang và hồ sơ cơ bản chỉ đọc; xem admin-users-screen.md |
+| User / Users / Người dùng / Quản lý người dùng | AdminUsersPage | /admin/users | Danh sách/tìm/lọc/sort/phân trang, hồ sơ và admin khoá/mở khoá; xem admin-users-screen.md |
 
-Dashboard, CRUD anime/thể loại, [Mùa và tập](../admin-episodes-screen.md), [Nguồn và phụ đề](../admin-playback-screen.md), [Kiểm duyệt bình luận](../admin-comments-screen.md) và [Người dùng chỉ đọc](../admin-users-screen.md) đã có FE mock. Theo [rule CRUD](../rules/admin-screens.md), màn quản lý phim/tập/thể loại/nguồn/phụ đề mặc định hoàn thiện CRUD của chính module, trừ khi người dùng giới hạn. Bình luận chỉ kiểm duyệt, không tạo/sửa nội dung hoặc khôi phục deleted. Người dùng giữ phạm vi đọc; Dashboard chỉ tổng hợp, không tự tạo quyền quản trị thật.
+Dashboard, CRUD anime/thể loại, [Mùa và tập](../admin-episodes-screen.md), [Nguồn và phụ đề](../admin-playback-screen.md), [Kiểm duyệt bình luận](../admin-comments-screen.md) và [Người dùng](../admin-users-screen.md) đã kết nối API BE. Theo [rule CRUD](../rules/admin-screens.md), màn quản lý phim/tập/thể loại/nguồn/phụ đề mặc định hoàn thiện CRUD của chính module, trừ khi người dùng giới hạn. Bình luận chỉ kiểm duyệt, không tạo/sửa nội dung hoặc khôi phục deleted. Người dùng: manage chỉ đọc, admin khoá/mở khoá với `admin:user:status:write`, version và xác nhận; đổi role theo admin:user:role:write; không tự thêm xoá/reset password; Dashboard chỉ tổng hợp, không tự tạo quyền quản trị thật.
 
 Tên chưa có trong bảng: ưu tiên tìm đặc tả trong DOC và source. Nếu đủ rõ, tự chọn route/page phù hợp, nêu giả định trong bàn giao. Chỉ hỏi khi tên thực sự mơ hồ hoặc liên quan quyết định nghiệp vụ chưa thể suy ra; không tự dựng chức năng quản trị ngoài màn hình được gọi hoặc cấp quyền thật.
 

@@ -1,4 +1,5 @@
 import type { AdminListQuery } from '@/types/admin-query';
+import { adminApiErrorMessage } from '@/utils/admin-api-error';
 import { useEffect, useState } from 'react';
 import { useSession } from '@/stores/session';
 import { adminCommentRepository } from '@/lib/api/repositories';
@@ -30,7 +31,7 @@ export function useCommentCatalog(fail: boolean, query?: AdminListQuery) {
       },
       (error: Error) => {
         if (!controller.signal.aborted)
-          setState({ key: requestKey, error: error.message, loading: false });
+          setState({ key: requestKey, error: adminApiErrorMessage(error), loading: false });
       },
     );
     return () => controller.abort();

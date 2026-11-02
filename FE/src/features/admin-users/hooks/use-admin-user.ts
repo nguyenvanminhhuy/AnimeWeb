@@ -5,11 +5,11 @@ import { adminUserRepository } from '@/lib/api/repositories';
 import type { AdminPreviewSession } from '@/types/admin';
 import type { AdminUser } from '@/types/admin-user';
 
-export function useAdminUser(id: string, session: AdminPreviewSession) {
+export function useAdminUser(id: string, session: AdminPreviewSession, revision = 0) {
   const [params, setParams] = useSearchParams();
   const mock = isMockApi ? params.get('mock') : null;
   const [attempt, setAttempt] = useState(0);
-  const key = `${session.id}:${id}:${mock}:${attempt}`;
+  const key = `${session.id}:${id}:${mock}:${attempt}:${revision}`;
   const [response, setResponse] = useState<{
     key: string;
     data: AdminUser | null;

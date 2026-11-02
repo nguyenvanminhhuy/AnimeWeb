@@ -254,11 +254,6 @@
   .aw-comment {
     border-bottom: 1px solid #ffffff0c;
   }
-  .aw-comment-avatar {
-    border: 1px solid #a697ff30;
-    background: #a697ff16;
-    color: #c6b6fa;
-  }
   .aw-comment-content > header {
     display: flex;
     align-items: center;

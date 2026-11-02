@@ -1,5 +1,5 @@
 import { anime as publicAnime } from '@/testing/mocks/fixtures/anime';
-import { assertVersion } from '@/lib/api/backend/error';
+import { ApiError, assertVersion } from '@/lib/api/backend/error';
 import type { AdminAnimeRepository } from '@/lib/api/contracts/admin-anime-repository';
 import type { AdminAnimeInput, AdminAnimeRow } from '@/types/admin-anime';
 import { adminAnimeWorkspace, waitForAdminMock } from '@/lib/api/mock/admin-anime-workspace';
@@ -127,15 +127,20 @@ export const mockAdminAnimeRepository: AdminAnimeRepository = {
     const rows = adminAnimeWorkspace(session, true);
     const index = rows.findIndex((row) => row.anime.id === id);
     if (index < 0) throw new AdminAnimeError('Phim không còn tồn tại trong phiên mẫu.');
-    assertVersion(rows[index].version, version);
+    if (rows[index].version !== version)
+      throw new ApiError(409, 'STALE_VERSION', 'Dữ liệu đã thay đổi. Hãy tải lại danh sách.');
     if (rows[index].publicationStatus === 'published')
-      throw new AdminAnimeError('Chuyển phim về bản nháp trước khi xoá.');
+      throw new ApiError(409, 'ANIME_PUBLISHED', 'Chuyển phim về bản nháp trước khi xoá.');
     if (rows[index].publishedEpisodes > 0)
-      throw new AdminAnimeError(
+      throw new ApiError(
+        409,
+        'ANIME_IN_USE',
         'Không thể xoá phim đã có tập công khai. Không xoá dây chuyền các tập hoặc lịch sử.',
       );
     if (adminCatalogWorkspace(session).seasons.some((season) => season.animeId === id))
-      throw new AdminAnimeError(
+      throw new ApiError(
+        409,
+        'ANIME_IN_USE',
         'Không thể xoá phim còn mùa/phần. Không xoá dây chuyền các tập hoặc lịch sử.',
       );
     rows.splice(index, 1);

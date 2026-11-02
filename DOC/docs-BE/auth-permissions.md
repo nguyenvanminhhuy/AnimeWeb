@@ -1,5 +1,9 @@
 # Xác thực và phân quyền BE
 
+Avatar: `profile:avatar:write:own` cho user/manage/admin, chỉ PUT/DELETE ảnh của chính tài khoản active; không nhận userId khác. GET ảnh public theo URL server trả. Version/lock chung với status/role/password, không revoke phiên chỉ vì đổi ảnh. Xem [contract avatar](account-avatar.md).
+
+Cập nhật 2026-11-02: [Đổi vai trò tài khoản](account-role-management.md) đã có BE/FE. PATCH `/api/v1/admin/users/{id}/role`, body `{role, version}`; admin cần `admin:user:read` và `admin:user:role:write`. Chọn đúng một role user/manage/admin, chặn tự hạ quyền/admin active cuối, thu hồi phiên khi đổi. Manage chỉ đọc.
+
 Yêu cầu đã xác nhận và ma trận quyền nằm tại [roles-permissions.md](../docs-FE/rules/roles-permissions.md). Server đã triển khai bearer opaque 7 ngày, PasswordHasher framework, DB session/hash và policy theo permission. Logout thu hồi phiên hiện tại, đổi mật khẩu thu hồi mọi phiên; trạng thái/quyền đọc lại mỗi request. Phiên demo FE không phải đăng nhập thật và FE chưa tích hợp.
 
 Khách tìm kiếm/xem phim qua common; user dùng cùng common. Chức năng cá nhân yêu cầu tài khoản hoạt động và permission tương ứng. Guest là ngữ cảnh chưa đăng nhập, không phải role trong database.
@@ -14,11 +18,11 @@ Ba mã role đã xác nhận theo [decisions.md](../decisions.md) và [ma trận
 | manage | Quyền của user và đọc quản trị theo permission; không mutation/kiểm duyệt |
 | admin | Quyền của manage và ghi nội dung/kiểm duyệt theo các permission được liệt kê; không wildcard bypass |
 
-Map RolePermission theo ma trận nguồn, không suy ra quyền chỉ từ tên/thứ tự role. Đăng ký mới mặc định user, không nhận roles/permissions từ client. Users chỉ đọc cho manage/admin; chưa cấp quyền tạo/xóa/khóa tài khoản, đổi role hoặc reset mật khẩu người khác. Admin vẫn chịu ownership và constraint; kiểm duyệt chỉ visible ↔ hidden, không khôi phục deleted hoặc sửa body/tác giả người khác.
+Map RolePermission theo ma trận nguồn, không suy ra quyền chỉ từ tên/thứ tự role. Đăng ký mới mặc định user, không nhận roles/permissions từ client. manage đọc Users; admin được khoá/mở khoá theo admin:user:status:write; được đổi role theo admin:user:role:write; chưa cấp quyền tạo/xoá tài khoản hoặc reset mật khẩu người khác. Admin vẫn chịu ownership và constraint; kiểm duyệt chỉ visible ↔ hidden, không khôi phục deleted hoặc sửa body/tác giả người khác.
 
 Permission quản trị gồm `admin:dashboard:read`, `admin:anime:read`, `admin:anime:write`, `admin:genre:read`, `admin:genre:write`, `admin:episode:read`, `admin:episode:write`, `admin:playback:read`, `admin:playback:write`, `admin:comment:read`, `admin:comment:moderate`, `admin:user:read`. Không thêm permission ngoài ma trận chỉ vì UI có tên quản lý.
 
-Đã có Account/LoginSession/UserRole/RolePermission và policy runtime theo [contract v0.3](../api-contract.md); không wildcard bypass own/constraint. FE còn member/adminPreview và cần refactor khi tích hợp. Bootstrap admin đầu tiên chỉ qua CLI explicit, không có API cấp role hoặc tài khoản/mật khẩu mặc định. Các hướng dẫn lựa chọn cookie/token bên dưới là tham chiếu cho thay đổi cơ chế sau này; hiện đã chọn bearer, không refresh, không CORS credentials.
+Đã có Account/LoginSession/UserRole/RolePermission và policy runtime theo [contract v0.3](../api-contract.md); không wildcard bypass own/constraint. FE còn member/adminPreview và cần refactor khi tích hợp. Bootstrap admin đầu tiên chỉ qua CLI explicit, có API đổi role cho admin; không có tài khoản/mật khẩu mặc định. Các hướng dẫn lựa chọn cookie/token bên dưới là tham chiếu cho thay đổi cơ chế sau này; hiện đã chọn bearer, không refresh, không CORS credentials.
 
 ```text
 Request me → Xác thực phiên → Tài khoản active
@@ -41,7 +45,7 @@ User blocked vẫn có thể đọc common như khách. Không mặc định adm
 
 Yêu cầu cụ thể lấy mục 3 và 9 của [handoff FE](../fe-backend-handoff.md): login `{email,password}`, register `{displayName,email,password}`, logout thu hồi server, me có id/displayName/email/roles/permissions, change-password chỉ của chính mình với currentPassword/newPassword. Các URL/DTO mới cần đặc tả trong contract trước code. FE hiện chưa truyền password vào repository và còn bootstrap phiên local đồng bộ; triển khai API không tự biến demo thành phiên thật.
 
-Baseline form FE: displayName 2–40 sau trim, email tối đa 254, password 8–128; đổi mật khẩu mới khác hiện tại, confirmation ở FE. Không trim/lowercase password. Đây là đầu vào để chốt validation server, không thay chính sách credential/phiên hoặc tự xác nhận giới hạn chưa duyệt. Profile chỉ đọc, không tự thêm sửa hồ sơ/avatar, quên mật khẩu hoặc cấp role.
+Baseline form FE: displayName 2–40 sau trim, email tối đa 254, password 8–128; đổi mật khẩu mới khác hiện tại, confirmation ở FE. Không trim/lowercase password. Tên/email vẫn chỉ đọc; đổi/xoá avatar theo contract own riêng ở trên. Không tự thêm quên mật khẩu hoặc cấp role qua form cá nhân.
 
 Chọn cookie hoặc token, mô tả login/logout, hết hạn, thu hồi và cập nhật quyền/khóa tài khoản. Nếu dùng cookie, xác định Secure/HttpOnly/SameSite, CORS credentials và CSRF theo môi trường triển khai. Nếu dùng token, xác định nơi lưu, thời hạn và thu hồi/refresh. Đây là yêu cầu thiết kế có điều kiện, chưa phải cấu hình đã cài.
 

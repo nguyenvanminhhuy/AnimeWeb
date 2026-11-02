@@ -64,13 +64,13 @@ export function EpisodeFormScreen() {
         <p className="aw-eyebrow">NỘI DUNG PHIM</p>
         <h1 className="tw:text-3xl">{episodeId ? 'Sửa tập phim' : 'Thêm tập phim'}</h1>
         <p className="tw:text-[var(--aw-muted)]">
-          Dữ liệu mẫu chỉ lưu trong phiên này. Published không đồng nghĩa có video.
+          Công bố tập phim không đồng nghĩa đã có nguồn video hợp lệ.
         </p>
         <Button as="link" variant="quiet" label="Về danh sách mùa và tập" to={returnTo} />
       </header>
       {saved ? (
         <div role="status" className="aw-surface tw:rounded-xl tw:p-6">
-          <h2 className="tw:text-xl">Đã lưu tập phim trong phiên mẫu.</h2>
+          <h2 className="tw:text-xl">Đã lưu tập phim.</h2>
           <Button as="link" to={returnTo} label="Về danh sách tập phim" />
         </div>
       ) : (

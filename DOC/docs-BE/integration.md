@@ -18,7 +18,7 @@
 | Comments | Local nhận CommentActor từ FE; list chưa phân trang | Server lấy user từ phiên; bỏ actor client, cập nhật hook/UI cho phân trang |
 | Player/progress | Watch UI/native video đã có, nguồn mock còn trống, tiến độ local | Nối playback/đồng bộ theo contract; không coi dữ liệu demo là lịch sử thật |
 | Quản trị nội dung | Mock CRUD độc lập catalog public; Episode/Playback dùng getCatalog tải toàn workspace | List/meta/options/detail và mutation server, đồng bộ publication/public sau ghi |
-| Users/moderation | Users chỉ đọc, comments có hide/restore; dữ liệu mock/local | Detail theo ID ngoài page, summary toàn collection, policy read/moderate và audit server |
+| Users/moderation | Users có đọc và admin khoá/mở khoá/đổi role; comments có hide/restore; dữ liệu mock/local | Detail theo ID ngoài page, summary toàn collection, policy read/moderate và audit server |
 | Dashboard/Top 10 | Metrics và viewCount fixture, ranking dùng chung Home | Aggregate DB/nguồn view đã định nghĩa; giữ cùng ranking, không bịa số vận hành |
 
 DTO genres đã triển khai là object id/slug/name, còn Anime FE dùng string[]. FE có subtitle và episodeLabel phục vụ hiển thị. Mapper quy định cách chuyển/derive khi đủ dữ liệu, không bịa số tập hoặc ép BE trả tên trường trình bày. API bannerUrl nullable cần fallback; format BE tv/movie/ova/ona/special khác FE tv/movie, cần mở rộng type/UI hoặc quyết định mapping rõ. Format, hasPlayback, related và danh sách tập cần rà soát cùng [api.md](api.md).
@@ -53,7 +53,7 @@ Player chỉ ghi progress khi đã phát/duration hợp lệ, khoảng mỗi 10 
 
 WatchDetail ghép metadata anime, mùa/tập và Playback; DTO tập detail đã có animeId/animeSlug/seasonId. Player native nhận MIME MP4/WebM, admin cấu hình mp4/hls và vtt/srt: chốt HLS/chuyển phụ đề hoặc giới hạn format trước nối. Thêm expiresAt/reload nguồn vào model; phân biệt tập không có 404, chưa có nguồn 200 sources=[], provider lỗi 503. Published/hasPlayback/nguồn enabled không đồng nghĩa phát thành công.
 
-HomeCatalog cần bốn nhóm featured/updated/recommended/topViewed; related và options có thể aggregate hoặc endpoint riêng. Không dùng sort releaseYear để giả lập cập nhật tập mới nhất. Ranking cùng nguồn Home/Dashboard, không tự POST view-event khi chưa chốt định nghĩa view. Dashboard dùng recentAnime theo ngày tập công bố, không ngày sửa metadata. Users chỉ đọc; moderation hide/restore có reason và audit, deleted không body/không restore. Không thêm upload/avatar, quên mật khẩu, CRUD user/cấp role vì muốn đủ bộ endpoint.
+HomeCatalog cần bốn nhóm featured/updated/recommended/topViewed; related và options có thể aggregate hoặc endpoint riêng. Không dùng sort releaseYear để giả lập cập nhật tập mới nhất. Ranking cùng nguồn Home/Dashboard, không tự POST view-event khi chưa chốt định nghĩa view. Dashboard dùng recentAnime theo ngày tập công bố, không ngày sửa metadata. Users có đọc và admin khoá/mở khoá/đổi role; moderation hide/restore có reason và audit, deleted không body/không restore. Không thêm upload/avatar, quên mật khẩu, CRUD user/sửa permission vì muốn đủ bộ endpoint.
 
 Cập nhật feature Anime 2026-10-30: API list/detail/genres đã có, FE vẫn dùng mock. API tìm không phân biệt hoa thường nhưng chưa bỏ dấu; page vượt cuối giữ nguyên page và data rỗng, khác mock tự clamp page. DTO detail chưa có seasons/episodes/related; không tự coi màn hình chi tiết FE đã tích hợp chỉ vì có endpoint theo slug. Xem quy tắc chính xác trong API contract trước khi viết mapper.
 

@@ -1,4 +1,5 @@
 export const userStatusLabels = { active: 'Đang hoạt động', blocked: 'Đã khoá' };
+export const userRoleLabels = { user: 'Người dùng', manage: 'Quản lý', admin: 'Quản trị viên' };
 export const userStatusStyles = {
   active: 'tw:bg-[#9fe3c218] tw:text-[#9fe3c2]',
   blocked: 'tw:bg-[#edacbc18] tw:text-[#edacbc]',

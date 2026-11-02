@@ -1,5 +1,11 @@
 # API contract v0.3
 
+Cập nhật 2026-11-03: DELETE admin anime trả 409 STALE_VERSION / ANIME_PUBLISHED / ANIME_IN_USE theo [hợp đồng lỗi quản trị](docs-BE/admin-mutation-errors.md). Không thay điều kiện xoá, không thêm cascade. FE phân biệt cần tải lại, về bản nháp hoặc dữ liệu đang được sử dụng.
+
+Cập nhật 2026-11-02: [Avatar tài khoản](docs-BE/account-avatar.md): PUT/DELETE `/api/v1/me/avatar?version=...` theo `profile:avatar:write:own`; GET `/api/v1/common/avatars/{id}/{key}` trả PNG công khai. ProfileDto thêm avatarUrl/version, AdminUserDto thêm avatarUrl. Avatar lưu DB, client chuẩn hoá ảnh, server kiểm tra bytes/kích thước độc lập; không phải API upload file/video chung.
+
+Cập nhật 2026-11-02: [Đổi vai trò tài khoản](docs-BE/account-role-management.md) đã có BE/FE. PATCH `/api/v1/admin/users/{id}/role`, body `{role, version}`; admin cần `admin:user:read` và `admin:user:role:write`. Chọn đúng một role user/manage/admin, chặn tự hạ quyền/admin active cuối, thu hồi phiên khi đổi. Manage chỉ đọc.
+
 Tra cứu chi tiết từng feature, field và path/query/body/response đang có tại [feature-reference.md](docs-BE/feature-reference.md), được đối chiếu theo source. Tài liệu này tiếp tục là nguồn quyết định contract; không tạo hợp đồng HTTP thứ hai.
 
 ## Quyết định cho lượt triển khai toàn bộ BE (2026-11-01)
@@ -12,7 +18,7 @@ Người dùng yêu cầu triển khai các feature BE còn thiếu và **đã x
 - Playback: metadata nguồn trực tiếp mp4/hls, subtitle vtt/srt; không tải/chuyển mã hoặc gọi provider thật. VTT có thể dùng native player; HLS/SRT đòi hỏi adapter FE thích hợp, API không hứa phát được trên mọi trình duyệt. URL absolute HTTP(S), HTTPS khi Production; local HTTP chỉ Development/test. Nguồn enabled và nội dung public mới trả public, expiresAt nullable; credentials provider không là DTO.
 - Home: featured là anime public mới nhất theo releaseYear/id, updated theo ngày tập published gần nhất, recommended theo số thể loại chung nếu có genre hoặc releaseYear/id khi không có; related theo số genre chung rồi releaseYear/id. Dashboard aggregate DB; recent 6 theo ngày tập published gần nhất. Ranking dùng cùng dữ liệu cho Home/Dashboard, không fixture.
 - View: bắt đầu phiên xem server; chỉ tính sau ít nhất 30 giây theo đồng hồ server và vị trí phát tăng ít nhất 30 giây; chống trùng mỗi anime/người dùng hoặc viewer cookie ngẫu nhiên trong mỗi khung 30 phút. Không coi GET playback là view; không nhận tổng viewCount client. Đây là số liệu vận hành cơ bản, không chứng minh chống gian lận tuyệt đối.
-- Admin list/detail/options theo handoff; Users chỉ đọc, không cấp role/khóa/xóa/reset mật khẩu. Mutations dùng version và 409 khi ghi cũ; server kiểm tra permission, own, FK/unique và transaction. Không tự upload/avatar/forgot-password hoặc CRUD user.
+- Admin list/detail/options theo handoff; Users đọc và admin khoá/mở khoá theo [contract trạng thái](docs-BE/account-status-management.md), có đổi role theo [contract vai trò](docs-BE/account-role-management.md), không xoá/reset mật khẩu. Mutations dùng version và 409 khi ghi cũ; server kiểm tra permission, own, FK/unique và transaction. Avatar own theo contract riêng; không tự thêm upload video/file chung, forgot-password hoặc thao tác tài khoản ngoài phạm vi.
 
 Chi tiết endpoint mới (prefix `/api/v1`):
 
@@ -74,7 +80,7 @@ Nguồn ma trận: [roles-permissions.md](docs-FE/rules/roles-permissions.md); �
 | manage | Có | Có, theo permission | Theo permission | Không |
 | admin | Có | Có, theo permission | Theo permission | Theo permission và ràng buộc |
 
-Tài khoản mới mặc định user; request đăng ký không nhận roles/permissions. Users chỉ đọc cho manage/admin; không cấp khóa/xóa/cấp role/reset mật khẩu người khác. Không wildcard admin bypass ownership hoặc phục hồi comment deleted. Blocked bị từ chối thao tác cá nhân/quản trị nhưng vẫn đọc public như khách. Auth/policy và các endpoint quản trị trong bảng v0.3 đã triển khai; thay đổi phạm vi cần cập nhật contract trước code.
+Tài khoản mới mặc định user; request đăng ký không nhận roles/permissions. manage đọc Users; admin được khoá/mở khoá theo admin:user:status:write; có đổi role theo admin:user:role:write; không tạo/xoá/reset mật khẩu người khác. Không wildcard admin bypass ownership hoặc phục hồi comment deleted. Blocked bị từ chối thao tác cá nhân/quản trị nhưng vẫn đọc public như khách. Auth/policy và các endpoint quản trị trong bảng v0.3 đã triển khai; thay đổi phạm vi cần cập nhật contract trước code.
 
 ## Endpoint nền BE
 

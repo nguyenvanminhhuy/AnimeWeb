@@ -1,5 +1,11 @@
 # AnimeWeb backend
 
+Ảnh đại diện: đã có [PUT/DELETE me/avatar và GET common/avatars](../DOC/docs-BE/account-avatar.md). Migration AccountAvatar thêm bảng lưu ảnh và quyền own cho cả ba role; apply migration bằng cấu hình local hiện có rồi restart BE/đăng nhập lại. Không cần thêm thư mục upload hoặc dịch vụ lưu ảnh ngoài.
+
+Admin có [đổi vai trò user/manage/admin](../DOC/docs-BE/account-role-management.md) trên `/admin/users`, permission `admin:user:role:write`; migration AccountRoleManagement đã bổ sung quyền. Khởi động lại BE và đăng nhập lại admin để dùng code/quyền mới.
+
+Cập nhật 2026-11-02: [Khoá/mở khoá tài khoản](../DOC/docs-BE/account-status-management.md) đã triển khai BE và FE. Admin dùng PATCH `/api/v1/admin/users/{id}/status` với status/version; manage chỉ đọc. Khoá thu hồi phiên, mở khoá yêu cầu đăng nhập lại. Migration AccountStatusManagement đã thêm Version và quyền mới.
+
 BE C#/.NET 10, ASP.NET Core Controller, EF Core và PostgreSQL. Đã có nền, Anime/Mùa/tập, Auth/RBAC, thư viện/tiến độ/bình luận, Playback metadata, Home/related/ranking và API quản trị theo [hiện trạng](../DOC/docs-BE/current-status.md). FE mặc định nối HTTP qua Vite /api proxy; không có video thật trong seed.
 
 ## Yêu cầu
@@ -127,7 +133,7 @@ Sau migration, người vận hành tự cấp cấu hình Bootstrap__Email, Boo
 dotnet run --project src/AnimeWeb.Api --no-launch-profile -- --bootstrap-admin
 ```
 
-CLI tạo admin đầu tiên nếu chưa có, không tạo lại khi đã tồn tại và không chạy HTTP server; không tự apply migration. Xóa cấu hình bootstrap khỏi phiên/môi trường sau sử dụng. Không có admin/password mặc định; đăng ký HTTP luôn role user. Users API chỉ đọc, không endpoint cấp quyền.
+CLI tạo admin đầu tiên nếu chưa có, không tạo lại khi đã tồn tại và không chạy HTTP server; không tự apply migration. Xóa cấu hình bootstrap khỏi phiên/môi trường sau sử dụng. Không có admin/password mặc định; đăng ký HTTP luôn role user. Users API có đọc và PATCH trạng thái theo quyền admin:user:status:write, đổi vai trò qua PATCH role theo admin:user:role:write.
 
 POST `/api/v1/auth/login` body `{email,password}` trả `{data:{accessToken,tokenType,expiresAt,profile}}`. Gửi `Authorization: Bearer <accessToken>` cho `/me` và `/admin`. Token tuyệt đối 7 ngày, không refresh; logout thu hồi phiên hiện tại, đổi mật khẩu thu hồi mọi phiên. Role/permission và blocked đọc lại từ DB mỗi request; production dùng HTTPS.
 

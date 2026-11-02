@@ -5,6 +5,8 @@ export interface AdminUser {
   status: 'active' | 'blocked';
   roles: ('user' | 'manage' | 'admin')[];
   createdAt: string;
+  version: number;
+  avatarUrl?: string | null;
 }
 export interface AdminUsersQuery {
   q: string;

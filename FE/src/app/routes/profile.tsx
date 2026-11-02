@@ -10,6 +10,7 @@ import { ProfileInfo, ProfileOverview } from '@/features/profile/components/prof
 import { useProfileLibrary } from '@/features/profile/hooks/use-profile-library';
 import { libraryHref } from '@/features/library/utils/library-query';
 import type { LibraryTab } from '@/features/library/types/library';
+import { AvatarEditor } from '@/features/profile/components/avatar-editor';
 
 export function ProfilePage() {
   const { user, initializing } = useSession();
@@ -28,7 +29,7 @@ export function ProfilePage() {
 }
 
 function ProfileContent() {
-  const { displayName, email } = useSession();
+  const { displayName, email, avatarUrl } = useSession();
   const { loading, error, canRead, retry, summary } = useProfileLibrary();
   const toLibrary = (tab: LibraryTab) => libraryHref({ tab, q: '', sort: 'recent', page: 1 });
   const completed = summary?.completedEpisodeCount ?? 0;
@@ -62,6 +63,7 @@ function ProfileContent() {
         </p>
       </header>
       <ProfileOverview
+        avatarUrl={avatarUrl}
         displayName={displayName}
         email={email}
         stats={canRead ? stats : []}
@@ -69,11 +71,14 @@ function ProfileContent() {
         historyTo={toLibrary('history')}
       />
       <div className="tw:grid tw:grid-cols-[300px_minmax(0,1fr)] tw:gap-6 tw:mt-8 tw:max-tablet:grid-cols-1">
-        <ProfileInfo
-          displayName={displayName}
-          email={email}
-          changePasswordTo={paths.changePassword}
-        />
+        <div className="tw:grid tw:gap-6 tw:self-start">
+          <AvatarEditor />
+          <ProfileInfo
+            displayName={displayName}
+            email={email}
+            changePasswordTo={paths.changePassword}
+          />
+        </div>
         <section aria-label="Nội dung thư viện cá nhân" aria-busy={loading} className="tw:min-w-0">
           {!canRead ? (
             <ContentState

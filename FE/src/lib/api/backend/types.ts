@@ -62,6 +62,8 @@ export interface ProfileDto {
   email: string;
   roles: Role[];
   permissions: string[];
+  avatarUrl: string | null;
+  version: number;
 }
 export interface LoginInput {
   email: string;
@@ -273,6 +275,8 @@ export interface AdminUserDto {
   status: 'active' | 'blocked';
   roles: Role[];
   createdAt: string;
+  version: number;
+  avatarUrl: string | null;
 }
 export interface DashboardDto {
   totalAnime: number;

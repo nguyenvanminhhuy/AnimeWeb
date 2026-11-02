@@ -11,6 +11,65 @@ namespace AnimeWeb.Api.Tests.Integration;
 public sealed partial class FeatureWorkflowTests
 {
     [PostgreSqlFact]
+    public async Task AnimeDeletionReportsSpecificConflictsAndPreservesReferencesAsync()
+    {
+        using var admin = await RegisterAsync("admin");
+        using var manager = await RegisterAsync("manage");
+        async Task<string> Create(string publication = "draft")
+        {
+            var result = await SendAsync(admin.Client, HttpMethod.Post, "/api/v1/admin/anime", new
+            {
+                title = "Delete fixture",
+                slug = "delete-" + Guid.NewGuid().ToString("N"),
+                posterUrl = "/fixture.webp",
+                releaseYear = 2026,
+                status = "airing",
+                format = "tv",
+                publicationStatus = publication,
+                version = 0
+            }, HttpStatusCode.Created);
+            return result.GetProperty("data").GetProperty("anime").GetProperty("id").GetString()!;
+        }
+        async Task Conflict(string id, long version, string code)
+        {
+            var result = await SendAsync(admin.Client, HttpMethod.Delete, $"/api/v1/admin/anime/{id}?version={version}", status: HttpStatusCode.Conflict);
+            Assert.Equal(code, result.GetProperty("error").GetProperty("code").GetString());
+        }
+        var published = await Create("published");
+        await Conflict(published, 1, "ANIME_PUBLISHED");
+        await Conflict(published, 2, "STALE_VERSION");
+        var seasonId = await Create();
+        var libraryId = await Create();
+        var commentId = await Create();
+        var viewsId = await Create();
+        await DatabaseAsync(async db =>
+        {
+            db.Seasons.Add(new() { Id = Guid.NewGuid().ToString("N"), AnimeId = seasonId, Title = "Fixture season", Number = 1, SortOrder = 1 });
+            db.LibraryEntries.Add(new() { UserId = admin.Id, AnimeId = libraryId, Status = "plan_to_watch", IsFavorite = true });
+            db.Comments.Add(new() { UserId = admin.Id, AnimeId = commentId, Body = "Preserved comment", Status = "visible" });
+            db.ViewEvents.Add(new() { AnimeId = viewsId, ViewerHash = "fixture-viewer", Bucket = 1 });
+            await db.SaveChangesAsync();
+        });
+        foreach (var id in new[] { seasonId, libraryId, commentId, viewsId }) await Conflict(id, 1, "ANIME_IN_USE");
+        await DatabaseAsync(async db =>
+        {
+            Assert.True(await db.Seasons.AnyAsync(x => x.AnimeId == seasonId));
+            Assert.True(await db.LibraryEntries.AnyAsync(x => x.AnimeId == libraryId));
+            Assert.True(await db.Comments.AnyAsync(x => x.AnimeId == commentId));
+            Assert.True(await db.ViewEvents.AnyAsync(x => x.AnimeId == viewsId));
+            Assert.Equal(4, await db.Anime.CountAsync(x => new[] { seasonId, libraryId, commentId, viewsId }.Contains(x.Id)));
+        });
+        var removable = await Create();
+        await SendAsync(manager.Client, HttpMethod.Delete, $"/api/v1/admin/anime/{removable}?version=1", status: HttpStatusCode.Forbidden);
+        await SendAsync(fixture.Client, HttpMethod.Delete, $"/api/v1/admin/anime/{removable}?version=1", status: HttpStatusCode.Unauthorized);
+        await Conflict(removable, 2, "STALE_VERSION");
+        var race = await Task.WhenAll(admin.Client.DeleteAsync($"/api/v1/admin/anime/{removable}?version=1"),
+            admin.Client.DeleteAsync($"/api/v1/admin/anime/{removable}?version=1"));
+        Assert.Single(race, x => x.StatusCode == HttpStatusCode.NoContent);
+        Assert.Single(race, x => x.StatusCode == HttpStatusCode.NotFound);
+    }
+
+    [PostgreSqlFact]
     public async Task AdminCatalogPublicationVersionRelationsAndMovieConventionAsync()
     {
         using var admin = await RegisterAsync("admin");

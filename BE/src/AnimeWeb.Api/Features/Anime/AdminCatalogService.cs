@@ -5,6 +5,7 @@ using AnimeWeb.Api.Shared;
 using AnimeWeb.Api.Shared.Errors;
 using AnimeWeb.Api.Shared.Pagination;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace AnimeWeb.Api.Features.Anime;
 
@@ -132,12 +133,25 @@ public sealed class AdminCatalogService(AnimeWebDbContext db)
     public async Task DeleteAsync(string id, long version, CancellationToken ct)
     {
         await using var transaction = await db.Database.BeginTransactionAsync(ct);
+        await db.Database.ExecuteSqlInterpolatedAsync($"SELECT pg_advisory_xact_lock(hashtextextended({id}, 0))", ct);
         var anime = await db.Anime.SingleOrDefaultAsync(x => x.Id == id, ct) ?? throw ApiFailure.NotFound();
-        FeatureRules.Version(anime, version);
-        if (anime.PublicationStatus == "published") throw ApiFailure.Conflict();
+        if (anime.Version != version)
+            throw new ApiFailure(409, "STALE_VERSION", "The anime changed. Reload before confirming deletion.");
+        if (anime.PublicationStatus == "published")
+            throw new ApiFailure(409, "ANIME_PUBLISHED", "Unpublish the anime before deleting it.");
+        if (await db.Seasons.AnyAsync(x => x.AnimeId == id, ct)
+            || await db.LibraryEntries.AnyAsync(x => x.AnimeId == id, ct)
+            || await db.Comments.AnyAsync(x => x.AnimeId == id, ct)
+            || await db.ViewEvents.AnyAsync(x => x.AnimeId == id, ct))
+            throw new ApiFailure(409, "ANIME_IN_USE", "The anime is referenced by related content, personal data or view records.");
         await db.AnimeGenres.Where(x => x.AnimeId == id).ExecuteDeleteAsync(ct);
         db.Remove(anime);
-        await db.SaveChangesAsync(ct);
+        try { await db.SaveChangesAsync(ct); }
+        // The database remains the final guard if a new reference is created after the precheck.
+        catch (DbUpdateException error) when (error.InnerException is PostgresException { SqlState: PostgresErrorCodes.ForeignKeyViolation })
+        { throw new ApiFailure(409, "ANIME_IN_USE", "The anime has related data and cannot be deleted."); }
+        catch (DbUpdateConcurrencyException)
+        { throw new ApiFailure(409, "STALE_VERSION", "The anime changed. Reload before confirming deletion."); }
         await transaction.CommitAsync(ct);
     }
     public async Task<PagedResponse<AdminGenreDto>> GenresAsync(AdminQuery filters, CancellationToken ct)

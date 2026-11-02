@@ -135,7 +135,7 @@ export function PlaybackScreen() {
   }
   const saved = () => {
     setEditor(null);
-    setNotice('Đã lưu cấu hình trong phiên mẫu.');
+    setNotice('Đã lưu cấu hình.');
     refresh();
   };
   if (!canRead)
@@ -158,11 +158,10 @@ export function PlaybackScreen() {
         <Button label="Làm mới" variant="quiet" loading={loading} onClick={refresh} />
       </header>
       <p className="tw:p-4 tw:rounded-xl tw:bg-[#a697ff0d] tw:border tw:border-[var(--aw-border)] tw:text-[var(--aw-muted)]">
-        Dữ liệu mẫu ·{' '}
         {canWrite
-          ? 'Thay đổi chỉ lưu trong phiên này, reset khi tải lại hoặc đổi phiên.'
+          ? 'Bạn được quản lý nguồn phát và phụ đề.'
           : 'Phiên chỉ đọc; dùng phiên có quyền chỉnh sửa để thay đổi cấu hình.'}{' '}
-        Nguồn chưa được kiểm chứng và không tự xuất hiện trên trang xem phim.
+        Bật nguồn không tự bảo đảm video phát được; cần URL hợp lệ và nội dung đã công bố.
       </p>
       {notice && (
         <p role="status" className="tw:text-[#9fe3c2]">
@@ -344,7 +343,7 @@ export function PlaybackScreen() {
                     >
                       <table className="tw:w-full tw:min-w-180 tw:text-left tw:mb-0">
                         <caption className="visually-hidden">
-                          Cấu hình nguồn phát trong phiên mẫu, chưa kiểm chứng khả năng phát
+                          Cấu hình nguồn phát theo tập phim
                         </caption>
                         <thead>
                           <tr>
@@ -576,7 +575,7 @@ export function PlaybackScreen() {
             }
             setTarget(null);
             setEditor(null);
-            setNotice('Đã xoá cấu hình khỏi phiên mẫu.');
+            setNotice('Đã xoá cấu hình.');
             focusResults.current = true;
             refresh();
           }}

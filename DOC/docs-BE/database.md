@@ -26,7 +26,7 @@ Upsert thư viện/tiến độ dựa trên khóa duy nhất từng user. Transa
 
 ## Yêu cầu dữ liệu từ handoff cho module chưa có
 
-- UserRole dùng mã user/manage/admin, RolePermission theo ma trận; guest không lưu role. Đăng ký mặc định user. Chính sách cập nhật quyền/blocked/thu hồi phiên phải có hiệu lực server, không chỉ đổi claim ở FE. Không bổ sung CRUD tài khoản khi Users chỉ có yêu cầu đọc.
+- UserRole dùng mã user/manage/admin, RolePermission theo ma trận; guest không lưu role. Đăng ký mặc định user. Chính sách cập nhật quyền/blocked/thu hồi phiên phải có hiệu lực server, không chỉ đổi claim ở FE. Users bổ sung PATCH trạng thái và vai trò cho admin, không có CRUD tài khoản chung. Migration AccountStatusManagement thêm Accounts.Version (bigint, mặc định 1) để kiểm tra concurrency dùng chung status/role/password. AccountRoleManagement chỉ seed quyền đổi role; xem [quản lý trạng thái](account-status-management.md).
 - Library lưu status/isFavorite độc lập; tắt favorite không xóa status/progress. History là progress theo tập, watching chọn progress mới nhất mỗi anime rồi kiểm tra completed. Summary trước q/không theo page, phân biệt số tập với số anime; các truy vấn cần tie-breaker ổn định và policy request cũ/đa thiết bị được chốt.
 - Genre liên kết bằng ID, không tên/slug do form chọn. Public genre chỉ có phim published; admin options gồm chưa dùng, animeCount/years/options không suy từ page. DTO subtitle/episodeLabel không buộc thêm cột trình bày; chốt derive hay lưu theo nhu cầu.
 - Ghi tập phải kiểm tra animeId khớp seasonId, duration nullable/không âm, publishedAt có khi published. Chốt ai gán ngày/khi xuất bản lại; không đồng nhất publication anime với release status. Quy tắc chặn xóa anime/mùa/tập và tài nguyên tham chiếu cần đặc tả, không cascade tự động.
@@ -52,6 +52,8 @@ dotnet ef migrations add DescribeApprovedChange --project src/AnimeWeb.Api --sta
 Tên migration phản ánh thay đổi thực tế. Việc apply migration chỉ thực hiện với database local/test đã xác định; không chạy update/drop/reset vào môi trường chưa được xác minh. Xem [provider Npgsql](https://www.npgsql.org/efcore/) và [EF Core migrations](https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/).
 
 ## Migration và seed
+
+AccountAvatar thêm Accounts.AvatarKey nullable và AccountAvatars(UserId PK/FK, Content bytea); mỗi tài khoản có tối đa một PNG nhỏ, thay/xoá trong transaction cùng account version. Seed quyền profile:avatar:write:own cho user/manage/admin. Không lưu bytes trên Accounts hoặc tạo thư mục upload tuỳ ý. Xem [hợp đồng avatar](account-avatar.md).
 
 Migration có phiên bản, review cùng model/API. Kiểm tra trên database rỗng và database có fixture phiên bản trước; xác định cách khôi phục khi lỗi trước khi dùng dữ liệu thật.
 

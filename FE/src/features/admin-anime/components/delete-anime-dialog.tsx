@@ -4,6 +4,7 @@ import { adminAnimeRepository } from '@/lib/api/repositories';
 import type { AdminAnimeRow } from '@/types/admin-anime';
 import type { AdminPreviewSession } from '@/types/admin';
 import { useAdminAnimeMutation } from '@/features/admin-anime/hooks/use-admin-anime-mutation';
+import { paths } from '@/config/paths';
 
 export function DeleteAnimeDialog({
   row,
@@ -11,17 +12,26 @@ export function DeleteAnimeDialog({
   fail,
   onClose,
   onDeleted,
+  onRefresh,
+  returnTo,
 }: {
   row: AdminAnimeRow;
   session: AdminPreviewSession;
   fail: boolean;
   onClose: () => void;
   onDeleted: () => void;
+  onRefresh: () => void;
+  returnTo: string;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const cancel = useRef<HTMLButtonElement>(null);
   const failOnce = useRef(fail);
-  const { run, pending, error } = useAdminAnimeMutation();
+  const { run, pending, error, failure } = useAdminAnimeMutation();
+  const published = row.publicationStatus === 'published' || failure?.code === 'ANIME_PUBLISHED';
+  const inUse = row.publishedEpisodes > 0 || failure?.code === 'ANIME_IN_USE';
+  const reloadRequired =
+    failure?.status === 404 ||
+    (failure?.status === 409 && !['ANIME_PUBLISHED', 'ANIME_IN_USE'].includes(failure.code));
   useLayoutEffect(() => {
     const element = dialog.current!;
     const previous = document.activeElement;
@@ -30,6 +40,7 @@ export function DeleteAnimeDialog({
     return () => {
       element.close();
       if (previous instanceof HTMLElement && previous.isConnected) previous.focus();
+      else document.getElementById('admin-anime-results')?.focus();
     };
   }, []);
   return (
@@ -50,12 +61,14 @@ export function DeleteAnimeDialog({
         Xoá phim?
       </h2>
       <p id="delete-anime-description" className="tw:break-words">
-        Xoá “{row.anime.title}” khỏi dữ liệu của phiên quản trị mẫu. Không thể hoàn tác trong phiên
-        này. Danh mục công khai và thư viện cá nhân không thay đổi.
+        Xoá vĩnh viễn “{row.anime.title}”. Không thể hoàn tác. Chỉ xoá được phim ở bản nháp và không
+        còn dữ liệu liên quan.
       </p>
-      {row.publishedEpisodes > 0 && (
+      {(published || inUse) && (
         <p className="tw:text-[#f1cd8a]">
-          Phim đã có tập công khai nên không thể xoá. Dữ liệu tập phim sẽ được giữ nguyên.
+          {published
+            ? 'Phim đang được công bố. Chuyển về bản nháp trước khi xoá.'
+            : 'Phim còn tập hoặc dữ liệu liên quan nên chưa thể xoá. Dữ liệu liên quan được giữ nguyên.'}
         </p>
       )}
       {error && (
@@ -65,19 +78,38 @@ export function DeleteAnimeDialog({
       )}
       <div className="tw:flex tw:justify-end tw:gap-3 tw:mt-6 tw:flex-wrap">
         <Button ref={cancel} variant="quiet" disabled={pending} label="Huỷ" onClick={onClose} />
-        <Button
-          label={pending ? 'Đang xoá…' : 'Xác nhận xoá'}
-          loading={pending}
-          onClick={() => {
-            const shouldFail = failOnce.current;
-            failOnce.current = false;
-            void run(
-              (signal) =>
-                adminAnimeRepository.remove(row.anime.id, row.version, signal, session, shouldFail),
-              onDeleted,
-            );
-          }}
-        />
+        {published && (
+          <Button
+            as="link"
+            variant="quiet"
+            to={paths.adminAnimeEdit(row.anime.id, returnTo)}
+            label="Chỉnh sửa phim"
+          />
+        )}
+        {reloadRequired ? (
+          <Button label="Tải lại danh sách" onClick={onRefresh} />
+        ) : (
+          <Button
+            label={pending ? 'Đang xoá…' : 'Xác nhận xoá'}
+            loading={pending}
+            disabled={published || inUse || failure?.status === 403}
+            onClick={() => {
+              const shouldFail = failOnce.current;
+              failOnce.current = false;
+              void run(
+                (signal) =>
+                  adminAnimeRepository.remove(
+                    row.anime.id,
+                    row.version,
+                    signal,
+                    session,
+                    shouldFail,
+                  ),
+                onDeleted,
+              );
+            }}
+          />
+        )}
       </div>
     </dialog>
   );

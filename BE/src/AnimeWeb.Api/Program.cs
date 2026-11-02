@@ -63,6 +63,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddScoped<IPasswordHasher<Account>, PasswordHasher<Account>>();
 builder.Services.AddScoped<AccountService>();
+builder.Services.AddScoped<AvatarService>();
 builder.Services.AddScoped<AdminBootstrap>();
 builder.Services.AddScoped<PersonalService>();
 builder.Services.AddScoped<CommentService>();

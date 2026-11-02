@@ -1,5 +1,7 @@
 # Quản lý anime
 
+Cập nhật 2026-11-03: màn hình đã dùng API thật mặc định. Xoá chỉ cho bản nháp không còn tham chiếu; dialog chặn published/tập công khai, có link chỉnh sửa. 409 STALE_VERSION/404 yêu cầu Tải lại danh sách và xác nhận lại, giữ query/phân trang; ANIME_IN_USE giữ dữ liệu và chặn thử xoá tiếp. 403 báo thiếu quyền, network/5xx cho thử lại. Xem [hợp đồng lỗi](../docs-BE/admin-mutation-errors.md); các mô tả mock bên dưới chỉ áp dụng VITE_API_MODE=mock trong DEV.
+
 Đã triển khai FE tại `/admin/anime` ngày 2026-10-30, gồm danh sách và chức năng thêm/sửa/xoá trong phiên mẫu riêng. Seed ban đầu có 24 anime; chưa kết nối BE hoặc có API quản trị. Chưa có upload, phát hành ra danh mục công khai hoặc quản lý tập trong màn này.
 
 ## Mở màn hình

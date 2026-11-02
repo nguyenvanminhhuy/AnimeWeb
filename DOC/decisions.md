@@ -1,5 +1,15 @@
 # Quyết định và câu hỏi còn mở
 
+## 2026-11-02 — Ảnh đại diện cá nhân
+
+Người dùng yêu cầu thêm đổi ảnh đại diện ở BE/FE. Chọn PNG/JPG/WebP tại Profile, canvas cắt vuông/xuất PNG tối đa 512px; BE kiểm tra bytes/CRC/decompression/kích thước, lưu bytea trong bảng riêng PostgreSQL. Upload/xoá chỉ own với profile:avatar:write:own, version chung Account và transaction; GET ảnh public theo key server cấp. Không thêm dịch vụ ngoài, upload video hoặc sửa tên/email. Xem [contract avatar](docs-BE/account-avatar.md).
+
+## 2026-11-02 — Admin đổi vai trò tài khoản
+
+Theo yêu cầu người dùng, mở thêm PATCH role và UI chọn user/manage/admin trong Users. Thay thế đúng một role; permission riêng admin:user:role:write chỉ seed admin; chặn tự hạ quyền và admin active cuối, dùng chung account version/transaction lock với status, thu hồi phiên khi role thực sự đổi. Không mở CRUD tài khoản hoặc sửa permission. Xem [contract vai trò](docs-BE/account-role-management.md).
+
+Quyết định bổ sung 2026-11-02: admin được khoá/mở khoá tài khoản qua permission admin:user:status:write; manage vẫn chỉ đọc. Thêm version/409, thu hồi phiên khi khoá, không tự khoá hoặc khoá admin active cuối cùng. Xem [contract trạng thái](docs-BE/account-status-management.md). Quyết định này thay phạm vi Users chỉ đọc trong các mục lịch sử dưới đây; không mở thêm cấp role/tạo/xoá/reset mật khẩu tài khoản quản trị.
+
 ## Bộ mặc định BE xác nhận 2026-11-01
 
 Người dùng yêu cầu code toàn bộ feature BE còn thiếu và chọn “Dùng bộ mặc định đề xuất”: bearer opaque 7 ngày, PasswordHasher framework, logout/đổi mật khẩu thu hồi phiên; anime draft/publication riêng, ngày công bố tập do server gán và giữ khi tái xuất bản; comments hiện ngay; version/409 chống ghi đè; metadata direct MP4/HLS/VTT/SRT; view sau 30 giây đồng hồ server + delta vị trí, dedup anime/viewer/bucket30phút; ranking chung Home/Dashboard. Phạm vi endpoint/DTO và chi tiết tại [API contract v0.3](api-contract.md), hiện trạng tại [current-status](docs-BE/current-status.md). Các ghi chú còn đề xuất ở các mục lịch sử bên dưới không thay quyết định mới này. Chưa triển khai tích hợp FE, media thật hoặc deploy; Users vẫn chỉ đọc, không API cấp role/khóa/xóa/reset mật khẩu.

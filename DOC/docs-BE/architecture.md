@@ -71,7 +71,7 @@ Giữ nghiệp vụ Anime/Mùa/tập/Playback tại feature tương ứng; màn 
 
 List quản trị xử lý filter/sort/paging ở database, lookup/detail riêng phục vụ form trực tiếp; không trả toàn DB để giữ mock getCatalog. DTO summary/options/count dùng query toàn scope phù hợp, không tính từ một page. Mapper FE unwrap envelope và map nullable/genres/format, không đưa React/UI state vào service BE. Chỉ refactor FE khi phạm vi nhiệm vụ bao gồm tích hợp.
 
-Role user/manage/admin là nhóm quyền đã quy định; policy/ownership/active kiểm tra server, không tin AdminPreviewSession hay role client. Không dùng wildcard admin để bỏ constraint/own; không thêm mutation người dùng ngoài nhu cầu Users chỉ đọc.
+Role user/manage/admin là nhóm quyền đã quy định; policy/ownership/active kiểm tra server, không tin AdminPreviewSession hay role client. Không dùng wildcard admin để bỏ constraint/own; không thêm mutation người dùng ngoài nhu cầu Users có đọc và khoá/mở khoá theo quyền admin:user:status:write.
 
 ## Playback và vận hành
 

@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef, useState } from 'react';
+import { adminApiErrorMessage } from '@/utils/admin-api-error';
 import { Button } from '@/components/ui/button';
 import { adminEpisodeRepository } from '@/lib/api/repositories';
 import type { AdminPreviewSession } from '@/types/admin';
@@ -52,8 +53,7 @@ export function DeleteMetadataDialog({
       );
       if (!controller.signal.aborted) onDeleted();
     } catch (reason) {
-      if (!controller.signal.aborted)
-        setError(reason instanceof Error ? reason.message : 'Không thể xoá.');
+      if (!controller.signal.aborted) setError(adminApiErrorMessage(reason, 'Không thể xoá.'));
     } finally {
       if (!controller.signal.aborted) {
         setPending(false);
@@ -76,8 +76,8 @@ export function DeleteMetadataDialog({
         Xoá {target.kind === 'season' ? 'mùa/phần' : 'tập phim'}?
       </h2>
       <p id="delete-metadata-description">
-        “{target.title}” sẽ bị xoá khỏi phiên mẫu. Không thể hoàn tác. Mùa còn tập và tập đã công bố
-        sẽ bị chặn; không xoá dây chuyền hoặc lịch sử xem.
+        “{target.title}” sẽ bị xoá vĩnh viễn. Không thể hoàn tác. Mùa còn tập và tập đã công bố sẽ
+        bị chặn; không xoá dây chuyền hoặc lịch sử xem.
       </p>
       {error && (
         <p role="alert" className="tw:text-[#ffb4bc]">

@@ -1,4 +1,5 @@
 import { isMockApi } from '@/config/api';
+import { adminApiErrorMessage } from '@/utils/admin-api-error';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { adminAnimeRepository } from '@/lib/api/repositories';
@@ -56,13 +57,13 @@ export function useAdminAnime() {
             error: '',
           });
       },
-      () => {
+      (cause) => {
         if (!controller.signal.aborted)
           setResponse({
             key,
             resolvedKey: key,
             result: null,
-            error: 'Không thể tải danh sách phim. Vui lòng thử lại.',
+            error: adminApiErrorMessage(cause, 'Không thể tải danh sách phim. Vui lòng thử lại.'),
           });
       },
     );

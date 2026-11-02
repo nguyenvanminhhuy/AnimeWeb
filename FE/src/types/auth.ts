@@ -4,6 +4,7 @@ export interface DemoProfile {
   id: DemoUser;
   displayName: string;
   email: string;
+  avatarUrl?: string | null;
 }
 
 export type AuthState = 'ready' | 'error' | 'slow';

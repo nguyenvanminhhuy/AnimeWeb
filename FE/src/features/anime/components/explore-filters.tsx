@@ -23,6 +23,8 @@ export function ExploreFilters({ query, suggestions = [], options }: ExploreFilt
   const searchRef = useRef<HTMLInputElement>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const composingRef = useRef(false);
+  const genres = options?.genres ?? genreOptions;
+  const years = options?.years ?? catalogYears;
 
   function cancelSearch() {
     if (timerRef.current !== null) clearTimeout(timerRef.current);
@@ -97,15 +99,12 @@ export function ExploreFilters({ query, suggestions = [], options }: ExploreFilt
         <div className="aw-explore-filter-grid tw:gap-4.5 tw:grid tw:grid-cols-4 tw:mt-4.25 tw:max-tablet:grid-cols-2">
           <div className="aw-explore-field tw:grid tw:text-body">
             <label htmlFor="explore-genre">Thể loại</label>
-            <Selectbox
-              id="explore-genre"
-              name="genre"
-              key={query.genre}
-              defaultValue={query.genre}
-              onChange={submitFilter}
-            >
+            <Selectbox id="explore-genre" name="genre" value={query.genre} onChange={submitFilter}>
               <option value="">Tất cả thể loại</option>
-              {(options?.genres ?? genreOptions).map((option) => (
+              {query.genre && !genres.some((option) => option.value === query.genre) && (
+                <option value={query.genre}>{query.genre}</option>
+              )}
+              {genres.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
                 </option>
@@ -114,15 +113,12 @@ export function ExploreFilters({ query, suggestions = [], options }: ExploreFilt
           </div>
           <div className="aw-explore-field tw:grid tw:text-body">
             <label htmlFor="explore-year">Năm phát hành</label>
-            <Selectbox
-              id="explore-year"
-              name="year"
-              key={query.year}
-              defaultValue={query.year}
-              onChange={submitFilter}
-            >
+            <Selectbox id="explore-year" name="year" value={query.year} onChange={submitFilter}>
               <option value="">Tất cả năm</option>
-              {(options?.years ?? catalogYears).map((year) => (
+              {query.year && !years.some((year) => String(year) === query.year) && (
+                <option value={query.year}>{query.year}</option>
+              )}
+              {years.map((year) => (
                 <option key={year} value={year}>
                   {year}
                 </option>
@@ -134,8 +130,7 @@ export function ExploreFilters({ query, suggestions = [], options }: ExploreFilt
             <Selectbox
               id="explore-status"
               name="status"
-              key={query.status}
-              defaultValue={query.status}
+              value={query.status}
               onChange={submitFilter}
             >
               <option value="">Tất cả trạng thái</option>
@@ -151,8 +146,7 @@ export function ExploreFilters({ query, suggestions = [], options }: ExploreFilt
             <Selectbox
               id="explore-format"
               name="format"
-              key={query.format}
-              defaultValue={query.format}
+              value={query.format}
               onChange={submitFilter}
             >
               <option value="">Tất cả định dạng</option>

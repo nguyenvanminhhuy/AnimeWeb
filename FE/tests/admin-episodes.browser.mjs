@@ -58,7 +58,7 @@ export async function verifyAdminEpisodes(browser, baseURL) {
     await page.getByRole('button', { name: 'Thêm mùa/phần', exact: true }).click();
     await page.getByLabel('Tiêu đề *', { exact: true }).fill('Mùa thử nghiệm');
     await page.getByRole('button', { name: 'Lưu mùa/phần', exact: true }).click();
-    await page.getByText('Đã lưu mùa/phần trong phiên mẫu.', { exact: true }).waitFor();
+    await page.getByText('Đã lưu mùa/phần.', { exact: true }).waitFor();
     await ready();
     await page.getByLabel('Mùa/phần', { exact: true }).selectOption({ label: 'Mùa thử nghiệm' });
     const seasonId = new URL(page.url()).searchParams.get('seasonId');
@@ -77,7 +77,7 @@ export async function verifyAdminEpisodes(browser, baseURL) {
     );
     await page.getByLabel('Tiêu đề *', { exact: true }).fill('Tập thử nghiệm');
     await page.getByRole('button', { name: 'Lưu tập phim', exact: true }).click();
-    await page.getByRole('heading', { name: 'Đã lưu tập phim trong phiên mẫu.' }).waitFor();
+    await page.getByRole('heading', { name: 'Đã lưu tập phim.' }).waitFor();
     await page.getByRole('link', { name: 'Về danh sách tập phim', exact: true }).click();
     await ready();
     assert.equal(await page.locator('tbody tr').count(), 1);
@@ -207,7 +207,7 @@ export async function verifyAdminEpisodeStates(browser, baseURL) {
       'Published test',
     );
     await page.getByRole('button', { name: 'Lưu tập phim', exact: true }).click();
-    await page.getByRole('heading', { name: 'Đã lưu tập phim trong phiên mẫu.' }).waitFor();
+    await page.getByRole('heading', { name: 'Đã lưu tập phim.' }).waitFor();
     await page.getByRole('link', { name: 'Về danh sách tập phim', exact: true }).click();
     await page.locator('[data-admin-episodes="ready"]').waitFor();
     await page.getByLabel('Tìm tập phim', { exact: true }).fill('Published test');

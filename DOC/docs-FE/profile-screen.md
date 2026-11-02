@@ -1,6 +1,6 @@
 # Trang cá nhân / Profile
 
-Route `/profile`, source `FE/src/app/routes/profile.tsx`, dưới MainLayout và router hiện có. Mở bằng avatar Header → Trang cá nhân, hoặc mở trực tiếp rồi đăng nhập giữ returnTo. Màn hình được hoàn thiện theo screen-generation ngày 2026-10-30: thông tin hồ sơ chỉ đọc, chưa có chỉnh sửa tên/email, đổi mật khẩu hoặc upload avatar.
+Route `/profile`, source `FE/src/app/routes/profile.tsx`, dưới MainLayout và router hiện có. Mở bằng avatar Header → Trang cá nhân, hoặc mở trực tiếp rồi đăng nhập giữ returnTo. Tên/email chỉ đọc; đã có đổi mật khẩu và [đổi/xoá ảnh đại diện](../docs-BE/account-avatar.md) từ 2026-11-02. Chọn PNG/JPG/WebP, preview cắt vuông, Lưu ảnh thủ công; xoá cần xác nhận. Lỗi/409 không thay ảnh bằng optimistic update. Header và hero cập nhật ngay; reload lấy ảnh từ BE.
 
 Hero có avatar lớn, tên/email và nút Thư viện/Lịch sử xem. Bốn chỉ số từ phiên hiện tại: số phim yêu thích, tập đang xem, tập hoàn thành, tổng tập có lịch sử. Mỗi chỉ số là link đến tab thư viện phù hợp. Khối Thông tin tài khoản hiển thị tên, email và loại thành viên. Đây là số liệu cục bộ/mẫu, không phải lịch sử vận hành đã được xác thực.
 

@@ -50,8 +50,7 @@ export function DeleteGenreDialog({
         Xoá thể loại?
       </h2>
       <p id="delete-genre-description" className="tw:break-words">
-        Xoá “{row.name}” khỏi phiên quản trị mẫu. Không thể hoàn tác trong phiên này. Danh mục công
-        khai không thay đổi.
+        Xoá vĩnh viễn “{row.name}”. Không thể hoàn tác. Chỉ xoá được thể loại chưa có phim sử dụng.
       </p>
       {row.animeCount > 0 && (
         <p className="tw:text-[#f1cd8a]">

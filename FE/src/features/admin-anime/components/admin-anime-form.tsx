@@ -315,7 +315,7 @@ export function AdminAnimeForm({
         <Button as="link" variant="quiet" to={returnTo} label="Huỷ" />
       </div>
       <p className="tw:mt-4 tw:text-(--aw-muted)">
-        Thay đổi chỉ lưu trong phiên quản trị mẫu và được đặt lại khi tải lại hoặc đổi phiên.
+        Kiểm tra thông tin và trạng thái công bố trước khi lưu thay đổi.
       </p>
     </form>
   );

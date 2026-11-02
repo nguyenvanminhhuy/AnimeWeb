@@ -21,7 +21,7 @@ FE dùng React + TypeScript + Vite, Tailwind CSS và Bootstrap 5. Trang chủ, K
 | [Role/permission](rules/roles-permissions.md) | Guest/member, ownership và cache |
 | [Wireframes](design/wireframes.md) | Luồng sử dụng và bố cục |
 | [Prompt](prompts/readme.md) | Quy trình sinh màn hình |
-| [Generate quản trị](prompts/admin-screen-generation.md) | Dashboard, CRUD anime/thể loại/mùa và tập/nguồn và phụ đề, Người dùng chỉ đọc đã có FE mock; chưa kết nối API quản trị |
+| [Generate quản trị](prompts/admin-screen-generation.md) | Dashboard, CRUD anime/thể loại/mùa và tập/nguồn và phụ đề, Người dùng đã kết nối API quản trị; admin có khoá/mở khoá |
 | [Kiểm chứng](verification.md) | Bằng chứng thực tế, chỉ bổ sung lịch sử |
 
 ## Màn hình
@@ -38,7 +38,7 @@ FE dùng React + TypeScript + Vite, Tailwind CSS và Bootstrap 5. Trang chủ, K
 - [Mùa/phần và tập phim](admin-episodes-screen.md): `/admin/episodes`, CRUD mùa/phần và metadata tập, chặn xoá tài nguyên còn quan hệ hoặc đã công bố.
 - [Nguồn phát và phụ đề](admin-playback-screen.md): `/admin/playback`, CRUD cấu hình nguồn theo tập, phụ đề theo nguồn, bật/tắt và phụ đề mặc định; chưa kiểm chứng playback.
 - [Quản lý bình luận](admin-comments-screen.md): `/admin/comments`, tìm/lọc/phân trang, xem nội dung và ẩn/hiện lại kèm lý do; deleted không được khôi phục.
-- [Quản lý người dùng](admin-users-screen.md): `/admin/users`, tìm/lọc/sort/phân trang và hồ sơ theo userId trên URL; chỉ đọc dữ liệu hư cấu.
+- [Quản lý người dùng](admin-users-screen.md): `/admin/users`, tìm/lọc/sort/phân trang và hồ sơ theo userId trên URL; manage chỉ đọc, admin khoá/mở khoá qua API thật.
 - [Đăng nhập/Đăng ký](auth-screens.md): `/login`, `/register`; chưa xác thực thật.
 - [Đổi mật khẩu](change-password-screen.md): `/profile/change-password`, member, form hiện tại/mới/xác nhận và preview; chưa thay mật khẩu thật.
 

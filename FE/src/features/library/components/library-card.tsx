@@ -18,7 +18,10 @@ export function LibraryCard({ item, tab, favorite, canWrite, onToggleFavorite }:
   const completed = progress ? isCompleted(progress) : false;
   const minutes = progress ? Math.floor(progress.positionSeconds / 60) : 0;
   return (
-    <div className="aw-library-card tw:min-w-0" data-item-id={item.key}>
+    <div
+      className="aw-library-card tw:min-w-0 tw:flex tw:flex-col tw:h-full"
+      data-item-id={item.key}
+    >
       <AnimeCard anime={anime} />
       {progress ? (
         <div className="aw-library-progress tw:mt-4.5">
@@ -56,7 +59,7 @@ export function LibraryCard({ item, tab, favorite, canWrite, onToggleFavorite }:
       ) : (
         <p className="aw-library-not-started">Đã lưu cho một ngày muốn xem.</p>
       )}
-      <div className="aw-library-card-actions tw:gap-2 tw:flex tw:items-center tw:mt-3.75 tw:flex-wrap tw:max-phone:items-stretch">
+      <div className="aw-library-card-actions tw:gap-2 tw:flex tw:items-center tw:mt-auto tw:pt-3.75 tw:flex-wrap tw:max-phone:items-stretch">
         {progress ? (
           <Button
             as="link"

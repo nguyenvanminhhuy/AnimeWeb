@@ -1,4 +1,5 @@
 import { ApiError } from '@/lib/api/backend/error';
+import { adminApiErrorMessage } from '@/utils/admin-api-error';
 import { useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { Button } from '@/components/ui/button';
@@ -73,7 +74,7 @@ export function MediaForm({
       if (!controller.signal.aborted) onSaved();
     } catch (reason) {
       if (!controller.signal.aborted) {
-        setError(reason instanceof Error ? reason.message : 'Không thể lưu.');
+        setError(adminApiErrorMessage(reason, 'Không thể lưu.'));
         if (reason instanceof AdminPlaybackError || reason instanceof ApiError)
           invalid(reason.fields);
       }
@@ -233,7 +234,7 @@ export function MediaForm({
               checked={confirmed}
               onChange={(e) => setConfirmed(e.target.checked)}
             />
-            Xác nhận {source && value.enabled ? 'bật' : 'tắt'} nguồn trong phiên mẫu.
+            Xác nhận {source && value.enabled ? 'bật' : 'tắt'} nguồn phát.
           </label>
         )}
       </fieldset>

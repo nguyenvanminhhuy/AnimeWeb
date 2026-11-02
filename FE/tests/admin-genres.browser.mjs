@@ -121,7 +121,7 @@ export async function verifyAdminGenres(browser, baseURL) {
       form.requestSubmit();
       form.requestSubmit();
     });
-    await page.getByText('Đã thêm thể loại trong phiên mẫu.', { exact: true }).waitFor();
+    await page.getByText('Đã thêm thể loại.', { exact: true }).waitFor();
     await ready();
     const genreRow = page.locator('tbody tr').filter({ hasText: 'Khoa học viễn tưởng' });
     const genreId = await genreRow.getAttribute('data-genre-id');
@@ -158,7 +158,7 @@ export async function verifyAdminGenres(browser, baseURL) {
     assert.equal(await name.evaluate((element) => document.activeElement === element), true);
     await fill('Khoa học kỳ ảo', 'science-fantasy');
     await save();
-    await page.getByText('Đã lưu thay đổi thể loại trong phiên mẫu.', { exact: true }).waitFor();
+    await page.getByText('Đã lưu thay đổi thể loại.', { exact: true }).waitFor();
     await ready();
     assert.match(await page.locator(`[data-genre-id="${genreId}"]`).innerText(), /Khoa học kỳ ảo/);
     assert.deepEqual(documents, [], 'CRUD/filter/history stay in SPA');
@@ -203,7 +203,7 @@ export async function verifyAdminGenres(browser, baseURL) {
     await current.getByRole('button', { name: /^Sửa / }).click();
     await fill('Khoa học tương lai', 'future-fantasy');
     await save();
-    await page.getByText('Đã lưu thay đổi thể loại trong phiên mẫu.', { exact: true }).waitFor();
+    await page.getByText('Đã lưu thay đổi thể loại.', { exact: true }).waitFor();
     await ready();
     await current.getByRole('link').click();
     await animeReady();
@@ -243,7 +243,7 @@ export async function verifyAdminGenres(browser, baseURL) {
     await page.getByRole('form').getByRole('alert').waitFor();
     assert.equal(await name.inputValue(), 'Thể loại thử lại');
     await save();
-    await page.getByText('Đã thêm thể loại trong phiên mẫu.', { exact: true }).waitFor();
+    await page.getByText('Đã thêm thể loại.', { exact: true }).waitFor();
     await ready();
     await enter('/admin/genres?mock=error');
     await page.getByRole('heading', { name: 'Chưa tải được thể loại' }).waitFor();

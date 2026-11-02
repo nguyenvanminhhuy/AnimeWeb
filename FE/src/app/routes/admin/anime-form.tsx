@@ -89,7 +89,7 @@ function Editor({
         <>
           <ContentState
             title="Không tìm thấy phim"
-            description="Phim không tồn tại hoặc đã bị xoá trong phiên mẫu."
+            description="Phim không tồn tại hoặc đã bị xoá."
           />
           <Button as="link" to={returnTo} label="Về danh sách phim" />
         </>
@@ -102,9 +102,7 @@ function Editor({
           onSaved={() =>
             navigate(returnTo, {
               state: {
-                adminAnimeNotice: id
-                  ? 'Đã lưu thay đổi phim trong phiên mẫu.'
-                  : 'Đã thêm phim trong phiên mẫu.',
+                adminAnimeNotice: id ? 'Đã lưu thay đổi phim.' : 'Đã thêm phim.',
               },
             })
           }

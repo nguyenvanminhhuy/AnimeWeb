@@ -10,7 +10,9 @@ export function AnimeCard({ anime }: { anime: Anime }) {
         <div className="aw-poster tw:overflow-hidden tw:rounded-[9px]">
           <Artwork src={anime.posterUrl} alt={`Minh họa ${anime.title}`} />
         </div>
-        <h3>{anime.title}</h3>
+        <h3 className="tw:line-clamp-2 tw:min-h-[3em] tw:break-words" title={anime.title}>
+          {anime.title}
+        </h3>
         <span className="tw:block tw:mb-1 tw:text-body tw:text-[var(--aw-muted)]">
           {anime.episodeLabel}
         </span>

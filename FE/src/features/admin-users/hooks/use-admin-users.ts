@@ -71,6 +71,7 @@ export function useAdminUsers() {
       navigate(canonical + location.hash, { replace: true, preventScrollReset: true });
   }, [canonical, location.pathname, location.search, location.hash, navigate]);
   return {
+    canWrite: canRead && permissions.includes('admin:user:status:write'),
     canRead,
     userId,
     mock,

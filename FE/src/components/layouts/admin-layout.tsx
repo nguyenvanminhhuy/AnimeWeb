@@ -10,6 +10,7 @@ import { AccountMenu } from '@/components/navigation/account-menu';
 interface AdminLayoutProps {
   children: ReactNode;
   displayName: string;
+  avatarUrl?: string | null;
   pageLabel: string;
   previewWritable?: boolean;
   onLogout: () => void;
@@ -19,6 +20,7 @@ interface AdminLayoutProps {
 export function AdminLayout({
   children,
   displayName,
+  avatarUrl,
   pageLabel,
   previewWritable = false,
   onLogout,
@@ -127,6 +129,7 @@ export function AdminLayout({
             </nav>
             <div className="tw:ml-auto tw:flex tw:items-center">
               <AccountMenu
+                avatarUrl={avatarUrl}
                 identity="admin-preview"
                 displayName={displayName}
                 onLogout={onLogout}

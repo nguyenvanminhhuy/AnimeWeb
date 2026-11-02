@@ -14,7 +14,7 @@
 | Admin catalog | Anime/genre CRUD, publication riêng status, options/usage/year; version, unique/relations; không cascade xóa nội dung liên quan |
 | Admin episodes | Season/episode list/detail/CRUD; validate cha, movie một mùa/một tập, server gán publishedAt lần đầu và giữ khi tái xuất bản |
 | Admin media | Source/track CRUD, default track tối đa một/source trong transaction; chặn xóa source còn track; provider hiện chỉ direct |
-| Admin Users/Dashboard | Users list/detail/summary chỉ đọc; Dashboard aggregate counts/status/recent/ranking; không endpoint gán role, khóa/xóa hoặc reset mật khẩu người khác |
+| Admin Users/Dashboard | Users list/detail/summary và admin PATCH trạng thái theo version; Dashboard aggregate counts/status/recent/ranking; có PATCH role theo version; không xoá hoặc reset mật khẩu người khác |
 
 ## Dữ liệu và thao tác vận hành
 
@@ -22,7 +22,7 @@ Migration mới `20261101081745_CompleteBackendFeatures` bổ sung Accounts/Logi
 
 Anime draft không còn tài nguyên tham chiếu có thể xóa cùng các liên kết AnimeGenre của nó trong một transaction; không xóa Genre. Nếu còn mùa/library/comments/view events, FK chặn và transaction rollback. Episode published phải chuyển draft trước xóa; FK vẫn chặn nếu còn nguồn/progress/view session. Bản ghi đã được tham chiếu có thể giữ draft thay xóa.
 
-Admin đầu tiên chỉ tạo bằng CLI explicit `--bootstrap-admin` sau migration, với cấu hình Bootstrap__Email/Bootstrap__DisplayName/Bootstrap__Password do người vận hành cấp. Không chạy bootstrap khi ứng dụng start bình thường, không có mật khẩu mặc định, không nâng quyền tài khoản đăng ký và không có API cấp role. Xem [BE README](../../BE/README.md).
+Admin đầu tiên chỉ tạo bằng CLI explicit `--bootstrap-admin` sau migration, với cấu hình Bootstrap__Email/Bootstrap__DisplayName/Bootstrap__Password do người vận hành cấp. Không chạy bootstrap khi ứng dụng start bình thường, không có mật khẩu mặc định, không nâng quyền tài khoản đăng ký và đã có API đổi role cho admin. Xem [BE README](../../BE/README.md).
 
 ## Tích hợp và giới hạn thực tế
 

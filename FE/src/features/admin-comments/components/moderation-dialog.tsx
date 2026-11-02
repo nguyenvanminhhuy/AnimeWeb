@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef, useState } from 'react';
+import { adminApiErrorMessage } from '@/utils/admin-api-error';
 import type { FormEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -70,7 +71,7 @@ export function ModerationDialog({
       if (!controller.signal.aborted) onSaved();
     } catch (cause) {
       if (!controller.signal.aborted)
-        setError(cause instanceof Error ? cause.message : 'Không thể kiểm duyệt bình luận.');
+        setError(adminApiErrorMessage(cause, 'Không thể kiểm duyệt bình luận.'));
     } finally {
       if (!controller.signal.aborted) {
         request.current = null;
@@ -102,8 +103,8 @@ export function ModerationDialog({
         <p id="moderation-description" className="tw:mb-0">
           Bình luận của {comment.authorName} sẽ{' '}
           {action === 'hide' ? 'chuyển từ hiển thị sang đã ẩn' : 'chuyển từ đã ẩn sang hiển thị'}{' '}
-          trong phiên quản trị mẫu. Nội dung tác giả không đổi; dữ liệu trên trang phim công khai
-          không thay đổi.
+          theo trạng thái kiểm duyệt mới. Nội dung tác giả không đổi; danh sách bình luận công khai
+          được cập nhật tương ứng.
         </p>
         <div>
           <label htmlFor="moderation-reason">Lý do kiểm duyệt *</label>
@@ -120,7 +121,7 @@ export function ModerationDialog({
             onChange={(e) => setReason(e.target.value)}
           />
           <p id="moderation-reason-help" className="tw:text-[var(--aw-muted)] tw:mt-2 tw:mb-0">
-            Từ 3 đến 300 ký tự; chỉ lưu cùng lần kiểm duyệt gần nhất trong phiên mẫu.
+            Từ 3 đến 300 ký tự; lý do được lưu cùng lần kiểm duyệt.
           </p>
           {fieldError && (
             <p id="moderation-reason-error" role="alert" className="tw:text-[#ffb4bc] tw:mb-0">

@@ -22,7 +22,7 @@ Tất cả endpoint bên dưới thuộc prefix `/api/v1`. Method/payload/status
 | Quản trị thể loại / admin genres | admin genres | Auth, admin:genre:read/write | List/usage count/options gồm chưa dùng; ghi name/slug và chặn xoá đang dùng |
 | Quản trị mùa tập / admin episodes | admin episodes | Auth, admin:episode:read/write, Anime | Lookup cha, mùa, tập phân trang/detail; CRUD theo quan hệ/publication |
 | Quản trị nguồn phụ đề / admin playback | admin playback | Auth, admin:playback:read/write, Episode | Lookup/list sources, tracks; ghi enabled/default qua save, ràng buộc nguồn/track |
-| Người dùng quản trị / admin users | admin users | Auth, admin:user:read | List/detail/summary chỉ đọc, không mutation tài khoản |
+| Người dùng quản trị / admin users | admin users | Auth, admin:user:read | List/detail/summary; admin PATCH trạng thái với version, không mutation tài khoản khác |
 | Kiểm duyệt bình luận / admin comments | moderation | Auth, Comments, admin:comment:read/moderate | List/detail/summary và hide/restore có lý do, không restore deleted |
 | Dashboard / admin dashboard | admin aggregate | Auth, admin:dashboard:read, catalog; ranking chung | Metrics/statuses/recentAnime/topViewed; không số liệu vận hành giả |
 
@@ -42,7 +42,7 @@ Home/ranking/admin đã triển khai theo [API contract v0.3](../api-contract.md
 
 Đặc tả endpoint auth trước khi code vì contract hiện chưa có. Session/credentials thật độc lập phiên demo; `/me` tổng hợp roles/permissions từ server. Test thiếu/hết hạn/thu hồi phiên, user blocked, thiếu permission, không nhận quyền từ client. Không thêm admin bypass ownership.
 
-Handoff yêu cầu login/register nhận password, logout thu hồi phiên, me có id/displayName/email/roles/permissions và đổi mật khẩu của chính mình. FE repository hiện chưa nhận password, SessionProvider còn khôi phục phiên đồng bộ từ local; cần refactor khi nhiệm vụ có tích hợp. Đăng ký mặc định user; manage chỉ đọc admin; admin ghi theo ma trận, Users vẫn chỉ đọc. Cookie/bearer và vòng đời phiên chưa chốt; không tự thêm refresh endpoint. Profile hiện chỉ đọc, không có yêu cầu sửa hồ sơ/avatar/quên mật khẩu.
+Handoff yêu cầu login/register nhận password, logout thu hồi phiên, me có id/displayName/email/roles/permissions và đổi mật khẩu của chính mình. FE repository hiện chưa nhận password, SessionProvider còn khôi phục phiên đồng bộ từ local; cần refactor khi nhiệm vụ có tích hợp. Đăng ký mặc định user; manage chỉ đọc admin; admin ghi theo ma trận, Users có đọc và admin khoá/mở khoá/đổi role theo quyền admin:user:status:write. Cookie/bearer và vòng đời phiên chưa chốt; không tự thêm refresh endpoint. Profile hiện chỉ đọc, không có yêu cầu sửa hồ sơ/avatar/quên mật khẩu.
 
 ### Thư viện
 
@@ -83,7 +83,7 @@ Theo mục 6–7 của [handoff](../fe-backend-handoff.md), các endpoint admin 
 
 ### Users, moderation và Dashboard
 
-Users chỉ list/detail với id/displayName/email/status/roles/createdAt và summary total/active/blocked toàn tập người dùng; không API khóa/xóa/cấp role/reset mật khẩu. Moderation có list/detail theo ID, summary/lookup và action hide/restore, reason UI 3–300 làm baseline cần validate server; actor/time do server cấp. Deleted bỏ body và không được restore; không sửa tác giả/nội dung người khác.
+Users có list/detail với id/displayName/email/status/roles/createdAt/version và summary total/active/blocked toàn tập người dùng; admin có PATCH status/role theo quyền riêng, thu hồi phiên khi đổi và guard self/last active admin; không API xoá/reset mật khẩu. Moderation có list/detail theo ID, summary/lookup và action hide/restore, reason UI 3–300 làm baseline cần validate server; actor/time do server cấp. Deleted bỏ body và không được restore; không sửa tác giả/nội dung người khác.
 
 Dashboard cần totalAnime/publishedEpisodes/upcomingAnime/episodesWithoutVideo/totalSeasons/totalGenres, statuses, ranking chung và recentAnime. FE hiện lấy 6 phim gần đây theo ngày tập công bố mới nhất rồi ID; không đổi sang ngày sửa anime mà giữ nhãn. Chốt định nghĩa metric/summary trước code; không lấy số dòng page làm tổng hoặc dùng fixture làm số thật.
 

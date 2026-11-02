@@ -74,6 +74,6 @@ Từ SRC chạy `pnpm --filter anime-web-fe run dev`, hoặc chạy `pnpm dev` t
 
 [Quản lý thể loại](docs-FE/admin-genres-screen.md) tại `/admin/genres` đã có CRUD tên/slug và liên kết với Anime trong cùng workspace; chặn xoá khi còn phim sử dụng. Dùng cùng lựa chọn phiên chỉ đọc/chỉnh sửa, không gọi API quản trị thật.
 
-[Quản lý người dùng](docs-FE/admin-users-screen.md) tại `/admin/users` đã có danh sách/tìm/lọc/sort/phân trang và xem hồ sơ hư cấu theo userId. Cả hai preview đều chỉ đọc User; chưa có khoá/mở khoá, xoá tài khoản hoặc cấp role.
+[Quản lý người dùng](docs-FE/admin-users-screen.md) tại `/admin/users` đã kết nối API danh sách/tìm/lọc/sort/phân trang và xem hồ sơ theo userId. Manage chỉ đọc; admin có khoá/mở khoá. [API trạng thái tài khoản](docs-BE/account-status-management.md) kiểm tra version, chặn tự khoá/admin cuối và thu hồi phiên khi khoá; đã có đổi role với admin:user:role:write; chưa có xoá tài khoản.
 
 [Kiểm chứng FE](docs-FE/verification.md) được chuyển nguyên trạng. Các đường dẫn trong bằng chứng cũ phản ánh thời điểm chạy, không sửa lại lịch sử khi đổi vị trí tài liệu.

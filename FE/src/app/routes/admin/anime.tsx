@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { isMockApi } from '@/config/api';
 import { Icon } from '@/components/ui/icon';
 import { ContentState } from '@/components/common/content-state';
 import { Pagination } from '@/components/common/pagination';
@@ -69,9 +70,13 @@ export function AdminAnimePage() {
       ) : (
         <>
           <p className="tw:rounded-xl tw:bg-[#a697ff0d] tw:border tw:border-[var(--aw-border)] tw:p-4 tw:mb-6 tw:text-[var(--aw-muted)]">
-            {canWrite
-              ? 'Dữ liệu mẫu · Thêm, sửa và xoá chỉ tác động phiên hiện tại. Tải lại trang sẽ đặt lại dữ liệu.'
-              : 'Dữ liệu mẫu · Phiên chỉ đọc. Đổi sang phiên có quyền chỉnh sửa để thêm, sửa hoặc xoá phim.'}
+            {isMockApi
+              ? canWrite
+                ? 'Dữ liệu mẫu · Thêm, sửa và xoá chỉ tác động phiên hiện tại. Tải lại trang sẽ đặt lại dữ liệu.'
+                : 'Dữ liệu mẫu · Phiên chỉ đọc. Đổi sang phiên có quyền chỉnh sửa để thêm, sửa hoặc xoá phim.'
+              : canWrite
+                ? 'Bạn có quyền thêm, sửa và xoá phim. Chỉ xoá phim ở bản nháp và không còn dữ liệu liên quan.'
+                : 'Bạn có quyền xem danh mục. Thao tác thêm, sửa và xoá cần quyền quản trị tương ứng.'}
           </p>
           {notice && (
             <p role="status" className="tw:text-[#9fe3c2] tw:mb-5">
@@ -157,7 +162,7 @@ export function AdminAnimePage() {
             ) : (
               <ContentState
                 title="Không có phim phù hợp"
-                description="Thử thay đổi từ khóa hoặc đặt lại bộ lọc để xem danh mục mẫu."
+                description="Thử thay đổi từ khóa hoặc đặt lại bộ lọc để xem danh mục."
               />
             )}
           </section>
@@ -169,10 +174,16 @@ export function AdminAnimePage() {
           row={selected}
           session={adminPreview}
           fail={mock === 'delete-error'}
+          returnTo={returnTo}
+          onRefresh={() => {
+            setSelected(null);
+            focusResults.current = true;
+            refresh();
+          }}
           onClose={() => setSelected(null)}
           onDeleted={() => {
             setSelected(null);
-            setNotice('Đã xoá phim khỏi phiên mẫu.');
+            setNotice('Đã xoá phim.');
             focusResults.current = true;
             refresh();
           }}

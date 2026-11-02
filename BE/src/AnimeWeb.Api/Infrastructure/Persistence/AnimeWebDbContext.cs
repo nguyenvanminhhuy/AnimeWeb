@@ -18,6 +18,7 @@ public sealed class AnimeWebDbContext(DbContextOptions<AnimeWebDbContext> option
     public DbSet<Season> Seasons => Set<Season>();
     public DbSet<Episode> Episodes => Set<Episode>();
     public DbSet<Account> Accounts => Set<Account>();
+    public DbSet<AccountAvatar> AccountAvatars => Set<AccountAvatar>();
     public DbSet<LoginSession> LoginSessions => Set<LoginSession>();
     public DbSet<UserRole> UserRoles => Set<UserRole>();
     public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
