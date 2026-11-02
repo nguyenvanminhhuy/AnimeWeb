@@ -34,3 +34,8 @@ Thành viên có progress:write:own lưu theo tài khoản/episodeId trong schem
 `tests/player.browser.mjs` export verifyPlayer(browser, baseURL), dùng fixture `tests/fixtures/player.html` riêng: mô phỏng sự kiện media và duration/currentTime để kiểm tra resume, throttle, pause/ended, đổi tập/tài khoản/đăng xuất, lỗi/retry và quota. Fixture không nằm trong router hoặc production entry. **Các test sự kiện này không chứng minh phát/seek/phụ đề/autoplay hoạt động với một asset video thực.** Cần bổ sung video được phép sử dụng và kiểm chứng playback thực tế trước khi bàn giao khả năng xem video.
 
 Chạy qua Chromium đã có trong workspace theo [hướng dẫn route](rules/routes.md#kiểm-chứng); kết quả thực tế được bổ sung tại [verification.md](verification.md).
+
+
+## Bình luận trong màn Xem phim
+
+App route Watch ghép CommentsPanel của feature comments bên dưới player, dùng animeId của phim hiện tại. Bình luận dùng chung với trang Chi tiết phim (không phải luồng riêng từng tập), key theo anime/account để không giữ bản nháp của phim/tài khoản cũ. Guest có lời mời đăng nhập giữ returnTo là URL watch; người dùng có quyền được gửi/sửa/xoá bình luận của mình, giữ xác nhận xoá và phân trang commentPage cùng query season. Không import chéo feature player sang comments.

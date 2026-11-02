@@ -1,6 +1,6 @@
 # Icon — Font Awesome Free
 
-Source: `FE/src/components/ui/icon.tsx`; registry tại `icon-definitions.ts`. FE dùng component React chính thức để render SVG inline, đóng gói cùng ứng dụng; không dùng CDN, Kit script, icon font hoặc API key. Registry hiện có 15 definition, gồm `tags` (faTags) và `users` (faUsers) cho menu quản trị bằng named import.
+Source: `FE/src/components/ui/icon.tsx`; registry tại `icon-definitions.ts`. FE dùng component React chính thức để render SVG inline, đóng gói cùng ứng dụng; không dùng CDN, Kit script, icon font hoặc API key. Registry hiện có 18 definition, gồm `tags` (faTags) và `users` (faUsers) cho menu quản trị bằng named import.
 
 ## Dependencies và CSS
 
@@ -63,3 +63,6 @@ Callback/state thuộc feature; đường dẫn import theo vị trí file. Khô
 - Kiểm chứng `verifyIcons` tại FE/tests/icons.browser.mjs theo [hướng dẫn browser](../routes.md#kiểm-chứng). Fixture riêng kiểm tra registry, size, màu kế thừa, semantic/decorative và không inject CSS ngoài stylesheet Vite. Luồng thật kiểm tra guest login/returnTo và đổi tim regular → solid; chặn request ngoài origin để kiểm tra không phụ thuộc CDN.
 
 Tham chiếu chính thức: [thiết lập React](https://docs.fontawesome.com/web/use-with/react/), [import từng icon](https://docs.fontawesome.com/web/use-with/react/add-icons/).
+
+
+Các icon thao tác gồm `eye` (faEye), `edit` (faPenToSquare), `trash` (faTrashCan). Với nút chỉ có icon, dùng Button size sm với startIcon, aria-label có ngữ cảnh và title; không truyền label hiển thị. Nhóm thao tác dùng inline-flex/flex-nowrap để nằm một hàng. Nút xác nhận xoá trong dialog vẫn giữ nhãn chữ rõ ràng.

@@ -15,6 +15,8 @@ BE cung cấp danh mục anime, mùa/tập, thông tin phát, xác thực thật
 | Tài liệu | Nội dung |
 | --- | --- |
 | [feature-reference.md](feature-reference.md) | Tra cứu đầy đủ 69 thao tác HTTP, feature, field/DTO, query/body/path params, response, quyền và lỗi theo source |
+| [public-catalog.md](public-catalog.md) | Nhập metadata anime công khai vào database dev, nguồn/license và chạy lại không ghi đè |
+| [open-movie.md](open-movie.md) | Setup phim mẫu Big Buck Bunny có thể xem local, giấy phép và cách thêm nguồn phát |
 | [fe-backend-handoff.md](../fe-backend-handoff.md) | Nguồn yêu cầu dữ liệu FE: lời gọi repository/storage, input/output và query |
 | [feature-api-review.md](../feature-api-review.md) | Inventory và khoảng cách tích hợp; đối chiếu source BE trước khi dùng trạng thái |
 | [rules/readme.md](rules/readme.md) | Quy tắc bắt buộc khi tạo/sửa code BE |

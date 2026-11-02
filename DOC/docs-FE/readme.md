@@ -1,3 +1,5 @@
+> Cập nhật kết nối: FE mặc định gọi BE thật qua /api proxy. Xem [README](../../README.md) và [tích hợp HTTP](backend-compatibility.md); mock cần bật chủ động bằng VITE_API_MODE=mock trong dev.
+
 # Tài liệu frontend
 
 FE dùng React + TypeScript + Vite, Tailwind CSS và Bootstrap 5. Trang chủ, Khám phá, Chi tiết anime, Thư viện và Đăng nhập/Đăng ký đã có bản demo; Xem phim đã có giao diện/chuyển tập, chưa có asset video hoặc kết nối backend. Dashboard quản trị đã có FE đọc dữ liệu mẫu với phiên dev riêng, chưa kết nối auth/API quản trị BE. Lớp DTO/client/adapter đã được chuẩn bị theo BE v0.3, ứng dụng vẫn chạy mock.
@@ -7,6 +9,7 @@ FE dùng React + TypeScript + Vite, Tailwind CSS và Bootstrap 5. Trang chủ, K
 | Tài liệu | Nội dung |
 | --- | --- |
 | [Tổng quan dự án](../readme.md) | Trạng thái và tài liệu dùng chung |
+| [Setup local không Docker](../../SETUP.md) | BE/FE setup.ps1, start.ps1 và kết nối DBeaver |
 | [Quyết định](../decisions.md) | Yêu cầu đã xác nhận và đề xuất chưa duyệt |
 | [Rules](rules/readme.md) | Quy tắc tạo/sửa FE |
 | [Tương thích BE v0.3](backend-compatibility.md) | DTO, adapter, thay đổi màn hình và các bước kết nối còn lại |

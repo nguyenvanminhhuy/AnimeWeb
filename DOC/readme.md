@@ -1,12 +1,12 @@
 # Anime Web — Tổng quan tài liệu
 
-Trạng thái: **FE có các màn hình demo và lớp tương thích API v0.3; BE đã có API catalog, tài khoản/phân quyền, thư viện/tiến độ, bình luận, playback metadata và quản trị theo contract v0.3. Chưa nối FE với BE hoặc có nguồn phim thật.**
+Trạng thái: **FE có các màn hình demo và lớp tương thích API v0.3; BE đã có API catalog, tài khoản/phân quyền, thư viện/tiến độ, bình luận, playback metadata và quản trị theo contract v0.3. FE đã nối BE local qua HTTP/proxy; chưa có nguồn phim thật.**
 
-Mục tiêu là web xem anime hoạt động thực tế. FE dùng mock và dữ liệu cục bộ; auth demo không lưu/xác thực mật khẩu. Trang xem đã có giao diện và native video, chưa có video để kiểm chứng playback. BE dùng C#/ASP.NET Core Controller, PostgreSQL và EF Core. Xem [hướng dẫn chạy](../BE/README.md), [hiện trạng BE](docs-BE/current-status.md) và [kết quả kiểm chứng](docs-BE/verification.md).
+Mục tiêu là web xem anime hoạt động thực tế. FE mặc định dùng API BE, mock chỉ bật riêng trong dev; auth demo không lưu/xác thực mật khẩu. Trang xem đã có giao diện và native video, chưa có video để kiểm chứng playback. BE dùng C#/ASP.NET Core Controller, PostgreSQL và EF Core. Xem [hướng dẫn chạy](../BE/README.md), [hiện trạng BE](docs-BE/current-status.md) và [kết quả kiểm chứng](docs-BE/verification.md).
 
 ## FE đọc tài liệu API BE ở đâu?
 
-Điểm tra cứu API hiện có: **[DOC/docs-BE/feature-reference.md](docs-BE/feature-reference.md)**. Tài liệu mô tả từng feature, method/path, path/query/body, kiểu dữ liệu, response, validation và permission; dùng khi hoàn thiện HTTP transport và thay repository mock FE. FE đã có [lớp tương thích BE](docs-FE/backend-compatibility.md), chưa bật kết nối.
+Điểm tra cứu API hiện có: **[DOC/docs-BE/feature-reference.md](docs-BE/feature-reference.md)**. Tài liệu mô tả từng feature, method/path, path/query/body, kiểu dữ liệu, response, validation và permission; dùng khi hoàn thiện HTTP transport và thay repository mock FE. FE đã có [lớp tương thích BE](docs-FE/backend-compatibility.md), đã bật kết nối HTTP mặc định.
 
 | Cần tra cứu | Đường dẫn |
 | --- | --- |
@@ -61,6 +61,8 @@ Anime-Web/
 API/entity, roadmap và quyết định chung giữ tại DOC để FE và BE cùng tham chiếu. Tham chiếu API mô tả code hiện có; kết quả kiểm chứng và giới hạn triển khai nằm trong [verification](docs-BE/verification.md) và [current-status](docs-BE/current-status.md), không suy ra đã deploy hoặc đã tích hợp FE.
 
 ## Chạy FE hiện có
+
+[Setup BE/FE không Docker Desktop](../SETUP.md): PostgreSQL Windows, BE/setup.ps1 và start.ps1; FE/setup.ps1 cài pnpm workspace, FE/start.ps1 mở Vite. FE vẫn dùng mock cho đến khi triển khai kết nối HTTP.
 
 [Đổi mật khẩu](docs-FE/change-password-screen.md) tại `/profile/change-password` đã có form cho member, mở qua avatar/Profile; chỉ kiểm tra giao diện, chưa xác thực hoặc thay đổi mật khẩu thật.
 
