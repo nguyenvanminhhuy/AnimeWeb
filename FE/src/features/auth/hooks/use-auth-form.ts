@@ -1,3 +1,4 @@
+import { isMockApi } from '@/config/api';
 import { ApiError } from '@/lib/api/backend/error';
 import { useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
@@ -43,7 +44,7 @@ export function useAuthForm(mode: AuthMode) {
     setPending(true);
     const abort = new AbortController();
     controller.current = abort;
-    const mock = import.meta.env.DEV ? params.get('mock') : null;
+    const mock = isMockApi ? params.get('mock') : null;
     const state = mock === 'error' ? 'error' : mock === 'loading' ? 'slow' : 'ready';
     try {
       const profile =
@@ -59,7 +60,7 @@ export function useAuthForm(mode: AuthMode) {
               abort.signal,
             );
       if (abort.signal.aborted) return;
-      if (!login(profile)) throw new DemoAuthError('Không thể mở phiên demo. Hãy thử lại.');
+      if (!login(profile)) throw new DemoAuthError('Không thể mở phiên đăng nhập. Hãy thử lại.');
       setValues((current) => ({ ...current, password: '', confirmation: '' }));
     } catch (failure) {
       if (abort.signal.aborted) return;

@@ -3,7 +3,13 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { fileURLToPath, URL } from 'node:url';
 
+const apiProxy = { '/api': { target: 'http://127.0.0.1:5200', changeOrigin: true } };
+
 export default defineConfig({
+  server: { host: '127.0.0.1', port: 5173, strictPort: true, proxy: apiProxy },
+  preview: { proxy: apiProxy },
+  cacheDir:
+    process.env.VITE_API_MODE === 'mock' ? 'node_modules/.vite-mock' : 'node_modules/.vite-backend',
   // Let Vite optimize after PostCSS normalizes imported Bootstrap CSS.
   plugins: [react(), tailwindcss({ optimize: false })],
   resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },

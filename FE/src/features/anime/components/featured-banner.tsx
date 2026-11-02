@@ -1,3 +1,5 @@
+import { isMockApi } from '@/config/api';
+import { statusOptions } from '@/config/catalog';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
 import { useState } from 'react';
@@ -36,14 +38,16 @@ export function FeaturedBanner({ items }: { items: Anime[] }) {
         <h1>{item.title}</h1>
         <div className="aw-hero-meta tw:gap-2.5 tw:flex tw:flex-wrap tw:items-center tw:text-body">
           <span className="aw-status-dot tw:inline-block tw:w-1.25 tw:h-1.25 tw:rounded-[50%]" />
-          {item.status === 'airing' ? 'Đang phát hành' : 'Hoàn thành'}
+          {statusOptions.find((option) => option.value === item.status)?.label}
           <span>·</span>
           {item.releaseYear}
           <span>·</span>
           {item.episodeLabel}
-          <span className="aw-language tw:px-1 tw:py-px tw:text-body tw:rounded-[3px]">
-            VIETSUB
-          </span>
+          {isMockApi && (
+            <span className="aw-language tw:px-1 tw:py-px tw:text-body tw:rounded-[3px]">
+              VIETSUB
+            </span>
+          )}
         </div>
         <p className="aw-hero-synopsis tw:mx-0 tw:text-body tw:leading-[1.9] tw:mt-5 tw:mb-4 tw:max-w-107.5">
           {item.synopsis}

@@ -1,3 +1,4 @@
+import { isMockApi } from '@/config/api';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { adminAnimeRepository } from '@/lib/api/repositories';
@@ -15,7 +16,7 @@ export function useAdminAnime() {
   const navigate = useNavigate();
   const location = useLocation();
   const { adminPreview, permissions } = useSession();
-  const mock = import.meta.env.DEV ? params.get('mock') : null;
+  const mock = isMockApi ? params.get('mock') : null;
   const canRead = Boolean(
     adminPreview && permissions.includes('admin:anime:read') && mock !== 'forbidden',
   );

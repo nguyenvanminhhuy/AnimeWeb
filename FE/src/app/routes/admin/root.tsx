@@ -1,3 +1,4 @@
+import { isMockApi } from '@/config/api';
 import {
   Link,
   Outlet,
@@ -76,7 +77,7 @@ export function AdminRoot() {
             )}
             <Button as="link" variant="quiet" to={paths.home} label="Về Trang chủ" />
           </div>
-          {import.meta.env.DEV && (
+          {isMockApi && (
             <p className="tw:text-[var(--aw-muted)] tw:mt-6 tw:mb-0">
               Khi thử giao diện, chọn “Dùng phiên quản trị mẫu” trên trang đăng nhập. Phiên chỉ tồn
               tại trong lần mở này.

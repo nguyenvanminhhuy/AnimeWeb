@@ -1,5 +1,7 @@
+import { isMockApi } from '@/config/api';
 import { isDemoUser } from '@/utils/auth';
 import { scheduleDeadline } from '@/utils/deadline';
+import { backendCredentials } from '@/lib/api/backend/credentials';
 import type { LoginDto } from '@/lib/api/backend/types';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
@@ -47,6 +49,18 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const [adminPreview, setAdminPreview] = useState<AdminPreviewSession | null>(null);
   const current = useRef({ user, account });
   current.current = { user, account };
+  function invalidateSession(message = 'Phiên đã hết hạn. Vui lòng đăng nhập lại.') {
+    authRevision.current++;
+    backendCredentials.write(null);
+    setCredentials(null);
+    setProfile(null);
+    setAccount(null);
+    setAdminPreview(null);
+    current.current = { user: null, account: null };
+    setNotice(message);
+    if (isMockApi) demoAccount.saveSession(null);
+  }
+  useEffect(() => backendCredentials.subscribe(() => invalidateSession()), []);
   useEffect(() => {
     const controller = new AbortController();
     const revision = authRevision.current;
@@ -94,14 +108,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!credentials) return;
     return scheduleDeadline(Date.parse(credentials.expiresAt), () => {
-      authRevision.current++;
-      demoAccount.saveSession(null);
-      setCredentials(null);
-      setProfile(null);
-      setAccount(null);
-      setAdminPreview(null);
-      current.current = { user: null, account: null };
-      setNotice('Phiên đã hết hạn. Vui lòng đăng nhập lại.');
+      invalidateSession();
     });
   }, [credentials]);
   const adminContext =
@@ -145,16 +152,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const session: Session = {
     user,
     initializing,
-    invalidateSession(message = 'Phiên đã hết hạn. Vui lòng đăng nhập lại.') {
-      authRevision.current++;
-      setCredentials(null);
-      setProfile(null);
-      setAccount(null);
-      setAdminPreview(null);
-      current.current = { user: null, account: null };
-      setNotice(message);
-      demoAccount.saveSession(null);
-    },
+    invalidateSession,
     accessToken: credentials?.accessToken ?? null,
     expiresAt: credentials?.expiresAt ?? null,
     roles: credentials?.profile.roles ?? (user ? ['user'] : []),
@@ -163,7 +161,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     favorites: account?.favorites ?? [],
     progress: account?.progress ?? [],
     permissions:
-      import.meta.env.DEV && adminPreview
+      isMockApi && adminPreview
         ? adminPreview.permissions
         : credentials
           ? credentials.profile.permissions
@@ -181,10 +179,11 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     notice,
     adminPreview: adminContext,
     openAdminPreview(writable = false) {
+      if (!isMockApi) return;
       authRevision.current++;
       setInitializing(false);
       setCredentials(null);
-      if (!import.meta.env.DEV) return;
+      if (!isMockApi) return;
       current.current = { user: null, account: null };
       setProfile(null);
       setAccount(null);
@@ -210,6 +209,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       );
     },
     login(next) {
+      if (!isMockApi && typeof next === 'string') return false;
       authRevision.current++;
       setInitializing(false);
       const generation = authRevision.current;

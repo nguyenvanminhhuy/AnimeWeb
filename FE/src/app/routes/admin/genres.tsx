@@ -197,12 +197,13 @@ function GenresContent() {
                             </td>
                             {canWrite && (
                               <td className="tw:p-4">
-                                <div className="tw:flex tw:gap-2">
+                                <div className="tw:inline-flex tw:flex-nowrap tw:items-center tw:gap-2 tw:whitespace-nowrap">
                                   <Button
                                     variant="quiet"
                                     size="sm"
-                                    label="Sửa"
+                                    startIcon={<Icon name="edit" size="sm" />}
                                     aria-label={`Sửa ${row.name}`}
+                                    title={`Sửa ${row.name}`}
                                     onClick={() =>
                                       setEditor((current) => ({
                                         row,
@@ -214,8 +215,9 @@ function GenresContent() {
                                   <Button
                                     variant="quiet"
                                     size="sm"
-                                    label="Xoá"
+                                    startIcon={<Icon name="trash" size="sm" />}
                                     aria-label={`Xoá ${row.name}`}
+                                    title={`Xoá ${row.name}`}
                                     onClick={() => setSelected(row)}
                                   />
                                 </div>

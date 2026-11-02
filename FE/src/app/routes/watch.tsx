@@ -8,6 +8,7 @@ import { ContentState } from '@/components/common/content-state';
 import { useSession } from '@/stores/session';
 import { useWatchEpisode } from '@/features/player/hooks/use-watch-episode';
 import { VideoPlayer, formatPlaybackTime } from '@/features/player/components/video-player';
+import { CommentsPanel } from '@/features/comments/components/comments-panel';
 import { paths } from '@/config/paths';
 import type { WatchDetail } from '@/types/player';
 
@@ -216,10 +217,12 @@ function WatchContent({
                 . Bạn vẫn có thể xem khi chưa đăng nhập.
               </p>
             )}
-            <p className="tw:mb-0">
-              Nội dung và hình ảnh minh họa. Chưa có nguồn phim thực tế; mở thông tin tập không làm
-              thay đổi lịch sử xem.
-            </p>
+          </div>
+          <div className="tw:mt-8">
+            <CommentsPanel
+              key={`${detail.anime.id}:${user ?? 'guest'}`}
+              animeId={detail.anime.id}
+            />
           </div>
         </section>
         <aside

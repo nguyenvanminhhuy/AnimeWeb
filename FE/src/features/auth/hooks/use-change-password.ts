@@ -1,3 +1,4 @@
+import { isMockApi } from '@/config/api';
 import { useNavigate } from 'react-router-dom';
 import { paths } from '@/config/paths';
 import { ApiError } from '@/lib/api/backend/error';
@@ -48,7 +49,7 @@ export function useChangePassword() {
     const controller = new AbortController();
     request.current = controller;
     setPending(true);
-    const mock = import.meta.env.DEV ? params.get('mock') : null;
+    const mock = isMockApi ? params.get('mock') : null;
     try {
       // The adapter receives only the BE password payload; mock mode never stores it.
       await authRepository.changePassword(

@@ -1,3 +1,4 @@
+import { isMockApi } from '@/config/api';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useSession } from '@/stores/session';
@@ -48,7 +49,7 @@ function Editor({
   const [params, setParams] = useSearchParams();
   const [attempt, setAttempt] = useState(0);
   const [loaded, setLoaded] = useState<{ row: AdminAnimeRow | null; error: boolean } | null>(null);
-  const mock = import.meta.env.DEV ? params.get('mock') : null;
+  const mock = isMockApi ? params.get('mock') : null;
   useEffect(() => {
     if (!id || mock === 'loading') return;
     const controller = new AbortController();

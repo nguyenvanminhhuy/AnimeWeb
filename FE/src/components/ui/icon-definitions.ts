@@ -4,13 +4,16 @@ import {
   faArrowRight,
   faArrowUpRightFromSquare,
   faCheck,
+  faEye,
   faClock,
   faHeart,
   faMagnifyingGlass,
   faPlay,
+  faPenToSquare,
   faPlus,
   faRotateLeft,
   faTags,
+  faTrashCan,
   faUsers,
   faXmark,
 } from '@fortawesome/free-solid-svg-icons';
@@ -32,6 +35,9 @@ export const iconDefinitions = {
   plus: faPlus,
   tags: faTags,
   users: faUsers,
+  eye: faEye,
+  edit: faPenToSquare,
+  trash: faTrashCan,
 } as const;
 
 export type IconName = keyof typeof iconDefinitions;

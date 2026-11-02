@@ -1,3 +1,4 @@
+import { isMockApi } from '@/config/api';
 import { paths } from '@/config/paths';
 import type { AdminGenreQuery } from '@/types/admin-genre';
 
@@ -25,7 +26,7 @@ export function genreParams(query: AdminGenreQuery) {
 export function genreHref(query: AdminGenreQuery, mock?: string | null) {
   const params = genreParams(query);
   if (
-    import.meta.env.DEV &&
+    isMockApi &&
     mock &&
     ['loading', 'error', 'empty', 'forbidden', 'save-error', 'delete-error'].includes(mock)
   )

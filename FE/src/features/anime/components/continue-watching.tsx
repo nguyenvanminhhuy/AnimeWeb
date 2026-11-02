@@ -1,3 +1,4 @@
+import { isMockApi } from '@/config/api';
 import { useEffect, useState } from 'react';
 import { personalRepository } from '@/lib/api/repositories';
 import type { LibraryItem } from '@/types/personal';
@@ -40,9 +41,11 @@ export function ContinueWatching({ items }: { items?: LibraryItem[] }) {
           <span className="aw-eyebrow">CÂU CHUYỆN CÒN DANG DỞ</span>
           <h2 id="continue-title">
             Tiếp tục xem{' '}
-            <span className="aw-demo tw:px-1.5 tw:py-0.75 tw:rounded-[4px] tw:whitespace-nowrap">
-              LỊCH SỬ MẪU
-            </span>
+            {isMockApi && (
+              <span className="aw-demo tw:px-1.5 tw:py-0.75 tw:rounded-[4px] tw:whitespace-nowrap">
+                LỊCH SỬ MẪU
+              </span>
+            )}
           </h2>
         </div>
       </div>

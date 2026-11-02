@@ -60,7 +60,10 @@ export async function verifyDetail(browser, baseURL) {
         await page.getByText('BÌNH LUẬN ĐÃ XÓA KHÔNG ĐƯỢC HIỂN THỊ', { exact: true }).count(),
         0,
       );
-      assert.equal(await page.getByRole('button', { name: 'Sửa', exact: true }).count(), 0);
+      assert.equal(
+        await page.getByRole('button', { name: 'Sửa bình luận', exact: true }).count(),
+        0,
+      );
       assert.equal(await page.getByRole('link', { name: /Xem ngay|Xem tiếp/ }).count(), 0);
       await page.screenshot({
         path: `../Anime-Web/FE/test-results/detail-${width}.png`,
@@ -114,7 +117,7 @@ export async function verifyDetail(browser, baseURL) {
     const body = '<img src=x onerror="window.__commentInjected=1"> Bình luận thử';
     await post(body);
     assert.equal(await page.evaluate(() => window.__commentInjected), undefined);
-    assert.equal(await page.getByRole('button', { name: 'Sửa', exact: true }).count(), 1);
+    assert.equal(await page.getByRole('button', { name: 'Sửa bình luận', exact: true }).count(), 1);
     await page.reload();
     await title();
     await commentsReady();
@@ -123,7 +126,7 @@ export async function verifyDetail(browser, baseURL) {
       .getByText(body, { exact: true })
       .locator('xpath=ancestor::article')
       .getAttribute('data-comment-id');
-    await page.getByRole('button', { name: 'Sửa', exact: true }).click();
+    await page.getByRole('button', { name: 'Sửa bình luận', exact: true }).click();
     await page.getByLabel('Sửa bình luận của bạn', { exact: true }).fill('Bình luận đã sửa');
     await page.getByRole('button', { name: 'Lưu bình luận', exact: true }).click();
     await page.locator('.aw-comment-content > p').filter({ hasText: 'Bình luận đã sửa' }).waitFor();
@@ -163,8 +166,8 @@ export async function verifyDetail(browser, baseURL) {
     await page.getByText('Bình luận đã sửa', { exact: true }).waitFor();
     await page.getByRole('link', { name: /Đăng nhập để bình luận/ }).click();
     await login('Dùng tài khoản mới');
-    assert.equal(await page.getByRole('button', { name: 'Sửa', exact: true }).count(), 0);
-    assert.equal(await page.getByRole('button', { name: 'Xóa', exact: true }).count(), 0);
+    assert.equal(await page.getByRole('button', { name: 'Sửa bình luận', exact: true }).count(), 0);
+    assert.equal(await page.getByRole('button', { name: 'Xóa bình luận', exact: true }).count(), 0);
     assert.equal(await page.getByLabel('Cảm nhận của bạn', { exact: true }).inputValue(), '');
     assert.equal(
       await page.getByText('Bản nháp phải được xóa khi đổi tài khoản', { exact: true }).count(),
@@ -174,10 +177,10 @@ export async function verifyDetail(browser, baseURL) {
     await commentsReady();
     await page.getByRole('link', { name: /Đăng nhập để bình luận/ }).click();
     await login('Dùng tài khoản có lịch sử mẫu');
-    await page.getByRole('button', { name: 'Xóa', exact: true }).click();
+    await page.getByRole('button', { name: 'Xóa bình luận', exact: true }).click();
     await page.getByRole('button', { name: 'Hủy xóa', exact: true }).click();
     await page.getByText('Bình luận đã sửa', { exact: true }).waitFor();
-    await page.getByRole('button', { name: 'Xóa', exact: true }).click();
+    await page.getByRole('button', { name: 'Xóa bình luận', exact: true }).click();
     await page.getByRole('button', { name: 'Xác nhận xóa', exact: true }).click();
     await page.getByRole('status').filter({ hasText: 'Đã xóa bình luận của bạn.' }).waitFor();
     await commentsReady();

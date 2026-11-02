@@ -1,3 +1,4 @@
+import { isMockApi } from '@/config/api';
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -13,7 +14,7 @@ export function EpisodeFormScreen() {
   const navigate = useNavigate();
   const [saved, setSaved] = useState(false);
   const [retry, setRetry] = useState(false);
-  const mock = import.meta.env.DEV ? params.get('mock') : null;
+  const mock = isMockApi ? params.get('mock') : null;
   const { data, loading, error, canWrite, session, refresh } = useEpisodeCatalog(
     mock === 'error' && !retry,
     undefined,

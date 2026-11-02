@@ -1,3 +1,4 @@
+import { isMockApi } from '@/config/api';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { genreOptions } from '@/config/catalog';
@@ -7,7 +8,7 @@ import { animeRepository } from '@/lib/api/repositories';
 
 export function useHomeCatalog() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const mock = import.meta.env.DEV ? searchParams.get('mock') : null;
+  const mock = isMockApi ? searchParams.get('mock') : null;
   const state: MockState =
     mock === 'error' || mock === 'empty' || mock === 'loading' ? mock : 'ready';
   const genre = genreOptions.find((option) => option.label === searchParams.get('genre'))?.value;

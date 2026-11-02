@@ -1,3 +1,4 @@
+import { isMockApi } from '@/config/api';
 import { useId } from 'react';
 import { Link } from 'react-router-dom';
 import { Artwork } from '@/components/common/artwork';
@@ -16,7 +17,9 @@ export function TopViewedAnime({ items }: { items: readonly TopViewedAnimeEntry[
       <h2 id={headingId} className="tw:text-xl tw:mb-2">
         Top 10 phim được xem nhiều nhất
       </h2>
-      <p className="tw:text-[var(--aw-muted)] tw:mb-5">Xếp theo tổng lượt xem · Số liệu mẫu.</p>
+      <p className="tw:text-[var(--aw-muted)] tw:mb-5">
+        Xếp theo tổng lượt xem{isMockApi ? ' · Số liệu mẫu.' : ' đã xác nhận.'}
+      </p>
       {items.length ? (
         <ol className="tw:grid tw:grid-cols-2 tw:gap-x-6 tw:gap-y-3 tw:list-none tw:p-0 tw:m-0 tw:max-mobile:grid-cols-1">
           {items.map(({ anime, viewCount }, index) => (

@@ -1,3 +1,4 @@
+import { isMockApi } from '@/config/api';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useSession } from '@/stores/session';
@@ -12,7 +13,7 @@ export function useLibrary() {
   const { pathname, search } = useLocation();
   const navigate = useNavigate();
   const query = parseLibraryQuery(params);
-  const mock = import.meta.env.DEV ? params.get('mock') : null;
+  const mock = isMockApi ? params.get('mock') : null;
   const canRead =
     permissions.includes('library:read:own') &&
     permissions.includes('progress:read:own') &&

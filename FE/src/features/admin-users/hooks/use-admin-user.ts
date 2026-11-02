@@ -1,3 +1,4 @@
+import { isMockApi } from '@/config/api';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { adminUserRepository } from '@/lib/api/repositories';
@@ -6,7 +7,7 @@ import type { AdminUser } from '@/types/admin-user';
 
 export function useAdminUser(id: string, session: AdminPreviewSession) {
   const [params, setParams] = useSearchParams();
-  const mock = import.meta.env.DEV ? params.get('mock') : null;
+  const mock = isMockApi ? params.get('mock') : null;
   const [attempt, setAttempt] = useState(0);
   const key = `${session.id}:${id}:${mock}:${attempt}`;
   const [response, setResponse] = useState<{

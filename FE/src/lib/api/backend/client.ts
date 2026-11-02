@@ -51,7 +51,7 @@ function url(path: string, query?: object) {
 export function createBackendClient(
   transport: BackendTransport,
   getToken: () => string | null = () => null,
-  onUnauthorized?: () => void,
+  onUnauthorized?: (token: string) => void,
 ) {
   async function request<T>(
     method: BackendRequest['method'],
@@ -75,7 +75,7 @@ export function createBackendClient(
       ...(viewer ? { credentials: 'include' as const } : {}),
     });
     signal?.throwIfAborted();
-    if (result.status === 401 && token) onUnauthorized?.();
+    if (result.status === 401 && token) onUnauthorized?.(token);
     if (result.status < 200 || result.status >= 300)
       throw parseApiError(result.status, result.body);
     if (result.status === 204) return undefined as T;

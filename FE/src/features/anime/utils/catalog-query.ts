@@ -1,3 +1,4 @@
+import { isMockApi } from '@/config/api';
 import type { CatalogQuery } from '@/types/catalog';
 import { genreOptions, statusOptions, formatOptions, catalogYears } from '@/config/catalog';
 import { paths } from '@/config/paths';
@@ -37,7 +38,6 @@ export function catalogParams(query: CatalogQuery): URLSearchParams {
 
 export function catalogHref(query: CatalogQuery, mock?: string | null): string {
   const params = catalogParams(query);
-  if (import.meta.env.DEV && mock && ['loading', 'empty', 'error'].includes(mock))
-    params.set('mock', mock);
+  if (isMockApi && mock && ['loading', 'empty', 'error'].includes(mock)) params.set('mock', mock);
   return `${paths.explore}?${params}`;
 }

@@ -1,3 +1,4 @@
+import { isMockApi } from '@/config/api';
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import type { AnimeDetail } from '@/types/anime';
@@ -6,7 +7,7 @@ import { animeRepository } from '@/lib/api/repositories';
 export function useAnimeDetail() {
   const { slug = '' } = useParams();
   const [params, setParams] = useSearchParams();
-  const mock = import.meta.env.DEV ? params.get('mock') : null;
+  const mock = isMockApi ? params.get('mock') : null;
   const [attempt, setAttempt] = useState(0);
   const key = `${slug}:${mock}:${attempt}`;
   const [response, setResponse] = useState<{
