@@ -1,3 +1,4 @@
+import { isMockApi } from '@/config/api';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { adminDashboardRepository } from '@/lib/api/repositories';
@@ -7,7 +8,7 @@ import { useSession } from '@/stores/session';
 export function useAdminDashboard() {
   const [params, setParams] = useSearchParams();
   const { adminPreview } = useSession();
-  const mock = import.meta.env.DEV ? params.get('mock') : null;
+  const mock = isMockApi ? params.get('mock') : null;
   const [revision, setRevision] = useState(0);
   const key = `${adminPreview?.id}:${mock}:${revision}`;
   const [response, setResponse] = useState<{

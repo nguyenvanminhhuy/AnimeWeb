@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Artwork } from '@/components/common/artwork';
 import { Button } from '@/components/ui/button';
+import { Icon } from '@/components/ui/icon';
 import { statusOptions, formatOptions } from '@/config/catalog';
 import { paths } from '@/config/paths';
 import type { AdminAnimeRow } from '@/types/admin-anime';
@@ -97,15 +98,16 @@ export function AdminAnimeTable({
                 </td>
                 <td className="tw:p-4">{publishedEpisodes}</td>
                 <td className="tw:p-4">
-                  <div className="tw:flex tw:gap-2 tw:flex-wrap tw:min-w-32">
+                  <div className="tw:inline-flex tw:flex-nowrap tw:items-center tw:gap-2 tw:whitespace-nowrap">
                     {publicSlug && (
                       <Button
                         as="link"
                         to={paths.animeDetail(publicSlug)}
                         variant="quiet"
                         size="sm"
-                        label="Xem chi tiết"
+                        startIcon={<Icon name="eye" size="sm" />}
                         aria-label={`Xem chi tiết ${anime.title}`}
+                        title={`Xem chi tiết ${anime.title}`}
                       />
                     )}
                     {canWrite && (
@@ -115,14 +117,16 @@ export function AdminAnimeTable({
                           variant="quiet"
                           size="sm"
                           to={paths.adminAnimeEdit(anime.id, returnTo)}
-                          label="Sửa"
+                          startIcon={<Icon name="edit" size="sm" />}
                           aria-label={`Sửa ${anime.title}`}
+                          title={`Sửa ${anime.title}`}
                         />
                         <Button
                           variant="quiet"
                           size="sm"
-                          label="Xoá"
+                          startIcon={<Icon name="trash" size="sm" />}
                           aria-label={`Xoá ${anime.title}`}
+                          title={`Xoá ${anime.title}`}
                           onClick={() => onDelete(row)}
                         />
                       </>

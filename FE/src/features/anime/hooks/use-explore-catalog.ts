@@ -1,3 +1,4 @@
+import { isMockApi } from '@/config/api';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import type { CatalogResult } from '@/types/anime';
@@ -15,7 +16,7 @@ export function useExploreCatalog() {
   const navigate = useNavigate();
   const queryString = catalogParams(parseCatalogQuery(searchParams)).toString();
   const query = useMemo(() => parseCatalogQuery(new URLSearchParams(queryString)), [queryString]);
-  const mock = import.meta.env.DEV ? searchParams.get('mock') : null;
+  const mock = isMockApi ? searchParams.get('mock') : null;
   const state: MockState =
     mock === 'loading' || mock === 'empty' || mock === 'error' ? mock : 'ready';
   const [attempt, setAttempt] = useState(0);

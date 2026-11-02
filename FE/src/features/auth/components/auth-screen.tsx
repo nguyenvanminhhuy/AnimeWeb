@@ -1,3 +1,4 @@
+import { isMockApi } from '@/config/api';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
 import { Link, useSearchParams } from 'react-router-dom';
@@ -63,29 +64,35 @@ export function AuthScreen({ mode }: { mode: AuthMode }) {
           aria-labelledby={`${mode}-title`}
         >
           <span className="aw-auth-badge tw:inline-block tw:text-body tw:mb-4.5">
-            ✦ TÀI KHOẢN DEMO
+            ✦ {isMockApi ? 'TÀI KHOẢN DEMO' : 'TÀI KHOẢN'}
           </span>
           <h1 id={`${mode}-title`}>
-            {register ? 'Tạo tài khoản demo' : 'Chào mừng đến Anime Web'}
+            {register
+              ? isMockApi
+                ? 'Tạo tài khoản demo'
+                : 'Tạo tài khoản'
+              : 'Chào mừng đến Anime Web'}
           </h1>
           <p className="aw-auth-intro tw:text-body tw:leading-[1.8] tw:mb-6">
             {register
               ? 'Một hồ sơ riêng cho những câu chuyện bạn muốn giữ lại.'
               : 'Đăng nhập để mở thư viện và tiếp tục câu chuyện của bạn.'}
           </p>
-          <div className="aw-auth-demo-note tw:px-3.5 tw:py-2.75 tw:mb-6 tw:text-body tw:leading-[1.7]">
-            <strong>Đây là bản mô phỏng, chưa có xác thực thật.</strong>
-            <p>
-              Chỉ dùng thông tin giả. Mật khẩu chỉ kiểm tra form, không xác thực, không lưu và không
-              gửi đi.
-            </p>
-          </div>
+          {isMockApi && (
+            <div className="aw-auth-demo-note tw:px-3.5 tw:py-2.75 tw:mb-6 tw:text-body tw:leading-[1.7]">
+              <strong>Đây là bản mô phỏng, chưa có xác thực thật.</strong>
+              <p>
+                Chỉ dùng thông tin giả. Mật khẩu chỉ kiểm tra form, không xác thực, không lưu và
+                không gửi đi.
+              </p>
+            </div>
+          )}
           {user || (adminPreview && adminRequested) ? (
             <div className="aw-auth-success tw:px-5 tw:py-7 tw:my-6 tw:rounded-[10px] tw:text-center">
               <span aria-hidden="true">
                 <Icon name="check" size="lg" />
               </span>
-              <h2>Phiên demo đã sẵn sàng</h2>
+              <h2>{isMockApi ? 'Phiên demo đã sẵn sàng' : 'Đăng nhập thành công'}</h2>
               <p>
                 Bạn đang dùng hồ sơ <strong>{displayName}</strong>.
               </p>
@@ -106,7 +113,7 @@ export function AuthScreen({ mode }: { mode: AuthMode }) {
           ) : (
             <>
               <AuthForm key={mode} mode={mode} />
-              {import.meta.env.DEV && !register && adminRequested && (
+              {isMockApi && !register && adminRequested && (
                 <div className="tw:mt-6 tw:border-t tw:border-[var(--aw-border)] tw:pt-5">
                   <p className="tw:text-[var(--aw-muted)]">
                     Phiên quản trị mẫu chỉ để xem giao diện trong dev; không lưu sau khi tải lại.
@@ -128,7 +135,7 @@ export function AuthScreen({ mode }: { mode: AuthMode }) {
             </>
           )}
           <p className="aw-auth-switch tw:mx-0 tw:text-body tw:text-center tw:mt-6 tw:mb-0 tw:leading-[1.8]">
-            {register ? 'Đã có hồ sơ demo?' : 'Chưa có hồ sơ demo?'}{' '}
+            {register ? 'Đã có tài khoản?' : 'Chưa có tài khoản?'}{' '}
             <Link to={register ? paths.loginTo(returnTo) : paths.registerTo(returnTo)}>
               {register ? 'Đăng nhập' : 'Đăng ký ngay'} <Icon name="external-link" size="sm" />
             </Link>
@@ -136,8 +143,10 @@ export function AuthScreen({ mode }: { mode: AuthMode }) {
         </section>
       </div>
       <p className="aw-auth-bottom-note tw:mx-auto tw:text-body tw:text-center tw:mt-5 tw:mb-0 tw:leading-[1.8]">
-        Hồ sơ và thư viện demo chỉ thuộc trình duyệt hiện tại. Chưa hỗ trợ khôi phục mật khẩu hoặc
-        đăng nhập mạng xã hội.
+        {isMockApi
+          ? 'Hồ sơ và thư viện demo chỉ thuộc trình duyệt hiện tại.'
+          : 'Hồ sơ và thư viện được lưu trên máy chủ.'}{' '}
+        Chưa hỗ trợ khôi phục mật khẩu hoặc đăng nhập mạng xã hội.
       </p>
     </div>
   );

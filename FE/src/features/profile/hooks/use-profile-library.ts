@@ -1,3 +1,4 @@
+import { isMockApi } from '@/config/api';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useSession } from '@/stores/session';
@@ -6,7 +7,7 @@ import type { ProfileSummary } from '@/types/personal';
 export function useProfileLibrary() {
   const { user, permissions, favorites, progress } = useSession();
   const [params, setParams] = useSearchParams();
-  const mock = import.meta.env.DEV ? params.get('mock') : null;
+  const mock = isMockApi ? params.get('mock') : null;
   const canRead =
     !!user &&
     permissions.includes('library:read:own') &&

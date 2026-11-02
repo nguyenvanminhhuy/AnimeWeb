@@ -1,3 +1,4 @@
+import { isMockApi } from '@/config/api';
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import { Form, Link, useLocation, useNavigationType } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
@@ -131,7 +132,7 @@ export function AdminAnimeFilters({
       </div>
       <Input type="hidden" name="page" value="1" />
       <Input type="hidden" name="pageSize" value={query.pageSize} />
-      {mock && import.meta.env.DEV && <Input type="hidden" name="mock" value={mock} />}
+      {mock && isMockApi && <Input type="hidden" name="mock" value={mock} />}
       <div className="tw:grid tw:grid-cols-3 tw:gap-4 tw:max-phone:grid-cols-1">
         {fields.map((field) => (
           <div key={field.name} className="tw:min-w-0">

@@ -1,3 +1,4 @@
+import { isMockApi } from '@/config/api';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
 import { useRef, useState } from 'react';
@@ -38,17 +39,21 @@ export function CommentsPanel({ animeId }: { animeId: string }) {
             Bình luận <span>{comments.loading ? '…' : comments.total}</span>
           </h2>
         </div>
-        <span className="aw-detail-demo-label tw:px-1.75 tw:py-1 tw:text-body tw:rounded-[4px] tw:whitespace-nowrap">
-          MẪU · CỤC BỘ
-        </span>
+        {isMockApi && (
+          <span className="aw-detail-demo-label tw:px-1.75 tw:py-1 tw:text-body tw:rounded-[4px] tw:whitespace-nowrap">
+            MẪU · CỤC BỘ
+          </span>
+        )}
       </div>
       <p className="aw-comments-description tw:text-body tw:leading-[1.9] tw:mb-5">
-        Bình luận demo hiển thị công khai trên trình duyệt này. Chỉ tác giả có thể sửa hoặc xóa bình
-        luận của mình.
+        {isMockApi
+          ? 'Bình luận demo hiển thị công khai trên trình duyệt này.'
+          : 'Bình luận được lưu trên máy chủ và hiển thị công khai.'}{' '}
+        Chỉ tác giả có thể sửa hoặc xóa bình luận của mình.
       </p>
       {!comments.user ? (
         <div className="aw-comments-invitation tw:p-5 tw:rounded-[8px] tw:mb-6">
-          <p>Đăng nhập demo để chia sẻ cảm nhận của bạn.</p>
+          <p>{isMockApi ? 'Đăng nhập demo' : 'Đăng nhập'} để chia sẻ cảm nhận của bạn.</p>
           <Button
             as="link"
             variant="glass"
@@ -186,28 +191,34 @@ export function CommentsPanel({ animeId }: { animeId: string }) {
                       <p>{comment.body}</p>
                     )}
                     {own && comments.canCreate && (
-                      <div className="aw-comment-actions tw:gap-3.75 tw:flex tw:mt-2.5">
+                      <div className="aw-comment-actions tw:inline-flex tw:flex-nowrap tw:items-center tw:gap-2 tw:mt-2.5">
                         {comments.permissions.includes('comment:update:own') && (
                           <Button
-                            variant="unstyled"
+                            variant="quiet"
+                            size="sm"
                             disabled={comments.pending || editing === comment.id}
                             onClick={() => {
                               setDeleting(null);
                               setEditing(comment.id);
                               setEditBody(comment.body);
                             }}
-                            label="Sửa"
+                            startIcon={<Icon name="edit" size="sm" />}
+                            aria-label="Sửa bình luận"
+                            title="Sửa bình luận"
                           />
                         )}
                         {comments.permissions.includes('comment:delete:own') && (
                           <Button
-                            variant="unstyled"
+                            variant="quiet"
+                            size="sm"
                             disabled={comments.pending}
                             onClick={() => {
                               setEditing(null);
                               setDeleting(comment.id);
                             }}
-                            label="Xóa"
+                            startIcon={<Icon name="trash" size="sm" />}
+                            aria-label="Xóa bình luận"
+                            title="Xóa bình luận"
                           />
                         )}
                       </div>

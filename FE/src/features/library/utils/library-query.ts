@@ -1,3 +1,4 @@
+import { isMockApi } from '@/config/api';
 import { paths } from '@/config/paths';
 import { libraryTabs } from '@/features/library/config/library';
 import type { LibraryQuery } from '@/features/library/types/library';
@@ -20,7 +21,7 @@ export function libraryHref(query: LibraryQuery, mock?: string | null) {
     page: String(query.page),
   });
   if (query.q) params.set('q', query.q);
-  if (import.meta.env.DEV && mock && ['loading', 'empty', 'error', 'forbidden'].includes(mock))
+  if (isMockApi && mock && ['loading', 'empty', 'error', 'forbidden'].includes(mock))
     params.set('mock', mock);
   return `${paths.library}?${params}`;
 }

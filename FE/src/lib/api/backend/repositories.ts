@@ -77,12 +77,15 @@ export function createBackendRepositories(api: BackendClient, credentials: Crede
       return data;
     },
     async logout(signal) {
+      const token = credentials.read()?.accessToken;
       try {
         await api.auth.logout(signal);
       } finally {
-        credentials.write(null);
-        profiles.clear();
-        entries.clear();
+        if (credentials.read()?.accessToken === token) {
+          credentials.write(null);
+          profiles.clear();
+          entries.clear();
+        }
       }
     },
     async changePassword(input, _state, signal) {

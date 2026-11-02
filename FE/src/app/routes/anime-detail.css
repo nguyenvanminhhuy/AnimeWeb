@@ -29,7 +29,6 @@
     letter-spacing: 1.6px;
   }
   .aw-detail-subtitle {
-    letter-spacing: 3px;
     color: #b7adcd;
     overflow-wrap: anywhere;
   }
@@ -289,13 +288,6 @@
     white-space: pre-wrap;
     overflow-wrap: anywhere;
     margin: 0;
-  }
-  .aw-comment-actions button {
-    border: 0;
-    background: transparent;
-    padding: 3px 0;
-    color: #b8a5ed;
-    font-size: var(--aw-font-size-base);
   }
   .aw-comment-confirm {
     border-left: 2px solid #ad8cdd;

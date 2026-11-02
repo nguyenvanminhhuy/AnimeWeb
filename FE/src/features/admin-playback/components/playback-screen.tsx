@@ -1,6 +1,8 @@
+import { isMockApi } from '@/config/api';
 import { useEffect, useRef, useState } from 'react';
 import { Form, Link, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Icon } from '@/components/ui/icon';
 import { Input } from '@/components/ui/input';
 import { Selectbox } from '@/components/ui/selectbox';
 import { ContentState } from '@/components/common/content-state';
@@ -22,7 +24,7 @@ export function PlaybackScreen() {
   const [params, setParams] = useSearchParams();
   const query = readPlaybackQuery(params);
   const { animeId, seasonId, episodeId, sourceId, q, enabled, sort, pageSize } = query;
-  const mock = import.meta.env.DEV ? params.get('mock') : null;
+  const mock = isMockApi ? params.get('mock') : null;
   const { data, loading, error, session, canRead, canWrite, refresh } = usePlaybackCatalog(
     mock === 'error',
     { ...query, empty: mock === 'empty' },
@@ -410,17 +412,19 @@ export function PlaybackScreen() {
                               </td>
                               {canWrite && (
                                 <td className="tw:p-4">
-                                  <div className="tw:flex tw:gap-2">
+                                  <div className="tw:inline-flex tw:flex-nowrap tw:items-center tw:gap-2 tw:whitespace-nowrap">
                                     <Button
-                                      label="Sửa"
+                                      startIcon={<Icon name="edit" size="sm" />}
                                       aria-label={`Sửa nguồn ${s.label}`}
+                                      title={`Sửa nguồn ${s.label}`}
                                       size="sm"
                                       variant="quiet"
                                       onClick={() => edit(s.id, s)}
                                     />
                                     <Button
-                                      label="Xoá"
+                                      startIcon={<Icon name="trash" size="sm" />}
                                       aria-label={`Xoá nguồn ${s.label}`}
+                                      title={`Xoá nguồn ${s.label}`}
                                       size="sm"
                                       variant="quiet"
                                       onClick={() =>
@@ -510,17 +514,19 @@ export function PlaybackScreen() {
                             </p>
                           </div>
                           {canWrite && (
-                            <div className="tw:flex tw:gap-2">
+                            <div className="tw:inline-flex tw:flex-nowrap tw:items-center tw:gap-2 tw:whitespace-nowrap">
                               <Button
-                                label="Sửa"
+                                startIcon={<Icon name="edit" size="sm" />}
                                 aria-label={`Sửa phụ đề ${s.label}`}
+                                title={`Sửa phụ đề ${s.label}`}
                                 size="sm"
                                 variant="quiet"
                                 onClick={() => edit(s.id, s)}
                               />
                               <Button
-                                label="Xoá"
+                                startIcon={<Icon name="trash" size="sm" />}
                                 aria-label={`Xoá phụ đề ${s.label}`}
+                                title={`Xoá phụ đề ${s.label}`}
                                 size="sm"
                                 variant="quiet"
                                 onClick={() =>

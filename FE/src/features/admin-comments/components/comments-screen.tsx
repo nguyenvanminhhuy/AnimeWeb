@@ -1,3 +1,4 @@
+import { isMockApi } from '@/config/api';
 import { useEffect, useRef, useState } from 'react';
 import { Form, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -22,7 +23,7 @@ export function CommentsScreen() {
   const [params, setParams] = useSearchParams();
   const query = readCommentQuery(params);
   const { q, animeId, status, sort, pageSize, commentId } = query;
-  const mock = import.meta.env.DEV ? params.get('mock') : null;
+  const mock = isMockApi ? params.get('mock') : null;
   const { data, loading, error, canRead, canModerate, session, refresh } = useCommentCatalog(
     mock === 'error',
     { ...query, empty: mock === 'empty' },

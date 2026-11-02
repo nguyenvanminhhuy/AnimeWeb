@@ -24,13 +24,14 @@ public sealed class CatalogAggregateService(AnimeWebDbContext db, TimeProvider t
     }
     public async Task<HomeDto> HomeAsync(string? genre, CancellationToken ct)
     {
-        var featured = await Public.OrderByDescending(x => x.ReleaseYear).ThenBy(x => x.Id).Take(6).Select(CatalogProjection.Card).ToListAsync(ct);
+        var now = time.GetUtcNow();
+        var featured = await Public.PlayableFirst(db, now).ThenByDescending(x => x.ReleaseYear).ThenBy(x => x.Id).Take(6).Select(CatalogProjection.Card).ToListAsync(ct);
         var updated = await Public.Where(x => db.Episodes.Any(e => e.Season.AnimeId == x.Id && e.Status == "published"))
-            .OrderByDescending(x => db.Episodes.Where(e => e.Season.AnimeId == x.Id && e.Status == "published").Max(e => e.PublishedAt))
+            .PlayableFirst(db, now).ThenByDescending(x => db.Episodes.Where(e => e.Season.AnimeId == x.Id && e.Status == "published").Max(e => e.PublishedAt))
             .ThenBy(x => x.Id).Take(12).Select(CatalogProjection.Card).ToListAsync(ct);
         var recommended = Public;
         if (!string.IsNullOrWhiteSpace(genre)) recommended = recommended.Where(x => x.Genres.Any(g => g.Slug == genre));
-        var recommendations = await recommended.OrderByDescending(x => x.ReleaseYear).ThenBy(x => x.Id).Take(12).Select(CatalogProjection.Card).ToListAsync(ct);
+        var recommendations = await recommended.PlayableFirst(db, now).ThenByDescending(x => x.ReleaseYear).ThenBy(x => x.Id).Take(12).Select(CatalogProjection.Card).ToListAsync(ct);
         return new(featured, updated, recommendations, await RankingAsync(10, ct));
     }
     public async Task<List<AnimeCardDto>> RelatedAsync(string id, CancellationToken ct)

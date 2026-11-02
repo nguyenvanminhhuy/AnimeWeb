@@ -161,7 +161,7 @@ Header API riêng tư: `Authorization: Bearer <accessToken>`. DB chỉ lưu SHA-
 | `status` | string? | Không lọc | Enum release status |
 | `format` | string? | Không lọc | Enum format |
 | `year` | int? | Không lọc | 1–9999 |
-| `sort` | string | `newest` | `newest`: releaseYear giảm/id tăng; `title`: lowercase theo PostgreSQL collation C/id tăng |
+| `sort` | string | `newest` | `newest`: nguồn enabled/chưa hết hạn trên tập published trước, rồi releaseYear giảm/id tăng; `title`: lowercase theo PostgreSQL collation C/id tăng. Ưu tiên trước phân trang |
 | `page`, `pageSize` | int | 1, 20 | Pagination chung |
 
 Các filter AND. Public chỉ anime publicationStatus=published; detail draft và missing cùng 404 ANIME_NOT_FOUND. Genres chỉ gồm thể loại có ít nhất một anime public, sort slug. Search không bao gồm subtitle trong API public cũ; admin/library có hành vi riêng ở phần tương ứng.

@@ -94,3 +94,5 @@ Sau triển khai, chạy format/build theo AGENTS (bao gồm architecture/typech
 5. Mock không ghi sang dữ liệu cá nhân khác; không request ngoài hoặc gọi server thật. Không bịa đã test API/permission BE.
 
 Cập nhật tài liệu màn hình tại DOC/docs-FE và chỉ nối thêm bằng chứng vào verification.md. Bàn giao tên màn hình/route, cách mở phiên mẫu, thành phần đã tái sử dụng, kiểm chứng thực tế và giới hạn API/mock. Chỉ thêm rule/module/common thật sự cần cho màn hình đã gọi.
+
+Các thao tác xem/sửa/xoá trong hàng dữ liệu dùng Button icon-only size sm với Icon eye/edit/trash, aria-label có tên đối tượng và title. Nhóm thao tác dùng inline-flex, items-center, flex-nowrap và gap chung để các nút luôn cùng một hàng; bảng có thể cuộn ngang trên mobile. Giữ nguyên guard quyền và hộp xác nhận xoá có nhãn chữ đầy đủ; không thay icon thành cơ chế bỏ qua xác nhận.

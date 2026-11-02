@@ -1,3 +1,4 @@
+import { isMockApi } from '@/config/api';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
@@ -20,7 +21,15 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
         onSubmit={submit}
         noValidate
         className="aw-auth-form tw:gap-4.25 tw:grid"
-        aria-label={register ? 'Đăng ký demo' : 'Đăng nhập bằng email demo'}
+        aria-label={
+          isMockApi
+            ? register
+              ? 'Đăng ký demo'
+              : 'Đăng nhập bằng email demo'
+            : register
+              ? 'Đăng ký'
+              : 'Đăng nhập bằng email'
+        }
         aria-busy={pending}
       >
         {(error || Object.values(errors).some(Boolean)) && (
@@ -59,7 +68,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
           </div>
         )}
         <div className="aw-auth-field tw:gap-2 tw:grid tw:min-w-0">
-          <label htmlFor={`${mode}-email`}>Email demo</label>
+          <label htmlFor={`${mode}-email`}>{isMockApi ? 'Email demo' : 'Email'}</label>
           <Input
             id={`${mode}-email`}
             name="email"
@@ -73,7 +82,9 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
             disabled={pending}
             aria-invalid={Boolean(errors.email)}
             aria-describedby={errors.email ? `${mode}-email-error` : undefined}
-            placeholder={register ? 'ban@vi-du.test' : 'viewer@anime.test'}
+            placeholder={
+              isMockApi ? (register ? 'ban@vi-du.test' : 'viewer@anime.test') : 'ban@example.com'
+            }
           />
           {errors.email && (
             <p
@@ -87,7 +98,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
         <PasswordField
           id={`${mode}-password`}
           name="password"
-          label="Mật khẩu demo"
+          label={isMockApi ? 'Mật khẩu demo' : 'Mật khẩu'}
           value={values.password}
           onChange={(value) => change('password', value)}
           error={errors.password}
@@ -99,7 +110,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
             <PasswordField
               id="register-confirmation"
               name="confirmation"
-              label="Nhập lại mật khẩu demo"
+              label={isMockApi ? 'Nhập lại mật khẩu demo' : 'Nhập lại mật khẩu'}
               value={values.confirmation}
               onChange={(value) => change('confirmation', value)}
               error={errors.confirmation}
@@ -119,11 +130,11 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
         />
         {pending && (
           <p className="aw-auth-pending tw:m-0 tw:text-body" role="status">
-            Đang xử lý hồ sơ demo trên trình duyệt…
+            {isMockApi ? 'Đang xử lý hồ sơ demo trên trình duyệt…' : 'Đang xử lý…'}
           </p>
         )}
       </Form>
-      {!register && (
+      {isMockApi && !register && (
         <div className="aw-auth-demo-accounts tw:gap-2.25 tw:grid tw:mt-5.75">
           <p>
             <span />

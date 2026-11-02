@@ -1,3 +1,4 @@
+import { isMockApi } from '@/config/api';
 import { formatOptions, statusOptions } from '@/config/catalog';
 import { paths } from '@/config/paths';
 import type { AdminAnimeQuery } from '@/types/admin-anime';
@@ -38,7 +39,7 @@ export function adminAnimeParams(query: AdminAnimeQuery): URLSearchParams {
 export function adminAnimeHref(query: AdminAnimeQuery, mock?: string | null): string {
   const params = adminAnimeParams(query);
   if (
-    import.meta.env.DEV &&
+    isMockApi &&
     mock &&
     ['loading', 'empty', 'error', 'forbidden', 'delete-error'].includes(mock)
   )

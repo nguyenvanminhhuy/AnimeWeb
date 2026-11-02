@@ -1,6 +1,8 @@
+import { isMockApi } from '@/config/api';
 import { useEffect, useRef, useState } from 'react';
 import { Form, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Icon } from '@/components/ui/icon';
 import { Input } from '@/components/ui/input';
 import { Selectbox } from '@/components/ui/selectbox';
 import { ContentState } from '@/components/common/content-state';
@@ -13,7 +15,7 @@ import type { AdminSeason as Season } from '@/types/admin-episode';
 
 export function EpisodesScreen() {
   const [params, setParams] = useSearchParams();
-  const mock = import.meta.env.DEV ? params.get('mock') : null;
+  const mock = isMockApi ? params.get('mock') : null;
   const animeId = params.get('animeId') ?? '';
   const seasonId = params.get('seasonId') ?? '';
   const q = params.get('q') ?? '';
@@ -246,17 +248,19 @@ export function EpisodesScreen() {
                       </p>
                     </div>
                     {canWrite && (
-                      <div className="tw:flex tw:gap-2">
+                      <div className="tw:inline-flex tw:flex-nowrap tw:items-center tw:gap-2 tw:whitespace-nowrap">
                         <Button
-                          label="Sửa"
+                          startIcon={<Icon name="edit" size="sm" />}
                           aria-label={`Sửa mùa ${s.title}`}
+                          title={`Sửa mùa ${s.title}`}
                           size="sm"
                           variant="quiet"
                           onClick={() => setEditor({ row: s, revision: Date.now() })}
                         />
                         <Button
-                          label="Xoá"
+                          startIcon={<Icon name="trash" size="sm" />}
                           aria-label={`Xoá mùa ${s.title}`}
+                          title={`Xoá mùa ${s.title}`}
                           size="sm"
                           variant="quiet"
                           onClick={() =>
@@ -412,18 +416,20 @@ export function EpisodesScreen() {
                             </td>
                             {canWrite && (
                               <td className="tw:p-4">
-                                <div className="tw:flex tw:gap-2">
+                                <div className="tw:inline-flex tw:flex-nowrap tw:items-center tw:gap-2 tw:whitespace-nowrap">
                                   <Button
                                     as="link"
                                     to={paths.adminEpisodeEdit(e.id, returnTo)}
-                                    label="Sửa"
+                                    startIcon={<Icon name="edit" size="sm" />}
                                     aria-label={`Sửa tập ${e.title}`}
+                                    title={`Sửa tập ${e.title}`}
                                     size="sm"
                                     variant="quiet"
                                   />
                                   <Button
-                                    label="Xoá"
+                                    startIcon={<Icon name="trash" size="sm" />}
                                     aria-label={`Xoá tập ${e.title}`}
+                                    title={`Xoá tập ${e.title}`}
                                     size="sm"
                                     variant="quiet"
                                     onClick={() =>

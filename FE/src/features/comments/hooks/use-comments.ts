@@ -1,3 +1,4 @@
+import { isMockApi } from '@/config/api';
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useSession } from '@/stores/session';
@@ -7,7 +8,7 @@ import type { Comment, CommentState } from '@/types/comment';
 export function useComments(animeId: string) {
   const { user, displayName, permissions } = useSession();
   const [params, setParams] = useSearchParams();
-  const mock = import.meta.env.DEV ? params.get('comments') : null;
+  const mock = isMockApi ? params.get('comments') : null;
   const rawPage = params.get('commentPage');
   const value = rawPage && /^\d+$/.test(rawPage) ? Number(rawPage) : 1;
   const requested = Number.isSafeInteger(value) && value > 0 ? value : 1;
@@ -112,7 +113,7 @@ export function useComments(animeId: string) {
       setRevision((value) => value + 1);
       setNotice(
         action === 'create'
-          ? 'Đã gửi bình luận demo.'
+          ? 'Đã gửi bình luận.'
           : action === 'update'
             ? 'Đã lưu thay đổi.'
             : 'Đã xóa bình luận của bạn.',

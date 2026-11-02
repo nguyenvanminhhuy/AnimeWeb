@@ -1,5 +1,7 @@
 # Thiết lập nền BE bằng C#
 
+Chạy local không Docker Desktop đã có tại [SETUP.md](../../SETUP.md): cài PostgreSQL Windows một lần, dùng BE/setup.ps1 để tạo DB/apply migration và BE/start.ps1 để chạy API. Script Compose cũ vẫn dùng cho phương án Docker. Setup không bật kết nối HTTP của FE.
+
 **Cập nhật 2026-11-01:** không thiết lập lại nền. Các feature trong handoff đã có BE theo [contract v0.3](../api-contract.md), Auth dùng bearer/session DB, progress/mutation dùng version. Xem [hiện trạng](current-status.md) và BE README để migration/bootstrap explicit; không hỏi lại stack hoặc lựa chọn phiên đã được duyệt. Các hướng dẫn template bên dưới chỉ dùng khi thực sự cần dự án mới.
 
 Ngày 2026-10-30, người dùng chọn **C# + ASP.NET Core Web API dùng Controller, PostgreSQL và Entity Framework Core**, một backend tổ chức theo feature. Đã tạo nền BE trong repo `New folder/AnimeWeb` branch Be-Dev; xem [README chạy local](../../BE/README.md) và [kiểm chứng](verification.md). Không hỏi lại việc chọn C#/database/ORM khi generate module tiếp theo.

@@ -1,3 +1,4 @@
+import { isMockApi } from '@/config/api';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useSession } from '@/stores/session';
@@ -10,7 +11,7 @@ export function useAdminUsers() {
   const navigate = useNavigate();
   const location = useLocation();
   const { adminPreview, permissions } = useSession();
-  const mock = import.meta.env.DEV ? params.get('mock') : null;
+  const mock = isMockApi ? params.get('mock') : null;
   const userId = params.get('userId')?.slice(0, 100) || null;
   const canRead = Boolean(
     adminPreview && permissions.includes('admin:user:read') && mock !== 'forbidden',

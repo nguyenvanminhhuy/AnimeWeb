@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AnimeWeb.Api.Features.Anime;
 
-public sealed class AnimeService(AnimeWebDbContext database)
+public sealed class AnimeService(AnimeWebDbContext database, TimeProvider time)
 {
     public async Task<PagedResponse<AnimeSummaryDto>> ListAsync(AnimeQuery filters, CancellationToken cancellationToken)
     {
@@ -46,7 +46,7 @@ public sealed class AnimeService(AnimeWebDbContext database)
         }
         var ordered = filters.Sort == "title"
             ? query.OrderBy(anime => EF.Functions.Collate(anime.Title.ToLower(), "C")).ThenBy(anime => anime.Id)
-            : query.OrderByDescending(anime => anime.ReleaseYear).ThenBy(anime => anime.Id);
+            : query.PlayableFirst(database, time.GetUtcNow()).ThenByDescending(anime => anime.ReleaseYear).ThenBy(anime => anime.Id);
         var data = await ordered.Skip((int)offset).Take(filters.PageSize)
             .Select(anime => new AnimeSummaryDto(
                 anime.Id, anime.Slug, anime.Title, anime.PosterUrl,

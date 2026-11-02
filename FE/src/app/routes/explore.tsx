@@ -125,7 +125,11 @@ export function ExplorePage() {
                 name="sort"
                 form={exploreFormId}
                 key={query.sort}
-                options={sortOptions}
+                options={sortOptions.map((option) =>
+                  option.value === 'newest'
+                    ? { ...option, label: 'Phim có nguồn phát trước' }
+                    : option,
+                )}
                 defaultValue={query.sort}
                 onChange={(event) => event.currentTarget.form?.requestSubmit()}
               />

@@ -1,3 +1,4 @@
+import { isMockApi } from '@/config/api';
 import { paths } from '@/config/paths';
 import type { AdminUsersQuery } from '@/types/admin-user';
 
@@ -35,7 +36,7 @@ export function usersHref(query: AdminUsersQuery, mock?: string | null, userId?:
   const params = usersParams(query);
   if (userId) params.set('userId', userId.slice(0, 100));
   if (
-    import.meta.env.DEV &&
+    isMockApi &&
     mock &&
     [
       'loading',

@@ -7,8 +7,7 @@ import { paths, routePatterns, safeReturnTo } from '@/config/paths';
 import { AccountMenu } from '@/components/navigation/account-menu';
 export function Header() {
   const { user, displayName, adminPreview, permissions, logout } = useSession();
-  const canReadAdmin =
-    import.meta.env.DEV && adminPreview && permissions.includes('admin:dashboard:read');
+  const canReadAdmin = adminPreview && permissions.includes('admin:dashboard:read');
   const { pathname, search } = useLocation();
   const loginMatch = useMatch(routePatterns.login);
   const registerMatch = useMatch(routePatterns.register);

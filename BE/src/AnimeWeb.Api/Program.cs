@@ -103,6 +103,21 @@ builder.Services.AddRateLimiter(options =>
 
 var app = builder.Build();
 
+if (args.Contains("--import-public-catalog"))
+{
+    if (!app.Environment.IsDevelopment())
+        throw new InvalidOperationException("Public catalog import is only available in Development.");
+    var importIndex = Array.IndexOf(args, "--import-public-catalog");
+    if (importIndex + 1 >= args.Length || args[importIndex + 1].StartsWith("--", StringComparison.Ordinal))
+        throw new ArgumentException("Supply a local snapshot path after --import-public-catalog.");
+    await using var scope = app.Services.CreateAsyncScope();
+    var database = scope.ServiceProvider.GetRequiredService<AnimeWebDbContext>();
+    var result = await PublicCatalogImporter.ImportAsync(database, args[importIndex + 1]);
+    app.Logger.LogInformation("Public catalog import: {Added} added, {Skipped} skipped, {Genres} genres added. Source: {Source}",
+        result.Added, result.Skipped, result.AddedGenres, PublicCatalogImporter.Repository);
+    return;
+}
+
 if (args.Contains("--bootstrap-admin"))
 {
     await using var scope = app.Services.CreateAsyncScope();
