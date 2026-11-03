@@ -6,7 +6,14 @@ import { paths } from '@/config/paths';
 export function AnimeCard({ anime }: { anime: Anime }) {
   return (
     <article className="aw-anime-card tw:min-w-0">
-      <Link to={paths.animeDetail(anime.slug)}>
+      <Link
+        to={anime.available === false ? '#' : paths.animeDetail(anime.slug)}
+        aria-disabled={anime.available === false || undefined}
+        tabIndex={anime.available === false ? -1 : undefined}
+        onClick={(event) => {
+          if (anime.available === false) event.preventDefault();
+        }}
+      >
         <div className="aw-poster tw:overflow-hidden tw:rounded-[9px]">
           <Artwork src={anime.posterUrl} alt={`Minh họa ${anime.title}`} />
         </div>

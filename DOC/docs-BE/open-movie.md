@@ -1,5 +1,7 @@
 # Phim có thể xem trong môi trường local
 
+Cập nhật 2026-11-03: không cần sửa từng URL seed để test LAN. BE trả nguồn local `/media/...` trong Development để trình duyệt dùng đúng origin FE đang mở; deployment cấu hình Playback:PublicMediaBaseUrl. Xem [nhiều người cùng xem](concurrent-viewers.md#video-trên-lan-và-khi-triển-khai). URL localhost trong seed bên dưới vẫn giữ nguyên ở database.
+
 Đã thêm riêng **Big Buck Bunny (2008)** của Blender Foundation, giấy phép [CC BY 3.0](https://peach.blender.org/about/), để trải nghiệm player. Không gán video này cho các anime khác trong catalog.
 
 - [Trang chi tiết local](http://127.0.0.1:5173/anime/big-buck-bunny).

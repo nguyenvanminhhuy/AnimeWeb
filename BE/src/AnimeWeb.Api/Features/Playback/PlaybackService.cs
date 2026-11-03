@@ -5,6 +5,7 @@ using AnimeWeb.Api.Infrastructure.Persistence;
 using AnimeWeb.Api.Shared;
 using AnimeWeb.Api.Shared.Errors;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace AnimeWeb.Api.Features.Playback;
 
@@ -17,10 +18,22 @@ public interface IPlaybackProvider
 {
     Task<SourceDto> ResolveAsync(SourceDto source, CancellationToken ct);
 }
-public sealed class DirectPlaybackProvider : IPlaybackProvider
+public sealed class DirectPlaybackProvider(IOptions<PlaybackOptions> options, IHostEnvironment environment) : IPlaybackProvider
 {
     public Task<SourceDto> ResolveAsync(SourceDto source, CancellationToken ct)
-    { ct.ThrowIfCancellationRequested(); return Task.FromResult(source); }
+    {
+        ct.ThrowIfCancellationRequested();
+        string Resolve(string url)
+        {
+            if (!Uri.TryCreate(url, UriKind.Absolute, out var uri) || !uri.IsLoopback || !uri.AbsolutePath.StartsWith("/media/", StringComparison.Ordinal)) return url;
+            if (!string.IsNullOrEmpty(options.Value.PublicMediaBaseUrl))
+                return options.Value.PublicMediaBaseUrl.TrimEnd('/') + uri.AbsolutePath + uri.Query;
+            if (!environment.IsDevelopment()) throw new ApiFailure(503, "MEDIA_NOT_CONFIGURED", "A public media address is required for local media.");
+            // In dev the browser resolves this against the FE origin, including LAN hosts.
+            return uri.PathAndQuery;
+        }
+        return Task.FromResult(source with { Url = Resolve(source.Url), Subtitles = source.Subtitles.Select(track => track with { Url = Resolve(track.Url) }).ToList() });
+    }
 }
 public sealed class ViewInput
 {

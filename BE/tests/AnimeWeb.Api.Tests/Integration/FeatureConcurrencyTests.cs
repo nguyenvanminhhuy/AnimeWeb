@@ -21,6 +21,8 @@ public sealed partial class FeatureWorkflowTests
             user.Client.PutAsJsonAsync(url, new { positionSeconds = 20, version = 1 }));
         Assert.Single(writes, x => x.StatusCode == HttpStatusCode.OK);
         Assert.Single(writes, x => x.StatusCode == HttpStatusCode.Conflict);
+        var conflict = await writes.Single(x => x.StatusCode == HttpStatusCode.Conflict).Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal("PROGRESS_CONFLICT", conflict.GetProperty("error").GetProperty("code").GetString());
         foreach (var response in writes) response.Dispose();
         using var admin = await RegisterAsync("admin");
         var source = (await SendAsync(admin.Client, HttpMethod.Post, "/api/v1/admin/playback-sources", new

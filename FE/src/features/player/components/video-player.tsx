@@ -4,6 +4,12 @@ import { scheduleDeadline } from '@/utils/deadline';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
+import { Input } from '@/components/ui/input';
+import { Selectbox } from '@/components/ui/selectbox';
+import {
+  readPlayerPreferences,
+  writePlayerPreferences,
+} from '@/features/player/utils/player-preferences';
 import { useSession } from '@/stores/session';
 import type { WatchDetail, PlaybackSource } from '@/types/player';
 
@@ -17,15 +23,33 @@ export function VideoPlayer({
   source,
   onEnded,
   onRefresh,
+  getResumePosition,
+  onPositionSnapshot,
 }: {
   detail: WatchDetail;
   source: PlaybackSource | undefined;
   onEnded: () => void;
   onRefresh?: () => void;
+  getResumePosition?: () => number | undefined;
+  onPositionSnapshot?: (seconds: number) => void;
 }) {
-  const { user, progress, permissions, saveProgress } = useSession();
+  const { user, progress, permissions, saveProgress, progressConflicts, resolveProgressConflict } =
+    useSession();
+  const conflict = progressConflicts.find((row) => row.episodeId === detail.episode.id);
+  const [resolving, setResolving] = useState(false);
+  const [conflictError, setConflictError] = useState('');
   const saved = progress.find((entry) => entry.episodeId === detail.episode.id);
   const resume = useRef(saved?.completed ? 0 : (saved?.positionSeconds ?? 0));
+  const latestSaved = useRef(saved);
+  latestSaved.current = saved;
+  const [preferences, setPreferences] = useState(readPlayerPreferences);
+  const preferencesRef = useRef(preferences);
+  preferencesRef.current = preferences;
+  const snapshot = useRef(onPositionSnapshot);
+  snapshot.current = onPositionSnapshot;
+  useEffect(() => {
+    writePlayerPreferences(preferences);
+  }, [preferences]);
   const videoRef = useRef<HTMLVideoElement>(null);
   const writer = useRef(saveProgress);
   writer.current = saveProgress;
@@ -40,6 +64,116 @@ export function VideoPlayer({
   );
   const [subtitleFailed, setSubtitleFailed] = useState(false);
   const trackFailure = useCallback(() => setSubtitleFailed(true), []);
+  const reported = useRef(new Set<string>());
+  useEffect(() => {
+    const controller = new AbortController();
+    const kinds: ('media' | 'hls' | 'subtitle' | 'expired')[] = [];
+    if (failed) kinds.push(source?.type === 'application/vnd.apple.mpegurl' ? 'hls' : 'media');
+    if (subtitleFailed) kinds.push('subtitle');
+    if (expired) kinds.push('expired');
+    for (const kind of kinds) {
+      const key = `${attempt}:${kind}`;
+      if (reported.current.has(key)) continue;
+      reported.current.add(key);
+      void playbackRepository.report(detail.episode.id, kind, controller.signal).catch(() => {});
+    }
+    return () => controller.abort();
+  }, [failed, subtitleFailed, expired, attempt, source?.type, detail.episode.id]);
+  useEffect(() => {
+    if (conflict) videoRef.current?.pause();
+  }, [conflict]);
+  async function resolveConflict(useRemote: boolean) {
+    if (resolving) return;
+    setResolving(true);
+    setConflictError('');
+    try {
+      const remote = await resolveProgressConflict(detail.episode.id);
+      if (useRemote && videoRef.current) {
+        hasPlayed.current = false;
+        const position = remote?.completed ? 0 : (remote?.positionSeconds ?? 0);
+        videoRef.current.currentTime = Number.isFinite(videoRef.current.duration)
+          ? Math.min(position, Math.max(0, videoRef.current.duration - 1))
+          : position;
+      }
+    } catch {
+      setConflictError('Chưa tải được tiến độ mới. Hãy thử lại.');
+    } finally {
+      setResolving(false);
+    }
+  }
+  useEffect(() => {
+    const video = videoRef.current;
+    if (
+      video &&
+      video.readyState >= 1 &&
+      !hasPlayed.current &&
+      video.currentTime === 0 &&
+      saved &&
+      !saved.completed &&
+      getResumePosition?.() === undefined &&
+      Number.isFinite(video.duration)
+    )
+      video.currentTime = Math.min(saved.positionSeconds, Math.max(0, video.duration - 1));
+  }, [saved?.positionSeconds, saved?.completed, getResumePosition]);
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    const current = preferencesRef.current;
+    video.volume = current.volume;
+    video.muted = current.muted;
+    video.playbackRate = current.rate;
+    const sync = () =>
+      setPreferences((value) => ({
+        ...value,
+        volume: video.volume,
+        muted: video.muted,
+        rate: video.playbackRate,
+      }));
+    video.addEventListener('volumechange', sync);
+    video.addEventListener('ratechange', sync);
+    return () => {
+      video.removeEventListener('volumechange', sync);
+      video.removeEventListener('ratechange', sync);
+    };
+  }, [attempt, expired, source]);
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    const apply = () => {
+      const tracks = Array.from(video.querySelectorAll('track'));
+      const selected =
+        preferences.subtitle === 'default'
+          ? tracks.find((track) => track.default)
+          : tracks.find((track) => track.srclang === preferences.subtitle);
+      for (const track of tracks)
+        track.track.mode =
+          track === selected && preferences.subtitle !== 'off' ? 'showing' : 'disabled';
+    };
+    apply();
+    const sync = () => {
+      const showing = Array.from(video.textTracks).find((track) => track.mode === 'showing');
+      const tracks = Array.from(video.querySelectorAll('track'));
+      const expected =
+        preferencesRef.current.subtitle === 'default'
+          ? tracks.find((track) => track.default)?.srclang
+          : preferencesRef.current.subtitle === 'off'
+            ? undefined
+            : preferencesRef.current.subtitle;
+      if (
+        showing?.language !== expected &&
+        (showing || expected === undefined || tracks.some((track) => track.srclang === expected))
+      )
+        setPreferences((value) => ({ ...value, subtitle: showing?.language ?? 'off' }));
+    };
+    video.textTracks.addEventListener('addtrack', apply);
+    video.textTracks.addEventListener('change', sync);
+    video.addEventListener('loadedmetadata', apply);
+    return () => {
+      video.textTracks.removeEventListener('addtrack', apply);
+      video.textTracks.removeEventListener('change', sync);
+      video.removeEventListener('loadedmetadata', apply);
+    };
+  }, [preferences.subtitle, attempt, source, expired]);
   useEffect(() => {
     if (!source?.expiresAt) return;
     return scheduleDeadline(Date.parse(source.expiresAt), () => setExpired(true));
@@ -122,6 +256,8 @@ export function VideoPlayer({
     document.addEventListener('visibilitychange', hidden);
     window.addEventListener('pagehide', pause);
     return () => {
+      if (video && hasPlayed.current && Number.isFinite(video.currentTime))
+        snapshot.current?.(video.ended ? 0 : video.currentTime);
       persist(true, video?.ended ?? false);
       video?.removeEventListener('playing', played);
       video?.removeEventListener('timeupdate', tick);
@@ -228,8 +364,14 @@ export function VideoPlayer({
         poster={detail.anime.bannerUrl}
         onLoadedMetadata={(event) => {
           const video = event.currentTarget;
+          const savedPosition = latestSaved.current?.completed
+            ? 0
+            : latestSaved.current?.positionSeconds;
+          const position =
+            getResumePosition?.() ??
+            (attempt > 0 ? resume.current : (savedPosition ?? resume.current));
           if (Number.isFinite(video.duration))
-            video.currentTime = Math.min(resume.current, Math.max(0, video.duration - 1));
+            video.currentTime = Math.min(Math.max(0, position), Math.max(0, video.duration - 1));
         }}
         onError={() => setFailed(true)}
       >
@@ -244,6 +386,100 @@ export function VideoPlayer({
           />
         ))}
       </video>
+      {conflict && (
+        <div role="alert" className="tw:p-4 tw:bg-[#252137]">
+          <p>Tiến độ đã được cập nhật ở tab hoặc thiết bị khác. Đã tạm dừng đồng bộ để bạn chọn.</p>
+          {conflict.remote && (
+            <p>
+              Tiến độ đã lưu: {formatPlaybackTime(conflict.remote.positionSeconds)}
+              {conflict.remote.completed ? ' · Đã xem xong' : ''}.
+            </p>
+          )}
+          {conflictError && <p>{conflictError}</p>}
+          <div className="tw:flex tw:flex-wrap tw:gap-3">
+            <Button
+              label="Tiếp tục ở vị trí hiện tại"
+              loading={resolving}
+              onClick={() => void resolveConflict(false)}
+            />
+            <Button
+              variant="quiet"
+              label="Dùng tiến độ đã lưu"
+              disabled={resolving}
+              onClick={() => void resolveConflict(true)}
+            />
+          </div>
+        </div>
+      )}
+      <div className="tw:flex tw:flex-wrap tw:gap-4 tw:items-end tw:p-4 tw:bg-[#141925]">
+        <Button
+          variant="quiet"
+          size="sm"
+          label={preferences.muted ? 'Bật tiếng' : 'Tắt tiếng'}
+          aria-pressed={preferences.muted}
+          onClick={() => {
+            if (videoRef.current) videoRef.current.muted = !videoRef.current.muted;
+          }}
+        />
+        <label>
+          Âm lượng {Math.round(preferences.volume * 100)}%
+          <Input
+            type="range"
+            min={0}
+            max={1}
+            step={0.05}
+            aria-label="Âm lượng"
+            value={preferences.volume}
+            onChange={(event) => {
+              if (videoRef.current) {
+                videoRef.current.volume = Number(event.target.value);
+                videoRef.current.muted = false;
+              }
+            }}
+          />
+        </label>
+        <label>
+          Tốc độ
+          <Selectbox
+            aria-label="Tốc độ phát"
+            value={preferences.rate}
+            options={[0.5, 0.75, 1, 1.25, 1.5, 2].map((value) => ({
+              value: String(value),
+              label: `${value}×`,
+            }))}
+            onChange={(event) => {
+              if (videoRef.current) videoRef.current.playbackRate = Number(event.target.value);
+            }}
+          />
+        </label>
+        <label>
+          Phụ đề
+          <Selectbox
+            aria-label="Phụ đề"
+            value={preferences.subtitle}
+            options={[
+              { value: 'default', label: 'Mặc định' },
+              { value: 'off', label: 'Tắt phụ đề' },
+              ...Array.from(
+                new Map(
+                  source.subtitles.map((track) => [
+                    track.language,
+                    { value: track.language, label: track.label },
+                  ]),
+                ).values(),
+              ),
+              ...(!['default', 'off', ...source.subtitles.map((track) => track.language)].includes(
+                preferences.subtitle,
+              )
+                ? [{ value: preferences.subtitle, label: 'Ngôn ngữ đã chọn không có ở nguồn này' }]
+                : []),
+            ]}
+            onChange={(event) =>
+              setPreferences((value) => ({ ...value, subtitle: event.target.value }))
+            }
+          />
+        </label>
+      </div>
       {subtitleFailed && (
         <p role="status" className="tw:p-4">
           Không tải được phụ đề. Bạn vẫn có thể xem video hoặc chọn nguồn khác.

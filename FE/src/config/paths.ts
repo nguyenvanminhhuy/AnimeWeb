@@ -17,6 +17,8 @@ export const routePatterns = {
   adminEpisodes: '/admin/episodes',
   adminPlayback: '/admin/playback',
   adminComments: '/admin/comments',
+  adminAudit: '/admin/audit-logs',
+  adminOperations: '/admin/operations',
   adminEpisodeNew: '/admin/episodes/new',
   adminEpisodeEdit: '/admin/episodes/:episodeId/edit',
   profile: '/profile',
@@ -36,6 +38,8 @@ export const paths = {
   adminEpisodes: routePatterns.adminEpisodes,
   adminPlayback: routePatterns.adminPlayback,
   adminComments: routePatterns.adminComments,
+  adminAudit: routePatterns.adminAudit,
+  adminOperations: routePatterns.adminOperations,
   adminPlaybackForEpisode: (episodeId: string) =>
     `${routePatterns.adminPlayback}?${createSearchParams({ episodeId })}`,
   adminEpisodeNew: (animeId = '', seasonId = '', returnTo: string = routePatterns.adminEpisodes) =>

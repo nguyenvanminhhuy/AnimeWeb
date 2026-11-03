@@ -167,7 +167,7 @@ export function CommentsScreen() {
               e.preventDefault();
               change('q', search.trim());
             }}
-            className="aw-surface tw:rounded-xl tw:p-5 tw:grid tw:grid-cols-4 tw:gap-4 tw:max-tablet:grid-cols-2 tw:max-phone:grid-cols-1"
+            className="aw-surface tw:rounded-xl tw:p-5 tw:grid tw:grid-cols-4 tw:gap-4 tw:max-tablet:grid-cols-2 tw:max-mobile:grid-cols-2"
           >
             <div>
               <label htmlFor="comments-search">Tìm bình luận</label>
@@ -264,7 +264,7 @@ export function CommentsScreen() {
                     tabIndex={0}
                     className="aw-surface tw:rounded-xl tw:overflow-x-auto tw:border tw:border-[var(--aw-border)]"
                   >
-                    <table className="tw:w-full tw:min-w-160 tw:mb-0 tw:text-left">
+                    <table className="aw-admin-records tw:w-full tw:min-w-160 tw:mb-0 tw:text-left">
                       <caption className="visually-hidden">
                         Bình luận mẫu quản trị, nội dung đã xoá được lược bỏ
                       </caption>
@@ -299,32 +299,41 @@ export function CommentsScreen() {
                                 {row.body ?? 'Nội dung đã được xoá.'}
                               </p>
                             </th>
-                            <td className="tw:p-4 tw:min-w-36">
-                              {film(row.animeId)?.title ?? 'Phim không còn trong danh mục'}
+                            <td data-label="Phim" className="tw:p-4 tw:min-w-36">
+                              <div className="aw-admin-record-value">
+                                {film(row.animeId)?.title ?? 'Phim không còn trong danh mục'}
+                              </div>
                             </td>
-                            <td className="tw:p-4 tw:whitespace-nowrap">
-                              <span className={commentStatusClasses[row.status]}>
-                                {commentStatusLabels[row.status]}
-                              </span>
-                              <time
-                                dateTime={row.createdAt}
-                                className="tw:block tw:mt-1 tw:text-[var(--aw-muted)]"
-                              >
-                                {commentDate(row.createdAt)}
-                              </time>
+                            <td
+                              data-label="Trạng thái / Ngày gửi"
+                              className="tw:p-4 tw:whitespace-nowrap"
+                            >
+                              <div className="aw-admin-record-value">
+                                <span className={commentStatusClasses[row.status]}>
+                                  {commentStatusLabels[row.status]}
+                                </span>
+                                <time
+                                  dateTime={row.createdAt}
+                                  className="tw:block tw:mt-1 tw:text-[var(--aw-muted)]"
+                                >
+                                  {commentDate(row.createdAt)}
+                                </time>
+                              </div>
                             </td>
-                            <td className="tw:p-4">
-                              <Button
-                                as="link"
-                                to={commentsHref(params, { commentId: row.id })}
-                                label="Xem nội dung"
-                                aria-label={`Xem bình luận ${row.id}`}
-                                variant="quiet"
-                                size="sm"
-                                onClick={(e) => {
-                                  returnFocus.current = e.currentTarget;
-                                }}
-                              />
+                            <td data-label="Chi tiết" className="tw:p-4">
+                              <div className="aw-admin-record-value">
+                                <Button
+                                  as="link"
+                                  to={commentsHref(params, { commentId: row.id })}
+                                  label="Xem nội dung"
+                                  aria-label={`Xem bình luận ${row.id}`}
+                                  variant="quiet"
+                                  size="sm"
+                                  onClick={(e) => {
+                                    returnFocus.current = e.currentTarget;
+                                  }}
+                                />
+                              </div>
                             </td>
                           </tr>
                         ))}

@@ -1,10 +1,12 @@
 import type { Anime, CatalogResult } from '@/types/anime';
 import type { CatalogQuery } from '@/types/catalog';
 
-export type AdminAnimeQuery = CatalogQuery;
+export type AdminAnimeQuery = CatalogQuery & {
+  publicationStatus?: '' | 'draft' | 'published' | 'archived';
+};
 export interface AdminAnimeRow {
   version: number;
-  publicationStatus: 'draft' | 'published';
+  publicationStatus: 'draft' | 'published' | 'archived';
   alternativeTitles: string[];
   anime: Anime;
   publishedEpisodes: number;

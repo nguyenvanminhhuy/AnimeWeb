@@ -12,6 +12,7 @@ public sealed class CatalogDatabaseFixture : IAsyncLifetime
 {
     private readonly string schema = "catalog_" + Guid.NewGuid().ToString("N");
     private string? rootConnectionString;
+    private string? scopedConnectionString;
     private bool schemaCreated;
     public ApiFactory Factory { get; private set; } = null!;
     public HttpClient Client { get; private set; } = null!;
@@ -37,6 +38,9 @@ public sealed class CatalogDatabaseFixture : IAsyncLifetime
         schemaCreated = true;
 
         parsed.SearchPath = schema;
+        // Each generated schema has its own pool. Bound their combined budget on the shared test DB.
+        parsed.MaxPoolSize = 8;
+        scopedConnectionString = parsed.ConnectionString;
         Factory = new ApiFactory(parsed.ConnectionString, clock: Clock);
         Client = Factory.CreateClient();
         await using var scope = Factory.Services.CreateAsyncScope();
@@ -53,7 +57,7 @@ public sealed class CatalogDatabaseFixture : IAsyncLifetime
             VALUES ('upgrade_fixture','upgrade-fixture','Existing catalog',ARRAY[]::text[],'Preserved synopsis','/fixture.webp','upcoming','tv',2026,'published')
             """);
         await database.Database.MigrateAsync();
-        Assert.Equal(7, (await database.Database.GetAppliedMigrationsAsync()).Count());
+        Assert.Equal(8, (await database.Database.GetAppliedMigrationsAsync()).Count());
         var upgraded = await database.Anime.SingleAsync(x => x.Id == "upgrade_fixture");
         Assert.Equal("Preserved synopsis", upgraded.Synopsis);
         Assert.Equal(1, upgraded.Version);
@@ -71,6 +75,8 @@ public sealed class CatalogDatabaseFixture : IAsyncLifetime
         {
             Client.Dispose();
             await Factory.DisposeAsync();
+            using var pooled = new NpgsqlConnection(scopedConnectionString);
+            NpgsqlConnection.ClearPool(pooled);
         }
         if (schemaCreated && !string.IsNullOrWhiteSpace(rootConnectionString))
         {

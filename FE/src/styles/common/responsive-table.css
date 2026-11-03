@@ -1,0 +1,71 @@
+/* One semantic table and one set of actions: cards on phones, columns on wider screens. */
+@media (max-width: 767px) {
+  .aw-admin-records {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+  }
+  .aw-admin-records thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .aw-admin-records tbody {
+    display: grid;
+    gap: 12px;
+    padding: 12px;
+  }
+  .aw-admin-records tbody tr {
+    display: block;
+    min-width: 0;
+    border: 1px solid var(--aw-border);
+    border-radius: 12px;
+    padding-bottom: 8px;
+  }
+  .aw-admin-records tbody th {
+    display: block;
+    min-width: 0;
+    max-width: none;
+    padding: 16px 16px 12px;
+    overflow-wrap: anywhere;
+  }
+  .aw-admin-records tbody th > div > div {
+    min-width: 0;
+  }
+  .aw-admin-records td {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    align-items: start;
+    gap: 12px;
+    min-width: 0;
+    max-width: none;
+    padding: 8px 16px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .aw-admin-records td::before {
+    content: attr(data-label);
+    color: var(--aw-muted);
+    font-weight: 400;
+  }
+  .aw-admin-record-value {
+    min-width: 0;
+  }
+  .aw-admin-record-value > .tw\:whitespace-nowrap {
+    white-space: normal;
+  }
+  .aw-admin-records td[data-label='Thao tác'],
+  .aw-admin-records td[data-label='Chi tiết'] {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+  .aw-admin-records .aw-button {
+    --aw-control-min-height: 44px;
+    min-width: 44px;
+  }
+}

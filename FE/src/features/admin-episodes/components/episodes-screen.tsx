@@ -144,7 +144,7 @@ export function EpisodesScreen() {
               e.preventDefault();
               change('q', search.trim());
             }}
-            className="aw-surface tw:p-5 tw:rounded-xl tw:grid tw:grid-cols-3 tw:gap-4 tw:max-phone:grid-cols-1"
+            className="aw-surface tw:p-5 tw:rounded-xl tw:grid tw:grid-cols-3 tw:gap-4 tw:max-mobile:grid-cols-2"
           >
             <div>
               <label htmlFor="episodes-anime">Phim</label>
@@ -347,7 +347,7 @@ export function EpisodesScreen() {
                   tabIndex={0}
                   className="aw-surface tw:rounded-xl tw:overflow-x-auto tw:border tw:border-[var(--aw-border)]"
                 >
-                  <table className="tw:w-full tw:min-w-180 tw:text-left tw:mb-0">
+                  <table className="aw-admin-records tw:w-full tw:min-w-180 tw:text-left tw:mb-0">
                     <caption className="visually-hidden">
                       Danh sách tập phim và trạng thái công bố
                     </caption>
@@ -386,60 +386,71 @@ export function EpisodesScreen() {
                               </span>
                               {e.title}
                             </th>
-                            <td className="tw:p-4">
-                              {data.anime.find((a) => a.id === season.animeId)?.title}
-                              <span className="tw:block tw:text-[var(--aw-muted)]">
-                                {season.title}
-                              </span>
+                            <td data-label="Phim / Mùa" className="tw:p-4">
+                              <div className="aw-admin-record-value">
+                                {data.anime.find((a) => a.id === season.animeId)?.title}
+                                <span className="tw:block tw:text-[var(--aw-muted)]">
+                                  {season.title}
+                                </span>
+                              </div>
                             </td>
-                            <td className="tw:p-4">{e.sortOrder}</td>
-                            <td className="tw:p-4 tw:whitespace-nowrap">
-                              {e.durationSeconds === null
-                                ? '—'
-                                : Math.floor(e.durationSeconds / 60)}{' '}
-                              phút {e.durationSeconds === null ? '—' : e.durationSeconds % 60} giây
+                            <td data-label="Thứ tự" className="tw:p-4">
+                              <div className="aw-admin-record-value">{e.sortOrder}</div>
                             </td>
-                            <td className="tw:p-4 tw:whitespace-nowrap">
-                              <span
-                                className={
-                                  e.status === 'published'
-                                    ? 'tw:text-[#9fe3c2]'
-                                    : 'tw:text-[#e6c48d]'
-                                }
-                              >
-                                {e.status === 'published' ? 'Đã công bố' : 'Bản nháp'}
-                              </span>
-                              <span className="tw:block tw:text-[var(--aw-muted)]">
-                                {e.hasPlayback ? 'Có nguồn phát' : 'Chưa có video'}
-                              </span>
+                            <td data-label="Thời lượng" className="tw:p-4 tw:whitespace-nowrap">
+                              <div className="aw-admin-record-value">
+                                {e.durationSeconds === null
+                                  ? '—'
+                                  : Math.floor(e.durationSeconds / 60)}{' '}
+                                phút {e.durationSeconds === null ? '—' : e.durationSeconds % 60}{' '}
+                                giây
+                              </div>
+                            </td>
+                            <td data-label="Trạng thái" className="tw:p-4 tw:whitespace-nowrap">
+                              <div className="aw-admin-record-value">
+                                <span
+                                  className={
+                                    e.status === 'published'
+                                      ? 'tw:text-[#9fe3c2]'
+                                      : 'tw:text-[#e6c48d]'
+                                  }
+                                >
+                                  {e.status === 'published' ? 'Đã công bố' : 'Bản nháp'}
+                                </span>
+                                <span className="tw:block tw:text-[var(--aw-muted)]">
+                                  {e.hasPlayback ? 'Có nguồn phát' : 'Chưa có video'}
+                                </span>
+                              </div>
                             </td>
                             {canWrite && (
-                              <td className="tw:p-4">
-                                <div className="tw:inline-flex tw:flex-nowrap tw:items-center tw:gap-2 tw:whitespace-nowrap">
-                                  <Button
-                                    as="link"
-                                    to={paths.adminEpisodeEdit(e.id, returnTo)}
-                                    startIcon={<Icon name="edit" size="sm" />}
-                                    aria-label={`Sửa tập ${e.title}`}
-                                    title={`Sửa tập ${e.title}`}
-                                    size="sm"
-                                    variant="quiet"
-                                  />
-                                  <Button
-                                    startIcon={<Icon name="trash" size="sm" />}
-                                    aria-label={`Xoá tập ${e.title}`}
-                                    title={`Xoá tập ${e.title}`}
-                                    size="sm"
-                                    variant="quiet"
-                                    onClick={() =>
-                                      setTarget({
-                                        kind: 'episode',
-                                        id: e.id,
-                                        version: e.version,
-                                        title: e.title,
-                                      })
-                                    }
-                                  />
+                              <td data-label="Thao tác" className="tw:p-4">
+                                <div className="aw-admin-record-value">
+                                  <div className="tw:inline-flex tw:flex-nowrap tw:items-center tw:gap-2 tw:whitespace-nowrap">
+                                    <Button
+                                      as="link"
+                                      to={paths.adminEpisodeEdit(e.id, returnTo)}
+                                      startIcon={<Icon name="edit" size="sm" />}
+                                      aria-label={`Sửa tập ${e.title}`}
+                                      title={`Sửa tập ${e.title}`}
+                                      size="sm"
+                                      variant="quiet"
+                                    />
+                                    <Button
+                                      startIcon={<Icon name="trash" size="sm" />}
+                                      aria-label={`Xoá tập ${e.title}`}
+                                      title={`Xoá tập ${e.title}`}
+                                      size="sm"
+                                      variant="quiet"
+                                      onClick={() =>
+                                        setTarget({
+                                          kind: 'episode',
+                                          id: e.id,
+                                          version: e.version,
+                                          title: e.title,
+                                        })
+                                      }
+                                    />
+                                  </div>
                                 </div>
                               </td>
                             )}

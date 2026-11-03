@@ -1,5 +1,6 @@
 import type { Season, Episode } from '@/types/episode';
 export interface Anime {
+  available?: boolean;
   id: string;
   slug: string;
   title: string;

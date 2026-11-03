@@ -36,26 +36,21 @@ export function ExplorePage() {
   const end = Math.min(query.page * query.pageSize, total);
 
   return (
-    <div className="aw-shell aw-explore tw:mx-auto tw:pt-7">
+    <div className="aw-shell aw-explore tw:mx-auto tw:pt-6 tw:max-mobile:pt-4">
       <nav aria-label="Đường dẫn" className="aw-explore-breadcrumb tw:gap-3 tw:flex tw:text-body">
         <Link to={paths.home}>Trang chủ</Link>
         <span aria-hidden="true">/</span>
         <span aria-current="page">Khám phá</span>
       </nav>
-      <header className="aw-explore-heading tw:py-7.5 tw:relative tw:overflow-hidden tw:flex tw:justify-between tw:items-center tw:min-h-57.5">
+      <header className="aw-explore-heading tw:py-6 tw:relative tw:overflow-hidden tw:flex tw:justify-between tw:items-center tw:min-h-48 tw:max-mobile:min-h-0 tw:max-mobile:py-4">
         <div>
-          <p className="aw-eyebrow">MỖI LỰA CHỌN, MỘT THẾ GIỚI MỚI</p>
           <h1>
             Khám phá anime
             <span className="aw-heading-dot" aria-hidden="true">
               .
             </span>
           </h1>
-          <p>
-            Từ những chuyến phiêu lưu kỳ ảo đến những ngày bình yên.
-            <br />
-            Tìm câu chuyện dành riêng cho bạn.
-          </p>
+          <p>Tìm câu chuyện dành riêng cho bạn.</p>
         </div>
         <div
           className="aw-explore-heading-art tw:shrink-0 tw:grid tw:place-items-center tw:max-mobile:hidden"
@@ -73,7 +68,7 @@ export function ExplorePage() {
         suggestions={result?.data.map((anime) => anime.title) ?? []}
       />
       <div
-        className="aw-explore-active tw:py-3.75 tw:gap-2.25 tw:min-h-15 tw:flex tw:flex-wrap tw:items-center tw:text-body"
+        className="aw-explore-active tw:py-3 tw:gap-2 tw:flex tw:flex-wrap tw:items-center tw:text-body"
         aria-label="Bộ lọc đang chọn"
       >
         {selected.length ? (
@@ -99,12 +94,12 @@ export function ExplorePage() {
       </div>
 
       <section
-        className="aw-explore-results tw:pt-6.5 tw:mt-1"
+        className="aw-explore-results tw:pt-4 tw:mt-1"
         data-query={catalogParams(query).toString()}
         aria-labelledby="explore-results-title"
         aria-busy={!result && !error}
       >
-        <div className="aw-explore-results-heading tw:gap-5 tw:flex tw:items-center tw:justify-between tw:mb-6.5 tw:max-mobile:flex-col tw:max-mobile:items-start">
+        <div className="aw-explore-results-heading tw:gap-4 tw:flex tw:items-center tw:justify-between tw:mb-5 tw:max-mobile:flex-col tw:max-mobile:items-start">
           <div>
             <h2 id="explore-results-title">
               {query.q || selected.length ? 'Kết quả dành cho bạn' : 'Tất cả anime'}
@@ -117,7 +112,7 @@ export function ExplorePage() {
                   : 'Đang tìm những câu chuyện…'}
             </p>
           </div>
-          <div className="aw-explore-sort tw:gap-3.5 tw:flex tw:max-mobile:w-full">
+          <div className="aw-explore-sort tw:gap-3 tw:flex tw:max-mobile:w-full tw:[&>div]:min-w-0">
             <div className="aw-explore-field tw:grid tw:text-body">
               <label htmlFor="explore-sort">Sắp xếp</label>
               <Selectbox

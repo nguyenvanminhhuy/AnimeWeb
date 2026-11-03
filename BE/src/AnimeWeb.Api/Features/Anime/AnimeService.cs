@@ -1,5 +1,6 @@
 using AnimeWeb.Api.Features.Anime.Dtos;
 using AnimeWeb.Api.Infrastructure.Persistence;
+using AnimeWeb.Api.Shared;
 using AnimeWeb.Api.Shared.Pagination;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,14 +11,15 @@ public sealed class AnimeService(AnimeWebDbContext database, TimeProvider time)
     public async Task<PagedResponse<AnimeSummaryDto>> ListAsync(AnimeQuery filters, CancellationToken cancellationToken)
     {
         var query = database.Anime.AsNoTracking().Where(anime => anime.PublicationStatus == "published");
-        var search = filters.Q?.Trim();
+        var search = CatalogSearch.Normalize(filters.Q);
         if (!string.IsNullOrEmpty(search))
         {
             // Treat LIKE wildcard characters as literal user input.
             var pattern = "%" + search.Replace("~", "~~").Replace("%", "~%").Replace("_", "~_") + "%";
             query = query.Where(anime =>
-                EF.Functions.ILike(anime.Title, pattern, "~")
-                || anime.AlternativeTitles.Any(title => EF.Functions.ILike(title, pattern, "~")));
+                EF.Functions.Like(CatalogSearch.Fold(anime.Title), pattern, "~")
+                || EF.Functions.Like(CatalogSearch.Fold(anime.Subtitle), pattern, "~")
+                || anime.AlternativeTitles.Any(title => EF.Functions.Like(CatalogSearch.Fold(title), pattern, "~")));
         }
         if (!string.IsNullOrEmpty(filters.Genre))
         {

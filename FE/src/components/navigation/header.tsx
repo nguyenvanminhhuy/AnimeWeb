@@ -17,19 +17,19 @@ export function Header() {
       : pathname + search;
   return (
     <header className="aw-header">
-      <div className="aw-shell aw-header-inner tw:mx-auto tw:gap-8.5 tw:min-h-22 tw:flex tw:items-center tw:max-desktop:py-4.5 tw:max-desktop:gap-6 tw:max-desktop:flex-wrap tw:max-phone:gap-3 tw:max-phone:min-h-18">
+      <div className="aw-shell aw-header-inner tw:mx-auto tw:gap-8 tw:min-h-22 tw:flex tw:items-center tw:max-desktop:py-3 tw:max-desktop:gap-3 tw:max-desktop:flex-wrap tw:max-phone:gap-2 tw:max-phone:py-2">
         <Link
           className="aw-brand tw:inline-flex tw:items-center tw:whitespace-nowrap"
           to={paths.home}
           aria-label="Anime Web — Trang chủ"
         >
-          <span className="aw-brand-mark tw:mr-2" aria-hidden="true">
+          <span className="aw-brand-mark tw:mr-2 tw:leading-none" aria-hidden="true">
             ✦
           </span>
           anime<span>web</span>
         </Link>
         <nav
-          className="aw-nav tw:gap-6.5 tw:flex tw:self-center tw:items-center tw:[&>a]:py-1.5 tw:text-body tw:whitespace-nowrap tw:max-phone:order-2 tw:max-phone:w-full tw:max-phone:justify-between"
+          className="aw-nav tw:gap-6 tw:flex tw:self-center tw:items-center tw:[&>a]:min-h-11 tw:[&>a]:py-2.5 tw:text-body tw:whitespace-nowrap tw:max-phone:order-2 tw:max-phone:w-full tw:max-phone:justify-between"
           aria-label="Điều hướng chính"
         >
           <NavLink to={paths.home} end>
@@ -43,7 +43,7 @@ export function Header() {
           )}
         </nav>
         <Form
-          className="aw-search tw:px-3 tw:py-2 tw:gap-2 tw:ml-auto tw:flex tw:items-center tw:min-w-32.5 tw:w-60 tw:rounded-lg tw:max-desktop:order-3 tw:max-desktop:w-full"
+          className="aw-search tw:px-3 tw:py-2 tw:gap-2 tw:ml-auto tw:flex tw:items-center tw:min-h-11 tw:min-w-32.5 tw:w-60 tw:rounded-lg tw:max-desktop:order-3 tw:max-desktop:w-full"
           action={paths.explore}
           method="get"
           role="search"

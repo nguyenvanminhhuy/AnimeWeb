@@ -15,6 +15,14 @@ export async function verifyPlayer(browser, baseURL) {
     await page.goto(`${baseURL}/tests/fixtures/player.html`);
     const video = page.locator('video');
     await video.waitFor();
+    await page.getByRole('slider', { name: 'Âm lượng', exact: true }).fill('0.35');
+    await page.getByRole('combobox', { name: 'Tốc độ phát', exact: true }).selectOption('1.5');
+    await page.getByRole('combobox', { name: 'Phụ đề', exact: true }).selectOption('off');
+    await page.getByRole('button', { name: 'Tắt tiếng', exact: true }).click();
+    await page.waitForFunction(() => {
+      const prefs = JSON.parse(localStorage.getItem('aw:player:preferences:v1'));
+      return prefs.volume === 0.35 && prefs.muted && prefs.rate === 1.5 && prefs.subtitle === 'off';
+    });
     await page.getByRole('button', { name: 'Viewer', exact: true }).click();
     const event = async (name, position = 600) =>
       video.evaluate(
@@ -48,6 +56,13 @@ export async function verifyPlayer(browser, baseURL) {
     assert.equal((await stored()).progress[0].positionSeconds, 620);
     await event('pause', 640);
     assert.equal((await stored()).progress[0].positionSeconds, 640);
+    await page.getByRole('button', { name: 'Switch source', exact: true }).click();
+    await event('loadedmetadata', 0);
+    assert.equal(await video.evaluate((element) => element.currentTime), 640);
+    assert.equal(await video.evaluate((element) => element.volume), 0.35);
+    assert.equal(await video.evaluate((element) => element.muted), true);
+    assert.equal(await video.evaluate((element) => element.playbackRate), 1.5);
+    await event('playing');
     await event('ended', 1440);
     assert.equal((await stored()).progress[0].completed, true);
     assert.equal(await page.locator('#ended').textContent(), '1');

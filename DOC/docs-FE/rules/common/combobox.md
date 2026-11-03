@@ -42,7 +42,7 @@ import { Combobox } from '@/components/ui/combobox';
 - Trình duyệt quản lý mở/đóng, lọc, bàn phím và lựa chọn trong datalist. Không tự đặt aria-expanded/aria-activedescendant để mô tả một popup do React không quản lý.
 - Popup gợi ý, cách lọc, hỗ trợ thiết bị/screen reader và kiểu hiển thị phụ thuộc trình duyệt. Component không cung cấp listbox custom, multiple selection, phân trang gợi ý hoặc tùy biến render từng dòng. Vẫn sử dụng được như Input khi nền tảng không hiện popup.
 - Label phải nối với id input; lỗi/hint dùng aria-invalid + aria-describedby. Font ô nhập là token chung 14px; font popup native có thể do trình duyệt điều khiển.
-- Focus ô nhập giữ viền bình thường, không đổi màu viền hoặc thêm outline/ring/box-shadow như Input. Field shell không thêm lại border focus-within; popup native vẫn do trình duyệt quản lý.
+- Focus ô nhập giữ viền bình thường, không đổi màu viền; dùng outline :focus-visible như Input. Field shell không thêm lại border focus-within; popup native vẫn do trình duyệt quản lý.
 - Giữ id datalist độc lập với id input, không truyền list từ bên ngoài, không đặt các string nhạy cảm vào suggestions. Dùng Selectbox cho lựa chọn giới hạn cần validation theo ID.
 
 ## Tích hợp và generate
