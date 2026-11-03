@@ -1,5 +1,7 @@
 # Thư viện
 
+Bố cục hiện tại (2026-11-03): dưới 768px dùng ba tabs kèm số lượng, ẩn summary cards trùng lặp; tablet/desktop giữ summary. Xem [UI/UX polish](uiux-polish.md).
+
 Triển khai ngày 2026-10-28 tại `/library`, theo prompt screen-generation và rules/routes.md. Giữ giao diện tối/tím, React Router và dữ liệu/asset dùng chung hiện có.
 
 ## Chạy và mở

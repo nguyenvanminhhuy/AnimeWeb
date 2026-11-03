@@ -47,6 +47,18 @@ function validated(
 }
 
 export const mockAdminAnimeRepository: AdminAnimeRepository = {
+  async archive(id, archived, version, signal, session) {
+    await waitForAdminMock(signal);
+    const row = adminAnimeWorkspace(session, true).find((item) => item.anime.id === id);
+    if (!row) throw new ApiError(404, 'NOT_FOUND', 'Không tìm thấy phim.');
+    assertVersion(row.version, version);
+    if (!archived && row.publicationStatus !== 'archived')
+      throw new ApiError(409, 'ANIME_NOT_ARCHIVED', 'Phim chưa lưu trữ.');
+    row.publicationStatus = archived ? 'archived' : 'draft';
+    row.publicSlug = null;
+    row.version++;
+    return structuredClone(row);
+  },
   async list(query, state, signal, session) {
     adminAnimeWorkspace(session);
     await waitForAdminMock(signal, state === 'error');
@@ -56,7 +68,8 @@ export const mockAdminAnimeRepository: AdminAnimeRepository = {
     const genre = genres.find((option) => option.slug === query.genre)?.name;
     const items = (state === 'empty' ? [] : rows)
       .filter(
-        ({ anime }) =>
+        ({ anime, publicationStatus }) =>
+          (!query.publicationStatus || publicationStatus === query.publicationStatus) &&
           (!search || normalizeSearch(`${anime.title} ${anime.subtitle}`).includes(search)) &&
           (!query.genre || Boolean(genre && anime.genres.includes(genre))) &&
           (!query.year || anime.releaseYear === Number(query.year)) &&
@@ -110,6 +123,8 @@ export const mockAdminAnimeRepository: AdminAnimeRepository = {
     const row = rows.find((item) => item.anime.id === id);
     if (!row) throw new AdminAnimeError('Phim không còn tồn tại trong phiên mẫu.');
     assertVersion(row.version, input.version);
+    if (row.publicationStatus === 'archived')
+      throw new ApiError(409, 'ANIME_ARCHIVED', 'Khôi phục phim trước khi sửa.');
     const clean = validated(input, rows, session, id);
     row.version++;
     row.publicationStatus = input.publicationStatus;
@@ -131,6 +146,8 @@ export const mockAdminAnimeRepository: AdminAnimeRepository = {
       throw new ApiError(409, 'STALE_VERSION', 'Dữ liệu đã thay đổi. Hãy tải lại danh sách.');
     if (rows[index].publicationStatus === 'published')
       throw new ApiError(409, 'ANIME_PUBLISHED', 'Chuyển phim về bản nháp trước khi xoá.');
+    if (rows[index].publicationStatus === 'archived')
+      throw new ApiError(409, 'ANIME_ARCHIVED', 'Khôi phục phim trước khi xoá.');
     if (rows[index].publishedEpisodes > 0)
       throw new ApiError(
         409,

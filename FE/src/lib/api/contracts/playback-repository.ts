@@ -2,6 +2,11 @@ import type { WatchDetail } from '@/types/player';
 import type { MockState } from '@/lib/api/contracts/anime-repository';
 
 export interface PlaybackRepository {
+  report(
+    episodeId: string,
+    kind: 'media' | 'hls' | 'subtitle' | 'expired',
+    signal: AbortSignal,
+  ): Promise<void>;
   startView(
     episodeId: string,
     input: import('@/lib/api/backend/types').ViewInput,

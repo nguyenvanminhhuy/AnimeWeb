@@ -60,7 +60,9 @@ export function LibraryCard({ item, tab, favorite, canWrite, onToggleFavorite }:
         <p className="aw-library-not-started">Đã lưu cho một ngày muốn xem.</p>
       )}
       <div className="aw-library-card-actions tw:gap-2 tw:flex tw:items-center tw:mt-auto tw:pt-3.75 tw:flex-wrap tw:max-phone:items-stretch">
-        {progress ? (
+        {anime.available === false ? (
+          <Button disabled variant="glass" label="Phim đã lưu trữ" />
+        ) : progress ? (
           <Button
             as="link"
             variant="glass"
@@ -74,13 +76,13 @@ export function LibraryCard({ item, tab, favorite, canWrite, onToggleFavorite }:
             variant="glass"
             to={paths.animeDetail(anime.slug)}
             label="Xem chi tiết"
-            endIcon={<Icon name="external-link" size="sm" />}
+            endIcon={<Icon name="arrow-right" size="sm" />}
           />
         )}
         {canWrite && (
           <Button
             variant="unstyled"
-            className="aw-library-favorite tw:px-2.5 tw:py-1.75 tw:rounded-[6px] tw:min-h-9 tw:text-body tw:max-phone:w-full"
+            className="aw-library-favorite tw:px-3 tw:py-2 tw:rounded-md tw:min-h-11 tw:text-body tw:max-phone:w-full"
             type="button"
             aria-label={`${favorite ? 'Bỏ yêu thích' : 'Yêu thích'} ${anime.title}`}
             aria-pressed={favorite}

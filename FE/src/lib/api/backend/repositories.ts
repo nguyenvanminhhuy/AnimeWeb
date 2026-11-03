@@ -109,15 +109,18 @@ export function createBackendRepositories(api: BackendClient, credentials: Crede
     },
   };
   const animeRepository: AnimeRepository = {
-    async list(query, _state) {
+    async list(query, _state, signal) {
       const [result, genres, options] = await Promise.all([
-        api.catalog.list({
-          ...query,
-          year: query.year ? Number(query.year) : undefined,
-          format: query.format || undefined,
-        }),
-        api.catalog.genres(),
-        api.catalog.options(),
+        api.catalog.list(
+          {
+            ...query,
+            year: query.year ? Number(query.year) : undefined,
+            format: query.format || undefined,
+          },
+          signal,
+        ),
+        api.catalog.genres(signal),
+        api.catalog.options(signal),
       ]);
       return {
         ...result,
@@ -143,6 +146,9 @@ export function createBackendRepositories(api: BackendClient, credentials: Crede
     },
   };
   const playbackRepository: PlaybackRepository = {
+    async report(id, kind, signal) {
+      await api.playback.report(id, kind, signal);
+    },
     async getEpisode(id) {
       return missing(loadWatchDetail(api, id));
     },
@@ -286,12 +292,16 @@ export function createBackendRepositories(api: BackendClient, credentials: Crede
     },
   };
   const adminAnimeRepository: AdminAnimeRepository = {
+    async archive(id, archived, version, signal) {
+      return mapAdminAnime((await api.admin.archiveAnime(id, archived, version, signal)).data);
+    },
     async list(query, _state, signal) {
       const result = await api.admin.anime(
         {
           ...query,
           year: query.year ? Number(query.year) : undefined,
           format: query.format || undefined,
+          publicationStatus: query.publicationStatus || undefined,
         },
         signal,
       );
@@ -580,6 +590,12 @@ export function createBackendRepositories(api: BackendClient, credentials: Crede
     },
   };
   return {
+    operationsRepository: {
+      async get(signal: AbortSignal) {
+        return (await api.admin.operations(signal)).data;
+      },
+    },
+    adminAuditRepository: { list: api.admin.auditLogs },
     authRepository,
     animeRepository,
     playbackRepository,

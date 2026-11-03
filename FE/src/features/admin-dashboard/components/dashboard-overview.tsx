@@ -146,7 +146,6 @@ export function DashboardOverview({ data }: { data: AdminDashboardData }) {
           </p>
         </section>
       </div>
-      <TopViewedAnime items={data.topViewed} />
       <section className="aw-surface tw:rounded-xl tw:min-w-0" aria-labelledby="admin-recent-title">
         <div className="tw:p-6 tw:flex tw:justify-between tw:items-center tw:gap-4 tw:flex-wrap">
           <div>
@@ -162,7 +161,7 @@ export function DashboardOverview({ data }: { data: AdminDashboardData }) {
             variant="quiet"
             size="sm"
             to={paths.explore}
-            label="Xem danh mục"
+            label="Xem danh mục công khai"
             endIcon={<Icon name="arrow-right" size="sm" />}
           />
         </div>
@@ -172,7 +171,7 @@ export function DashboardOverview({ data }: { data: AdminDashboardData }) {
           aria-label="Bảng phim gần đây"
           tabIndex={0}
         >
-          <table className="tw:w-full tw:min-w-160 tw:text-body">
+          <table className="aw-admin-records tw:w-full tw:min-w-160 tw:text-body">
             <caption className="visually-hidden">
               Anime có tập công bố gần nhất; liên kết mở trang chi tiết công khai
             </caption>
@@ -202,27 +201,41 @@ export function DashboardOverview({ data }: { data: AdminDashboardData }) {
                       <span className="tw:max-w-65">{item.anime.title}</span>
                     </div>
                   </th>
-                  <td className="tw:px-6 tw:py-4 tw:whitespace-nowrap tw:text-[var(--aw-muted)]">
-                    {animeFormatLabel(item.anime.format)}
+                  <td
+                    data-label="Định dạng"
+                    className="tw:px-6 tw:py-4 tw:whitespace-nowrap tw:text-[var(--aw-muted)]"
+                  >
+                    <div className="aw-admin-record-value">
+                      {animeFormatLabel(item.anime.format)}
+                    </div>
                   </td>
-                  <td className="tw:px-6 tw:py-4">{item.episodeCount}</td>
-                  <td className="tw:px-6 tw:py-4 tw:whitespace-nowrap tw:text-[var(--aw-muted)]">
-                    {item.lastPublishedAt
-                      ? date.format(new Date(item.lastPublishedAt))
-                      : 'Chưa có tập'}
+                  <td data-label="Tập công bố" className="tw:px-6 tw:py-4">
+                    <div className="aw-admin-record-value">{item.episodeCount}</div>
                   </td>
-                  <td className="tw:px-6 tw:py-4">
-                    {item.publicSlug ? (
-                      <Link
-                        to={paths.animeDetail(item.publicSlug)}
-                        aria-label={`Xem chi tiết ${item.anime.title}`}
-                        className="tw:text-[var(--aw-accent)]"
-                      >
-                        Xem <Icon name="arrow-right" size="sm" />
-                      </Link>
-                    ) : (
-                      <span className="tw:text-[var(--aw-muted)]">Chưa công khai</span>
-                    )}
+                  <td
+                    data-label="Cập nhật"
+                    className="tw:px-6 tw:py-4 tw:whitespace-nowrap tw:text-[var(--aw-muted)]"
+                  >
+                    <div className="aw-admin-record-value">
+                      {item.lastPublishedAt
+                        ? date.format(new Date(item.lastPublishedAt))
+                        : 'Chưa có tập'}
+                    </div>
+                  </td>
+                  <td data-label="Chi tiết" className="tw:px-6 tw:py-4">
+                    <div className="aw-admin-record-value">
+                      {item.publicSlug ? (
+                        <Link
+                          to={paths.animeDetail(item.publicSlug)}
+                          aria-label={`Xem chi tiết ${item.anime.title}`}
+                          className="tw:text-[var(--aw-accent)]"
+                        >
+                          Xem <Icon name="arrow-right" size="sm" />
+                        </Link>
+                      ) : (
+                        <span className="tw:text-[var(--aw-muted)]">Chưa công khai</span>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -230,6 +243,7 @@ export function DashboardOverview({ data }: { data: AdminDashboardData }) {
           </table>
         </div>
       </section>
+      <TopViewedAnime items={data.topViewed} />
       <p className="tw:text-[var(--aw-muted)] tw:mb-0 tw:text-center">
         Các thống kê được tính từ dữ liệu mẫu. Chưa phải số liệu vận hành của hệ thống.
       </p>

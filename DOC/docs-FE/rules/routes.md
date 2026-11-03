@@ -1,5 +1,9 @@
 # Route và navigation
 
+Route lazy `/admin/operations` dùng paths.adminOperations, menu và guard admin:dashboard:read; [hợp đồng giám sát](../../docs-BE/load-progress-operations.md#giám-sát-vận-hành). Snapshot runtime chỉ đọc, không cache hoặc đưa dữ liệu này sang màn public.
+
+Cập nhật 2026-11-03: `/admin/audit-logs` đăng ký lazy tại app/router, paths.adminAudit, cần admin:audit:read. Menu/guard kiểm tra quyền này độc lập dashboard. [Luồng danh mục/player/nhật ký](../../docs-BE/archive-search-audit.md).
+
 Áp dụng cho mọi lần generate/sửa màn hình FE. Người dùng xác nhận dùng React Router và quản lý route tập trung ngày 2026-10-28.
 
 ## Cấu trúc

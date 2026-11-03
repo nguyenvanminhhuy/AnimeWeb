@@ -26,4 +26,6 @@ export const {
   adminEpisodeRepository,
   adminPlaybackRepository,
   adminCommentRepository,
+  adminAuditRepository,
+  operationsRepository,
 } = repositories;

@@ -25,6 +25,9 @@ public sealed class AdminCatalogController(AdminCatalogService service) : Contro
     [ProducesResponseType(204)]
     public async Task<IActionResult> Delete([StringLength(100)] string id, [FromQuery] DeleteQuery query, CancellationToken ct)
     { await service.DeleteAsync(id, query.Version!.Value, ct); return NoContent(); }
+    [Permission("admin:anime:write"), HttpPatch("anime/{id}/archive")]
+    public async Task<ApiResponse<AdminAnimeDto>> Archive([StringLength(100)] string id, ArchiveAnimeInput input, CancellationToken ct) =>
+        new(await service.ArchiveAsync(id, input, ct));
     [Permission("admin:genre:read"), HttpGet("genres")]
     public Task<PagedResponse<AdminGenreDto>> Genres([FromQuery] AdminQuery query, CancellationToken ct) => service.GenresAsync(query, ct);
     [Permission("admin:genre:read"), HttpGet("genres/options")]

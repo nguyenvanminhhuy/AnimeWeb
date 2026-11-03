@@ -1,6 +1,6 @@
 # Icon — Font Awesome Free
 
-Source: `FE/src/components/ui/icon.tsx`; registry tại `icon-definitions.ts`. FE dùng component React chính thức để render SVG inline, đóng gói cùng ứng dụng; không dùng CDN, Kit script, icon font hoặc API key. Registry hiện có 20 definition, gồm `lock` (faLock), `unlock` (faLockOpen) cho quản lý trạng thái và `tags`/`users` cho menu quản trị bằng named import.
+Source: `FE/src/components/ui/icon.tsx`; registry tại `icon-definitions.ts`. FE dùng component React chính thức để render SVG inline, đóng gói cùng ứng dụng; không dùng CDN, Kit script, icon font hoặc API key. Registry hiện có 21 definition, thêm `archive` (faBoxArchive) cho lưu trữ phim; `replay` dùng khôi phục. Giữ named imports.
 
 ## Dependencies và CSS
 
@@ -53,7 +53,7 @@ import { Button } from '@/components/ui/button';
 />
 ```
 
-Callback/state thuộc feature; đường dẫn import theo vị trí file. Không dùng màu hoặc hình icon làm nguồn thông tin duy nhất: giữ chữ/nhãn và aria-pressed/disabled phù hợp. Link nội bộ vẫn dùng React Router dù có icon external-link làm dấu mũi tên; icon không quyết định hành vi navigation.
+Callback/state thuộc feature; đường dẫn import theo vị trí file. Không dùng màu hoặc hình icon làm nguồn thông tin duy nhất: giữ chữ/nhãn và aria-pressed/disabled phù hợp. Link nội bộ dùng React Router và arrow-right/chevron nếu cần dấu điều hướng. Chỉ dùng external-link khi liên kết ra ngoài; icon không tự thay đổi hành vi hoặc mở tab mới.
 
 ## Quy tắc generate và tích hợp
 

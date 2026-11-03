@@ -13,7 +13,7 @@ public sealed class AnimeConfiguration : IEntityTypeConfiguration<AnimeEntity>
         {
             table.HasCheckConstraint("CK_Anime_Status", "\"Status\" IN ('upcoming', 'airing', 'completed')");
             table.HasCheckConstraint("CK_Anime_Format", "\"Format\" IN ('tv', 'movie', 'ova', 'ona', 'special')");
-            table.HasCheckConstraint("CK_Anime_Publication", "\"PublicationStatus\" IN ('draft', 'published')");
+            table.HasCheckConstraint("CK_Anime_Publication", "\"PublicationStatus\" IN ('draft', 'published', 'archived')");
             table.HasCheckConstraint("CK_Anime_ReleaseYear", "\"ReleaseYear\" BETWEEN 1 AND 9999");
             table.HasCheckConstraint("CK_Anime_Slug", "\"Slug\" ~ '^[a-z0-9]+(-[a-z0-9]+)*$'");
             table.HasCheckConstraint("CK_Anime_Title", "length(btrim(\"Title\")) > 0");

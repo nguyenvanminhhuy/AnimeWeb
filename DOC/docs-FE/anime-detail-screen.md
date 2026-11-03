@@ -1,5 +1,7 @@
 # Chi tiết anime
 
+Bố cục hiện tại (2026-11-03): mobile poster/title/meta cùng hàng, CTA toàn chiều rộng; Mùa & tập trước Câu chuyện, metadata không còn đưa lên đầu; giữ Bình luận và toàn bộ hành vi. Xem [UI/UX polish](uiux-polish.md).
+
 Triển khai ngày 2026-10-29 theo screen-generation và rule route, tại `/anime/:slug`. Giữ catalog 24 anime, artwork cục bộ, React Router và phiên demo hiện có. Không có BE/player/nguồn phim thật.
 
 ## Chạy và mở

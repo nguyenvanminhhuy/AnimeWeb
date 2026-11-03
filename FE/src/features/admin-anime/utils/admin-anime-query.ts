@@ -7,6 +7,11 @@ export function parseAdminAnimeQuery(params: URLSearchParams): AdminAnimeQuery {
   const page = Number(params.get('page') ?? '1');
   return {
     q: (params.get('q') ?? '').trim().slice(0, 100),
+    publicationStatus: ['draft', 'published', 'archived'].includes(
+      params.get('publicationStatus') ?? '',
+    )
+      ? (params.get('publicationStatus') as AdminAnimeQuery['publicationStatus'])
+      : '',
     genre:
       /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(params.get('genre') ?? '') &&
       (params.get('genre')?.length ?? 0) <= 100
@@ -27,7 +32,7 @@ export function parseAdminAnimeQuery(params: URLSearchParams): AdminAnimeQuery {
 
 export function adminAnimeParams(query: AdminAnimeQuery): URLSearchParams {
   const params = new URLSearchParams();
-  for (const key of ['q', 'genre', 'year', 'status', 'format'] as const) {
+  for (const key of ['q', 'genre', 'year', 'status', 'format', 'publicationStatus'] as const) {
     if (query[key]) params.set(key, query[key]);
   }
   params.set('sort', query.sort);
