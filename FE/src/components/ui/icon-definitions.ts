@@ -5,6 +5,8 @@ import {
   faArrowUpRightFromSquare,
   faCheck,
   faEye,
+  faLock,
+  faLockOpen,
   faClock,
   faHeart,
   faMagnifyingGlass,
@@ -38,6 +40,8 @@ export const iconDefinitions = {
   eye: faEye,
   edit: faPenToSquare,
   trash: faTrashCan,
+  lock: faLock,
+  unlock: faLockOpen,
 } as const;
 
 export type IconName = keyof typeof iconDefinitions;

@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <Using Include="Xunit" />
+    <EmbeddedResource Include="Fixtures/avatar-canvas.base64" />
   </ItemGroup>
 
   <ItemGroup>

@@ -23,7 +23,8 @@ public sealed class PasswordInput
     [Required, StringLength(128, MinimumLength = 8)] public string CurrentPassword { get; set; } = "";
     [Required, StringLength(128, MinimumLength = 8)] public string NewPassword { get; set; } = "";
 }
-public sealed record ProfileDto(string Id, string DisplayName, string Email, string[] Roles, string[] Permissions);
+public sealed record ProfileDto(string Id, string DisplayName, string Email, string[] Roles, string[] Permissions,
+    string? AvatarUrl = null, long Version = 1);
 public sealed record LoginDto(string AccessToken, string TokenType, DateTimeOffset ExpiresAt, ProfileDto Profile);
 
 public sealed class AccountService(AnimeWebDbContext db, IPasswordHasher<Account> hasher, TimeProvider time)
@@ -90,7 +91,7 @@ public sealed class AccountService(AnimeWebDbContext db, IPasswordHasher<Account
                                  join permission in db.RolePermissions on role.RoleCode equals permission.RoleCode
                                  where role.UserId == userId
                                  select permission.PermissionCode).Distinct().OrderBy(x => x).ToArrayAsync(ct);
-        return new(user.Id, user.DisplayName, user.Email, roles, permissions);
+        return new(user.Id, user.DisplayName, user.Email, roles, permissions, AvatarService.Url(user.Id, user.AvatarKey), user.Version);
     }
 
     public Task LogoutAsync(string tokenHash, CancellationToken ct) => db.LoginSessions

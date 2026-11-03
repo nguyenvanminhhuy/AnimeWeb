@@ -27,7 +27,7 @@ public sealed record CommentSummary(int Total, int Visible, int Hidden, int Dele
 public sealed class CommentService(AnimeWebDbContext db, TimeProvider time)
 {
     private static readonly Expression<Func<Comment, CommentDto>> Projection = x => new(x.Id, x.AnimeId,
-        new(x.UserId, x.User.DisplayName, null), x.Status == "deleted" ? null : x.Body, x.Status, x.CreatedAt, x.UpdatedAt, x.Version);
+        new(x.UserId, x.User.DisplayName, x.User.AvatarKey == null ? null : "/api/v1/common/avatars/" + x.UserId + "/" + x.User.AvatarKey), x.Status == "deleted" ? null : x.Body, x.Status, x.CreatedAt, x.UpdatedAt, x.Version);
     public async Task<PagedResponse<CommentDto>> PublicAsync(string animeId, PageQuery query, CancellationToken ct)
     {
         await RequirePublicAsync(animeId, ct);

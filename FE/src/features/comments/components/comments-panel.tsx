@@ -1,6 +1,7 @@
 import { isMockApi } from '@/config/api';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
+import { Avatar } from '@/components/ui/avatar';
 import { useRef, useState } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { useComments } from '@/features/comments/hooks/use-comments';
@@ -134,12 +135,7 @@ export function CommentsPanel({ animeId }: { animeId: string }) {
                   key={comment.id}
                   data-comment-id={comment.id}
                 >
-                  <div
-                    className="aw-comment-avatar tw:w-8.75 tw:h-8.75 tw:rounded-[50%] tw:grid tw:place-items-center tw:text-body tw:shrink-0"
-                    aria-hidden="true"
-                  >
-                    {comment.authorName.slice(0, 1).toUpperCase()}
-                  </div>
+                  <Avatar name={comment.authorName} src={comment.authorAvatarUrl} />
                   <div className="aw-comment-content tw:min-w-0 tw:flex-1">
                     <header>
                       <h3>

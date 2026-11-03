@@ -1,6 +1,8 @@
 # Sinh màn hình quản trị
 
-Áp dụng khi người dùng gọi Dashboard hoặc trang quản lý. [Dashboard](../admin-dashboard-screen.md), [CRUD anime](../admin-anime-screen.md), [CRUD thể loại](../admin-genres-screen.md), [Mùa/phần và tập](../admin-episodes-screen.md), [Nguồn và phụ đề](../admin-playback-screen.md), [Kiểm duyệt bình luận](../admin-comments-screen.md) và [Người dùng chỉ đọc](../admin-users-screen.md) đã có FE mock; API và quyền quản trị thật chưa triển khai. API/role quản trị vẫn cần chốt theo [quyền BE](../../docs-BE/auth-permissions.md) và [API chung](../../api-contract.md).
+Quy tắc lỗi/xác nhận mới: áp dụng [lỗi quản trị và xoá anime](../../docs-BE/admin-mutation-errors.md). Dùng adminApiErrorMessage cho API errors, giữ field validation. Không hiển thị nội dung “phiên mẫu/reset khi reload” ở flow backend. Không diễn giải mọi 409 là stale; không tự retry hoặc xoá dây chuyền để vượt constraint. Với delete anime stale/404, yêu cầu tải lại danh sách và xác nhận snapshot mới; giữ query/returnTo.
+
+Áp dụng khi người dùng gọi Dashboard hoặc trang quản lý. [Dashboard](../admin-dashboard-screen.md), [CRUD anime](../admin-anime-screen.md), [CRUD thể loại](../admin-genres-screen.md), [Mùa/phần và tập](../admin-episodes-screen.md), [Nguồn và phụ đề](../admin-playback-screen.md), [Kiểm duyệt bình luận](../admin-comments-screen.md) và [Người dùng](../admin-users-screen.md) đã kết nối API BE. Người dùng hỗ trợ đọc và admin khoá/mở khoá; áp dụng [quyền BE](../../docs-BE/auth-permissions.md) và [API chung](../../api-contract.md).
 
 Đọc cùng [screen-generation.md](../prompts/screen-generation.md), [cấu trúc FE](fe-structure.md), [routes](routes.md), [style](styling.md), [quyền](roles-permissions.md) và [common](common/readme.md). Chỉ triển khai màn hình được gọi tên và nền cần thiết; không sinh toàn bộ hệ thống quản trị hoặc BE.
 
@@ -20,7 +22,7 @@ Các route bên dưới là quy ước khi generate; hiện Dashboard, Anime, Th
 | Sửa tập phim | `/admin/episodes/:episodeId/edit` | Tải tập theo ID, chỉnh metadata và lưu/hủy |
 | Thể loại / Quản lý thể loại / Genres / Genre management | `/admin/genres` | CRUD form inline đã có, tìm/lọc/sort/phân trang, kiểm tra trùng và chặn xoá đang dùng |
 | Comment / Comments / Bình luận / Quản lý bình luận / Kiểm duyệt bình luận | `/admin/comments` | Tìm/lọc/sort/phân trang, panel nội dung và ẩn/hiện lại có lý do theo quyền; deleted không được khôi phục |
-| User / Users / Người dùng / Quản lý người dùng | `/admin/users` | Danh sách/tìm/lọc/sort/phân trang và hồ sơ query userId chỉ đọc đã có; không tự cấp role hoặc đổi trạng thái |
+| User / Users / Người dùng / Quản lý người dùng | `/admin/users` | Danh sách/tìm/lọc/sort/phân trang và hồ sơ query userId; admin khoá/mở khoá qua dialog xác nhận, manage chỉ đọc; admin đổi role theo admin:user:role:write |
 
 Theo yêu cầu cập nhật CRUD ngày 2026-10-30, khi generate/cập nhật màn quản lý tài nguyên có nghiệp vụ CRUD (phim/tập/thể loại/nguồn/phụ đề), mặc định hoàn thiện danh sách cùng thêm/sửa/xoá của chính module đó, form, validation, xác nhận xoá và guard đọc/ghi. Nếu người dùng chỉ yêu cầu danh sách hoặc một form cụ thể thì giữ phạm vi đó. Với thể loại và cấu hình nguồn/phụ đề, form ngắn có thể nằm cùng màn hình. Không tạo module quản lý khác khi chưa được gọi; CTA chỉ hiện khi có route và hành vi hoạt động.
 
@@ -43,13 +45,13 @@ Theo yêu cầu Top phim ngày 2026-10-31, Dashboard và Trang chủ dùng [TopV
 
 ## Phiên và phân quyền
 
-Áp dụng [ba role user/manage/admin](roles-permissions.md#ba-role-chuẩn): user không vào quản trị, manage chỉ đọc, admin đọc/ghi nội dung và kiểm duyệt trong phạm vi permission đã liệt kê. Quản lý người dùng vẫn chỉ đọc; tên admin không bỏ qua ownership, trạng thái hoặc ràng buộc xoá. Khi generate lấy ma trận role tại roles-permissions.md làm nguồn chung; không tự thêm quyền ngoài phạm vi.
+Áp dụng [ba role user/manage/admin](roles-permissions.md#ba-role-chuẩn): user không vào quản trị, manage chỉ đọc, admin đọc/ghi nội dung và kiểm duyệt trong phạm vi permission đã liệt kê. Quản lý người dùng: manage chỉ đọc, admin có khoá/mở khoá với admin:user:status:write và đổi role với admin:user:role:write; tên admin không bỏ qua ownership, trạng thái hoặc ràng buộc xoá. Khi generate lấy ma trận role tại roles-permissions.md làm nguồn chung; không tự thêm quyền ngoài phạm vi.
 
-User trong SessionProvider vẫn là guest/member demo với permission cá nhân. Phiên adminPreview tách riêng user, chỉ bật chủ động trong dev: hai lựa chọn đọc Dashboard/Anime/Mùa và tập/Thể loại/Người dùng/Nguồn và phụ đề/Bình luận; lựa chọn chỉnh sửa thêm admin:anime:write, admin:episode:write, admin:genre:write, admin:playback:write và admin:comment:moderate. Mỗi activation có ID và workspace bộ nhớ mới; bình luận quản trị và Người dùng không lấy từ registry đăng nhập/bình luận cá nhân. Không tự nâng quyền member hoặc thêm quyền ghi User. Mã quyền đọc/ghi đầy đủ ở bảng dưới.
+User trong SessionProvider vẫn là guest/member demo với permission cá nhân. Phiên adminPreview tách riêng user, chỉ bật chủ động trong dev: hai lựa chọn đọc Dashboard/Anime/Mùa và tập/Thể loại/Người dùng/Nguồn và phụ đề/Bình luận; lựa chọn chỉnh sửa thêm admin:anime:write, admin:episode:write, admin:genre:write, admin:playback:write, admin:comment:moderate, admin:user:status:write và admin:user:role:write. Mỗi activation có ID và workspace bộ nhớ mới; bình luận quản trị và Người dùng không lấy từ registry đăng nhập/bình luận cá nhân. Không tự nâng quyền member; quyền ghi User chỉ giới hạn khoá/mở khoá và đổi vai trò đã chốt. Mã quyền đọc/ghi đầy đủ ở bảng dưới.
 
 Khi chưa có auth/API quản trị, dùng adapter/fixture phiên quản trị mẫu **riêng và chỉ bật chủ động ở dev/test** để kiểm chứng giao diện. Tái sử dụng provider chung, không tạo router hoặc phiên production song song. Ghi rõ cách mở phiên mẫu trong tài liệu/bàn giao; không tự đăng nhập, không thêm quyền admin vào danh sách quyền mặc định. Production mặc định từ chối nếu chưa có nguồn quyền đáng tin cậy. Hành vi này là mô phỏng FE, không phải cấp quyền server.
 
-Các mã sau là đề xuất cho fixture/guard FE, phải map lại theo hợp đồng BE được duyệt khi tích hợp:
+Các mã sau dùng cho guard FE và policy BE; trạng thái Users tuân theo [hợp đồng trạng thái tài khoản](../../docs-BE/account-status-management.md):
 
 | Nghiệp vụ | Đọc | Ghi |
 | --- | --- | --- |
@@ -59,11 +61,11 @@ Các mã sau là đề xuất cho fixture/guard FE, phải map lại theo hợp 
 | Nguồn phát và phụ đề | `admin:playback:read` | `admin:playback:write` |
 | Thể loại | `admin:genre:read` | `admin:genre:write` |
 | Bình luận | `admin:comment:read` | `admin:comment:moderate` |
-| Người dùng | `admin:user:read` | Chưa mặc định cấp quyền thay trạng thái/role |
+| Người dùng | `admin:user:read` | Admin thêm `admin:user:status:write` để khoá/mở khoá; thêm `admin:user:role:write` để đổi vai trò |
 
 - Guest vào admin: yêu cầu đăng nhập, giữ returnTo nội bộ bằng paths.loginTo/safeReturnTo. Sau đăng nhập phải kiểm tra lại permission; member thông thường vẫn nhận trang thiếu quyền.
 - Mỗi route kiểm tra quyền đọc; form/hành động kiểm tra quyền ghi riêng. Người có quyền đọc không tự được sửa/xóa. Khi đăng xuất hoặc đổi phiên, dừng request đang ghi và xóa cache/draft nhạy cảm của phiên cũ.
-- Không mặc định role admin có mọi permission, bỏ ownership hoặc được sửa bình luận bị xóa. Không thêm giao diện cấp role/permission, reset mật khẩu, xem thông tin bí mật hoặc thao tác hàng loạt ngoài yêu cầu.
+- Không mặc định role admin có mọi permission, bỏ ownership hoặc được sửa bình luận bị xóa. Đổi role chỉ tại Users theo contract; không thêm giao diện sửa permission, reset mật khẩu, xem thông tin bí mật hoặc thao tác hàng loạt ngoài yêu cầu.
 - Chức năng kiểm duyệt là quy trình riêng với quyền comment:update:own. Hiện lại bình luận chỉ áp dụng từ trạng thái hidden hợp lệ, không tự khôi phục deleted. Quyền thật và trạng thái tài nguyên vẫn phải được BE kiểm tra.
 - [Bình luận quản trị](../admin-comments-screen.md) đã có FE mock: read/moderate riêng, chỉ visible ↔ hidden, lý do 3–300 ký tự và xác nhận. Không tạo/sửa nội dung/xoá cứng hoặc khôi phục deleted; DTO lược bỏ body đã xoá. Chỉ lưu lần kiểm duyệt gần nhất trong phiên mẫu, không thay bình luận công khai/cá nhân; audit/contract BE vẫn cần chốt.
 - FE guard và dữ liệu localStorage chỉ phục vụ UI/mock; không phải bằng chứng xác thực hoặc phân quyền BE.

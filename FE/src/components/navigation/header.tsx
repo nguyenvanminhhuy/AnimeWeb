@@ -6,7 +6,7 @@ import { Form, Link, NavLink, useLocation, useMatch } from 'react-router-dom';
 import { paths, routePatterns, safeReturnTo } from '@/config/paths';
 import { AccountMenu } from '@/components/navigation/account-menu';
 export function Header() {
-  const { user, displayName, adminPreview, permissions, logout } = useSession();
+  const { user, displayName, avatarUrl, adminPreview, permissions, logout } = useSession();
   const canReadAdmin = adminPreview && permissions.includes('admin:dashboard:read');
   const { pathname, search } = useLocation();
   const loginMatch = useMatch(routePatterns.login);
@@ -63,6 +63,7 @@ export function Header() {
         {user || adminPreview ? (
           <div className="tw:max-desktop:ml-auto">
             <AccountMenu
+              avatarUrl={avatarUrl}
               identity={user ?? 'admin-preview'}
               displayName={displayName}
               onLogout={logout}

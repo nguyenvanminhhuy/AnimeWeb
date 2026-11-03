@@ -39,7 +39,7 @@ Không tạo BrowserRouter/RouterProvider mới trong page/feature/layout con. K
 | `/admin/genres` | AdminGenresPage, form inline và xác nhận xoá | admin:genre:read; ghi thêm admin:genre:write; chỉ dev |
 | `/admin/episodes` | AdminEpisodesPage, CRUD mùa inline và danh sách tập | admin:episode:read; ghi thêm admin:episode:write; chỉ dev |
 | `/admin/episodes/new`, `/admin/episodes/:episodeId/edit` | AdminEpisodeFormPage, metadata tập | admin:episode:read và admin:episode:write; chỉ dev |
-| `/admin/users` | AdminUsersPage, danh sách và panel hồ sơ query userId | admin:user:read; chỉ đọc trong dev |
+| `/admin/users` | AdminUsersPage, danh sách và panel hồ sơ query userId | admin:user:read; khoá/mở khoá cần admin:user:status:write, đổi role cần admin:user:role:write (admin), dùng API thật |
 | `/admin/playback` | AdminPlaybackPage, CRUD inline nguồn phát và phụ đề | admin:playback:read; ghi thêm admin:playback:write; chỉ dev |
 | `/admin/comments` | AdminCommentsPage, filter/page và panel commentId, kiểm duyệt | admin:comment:read; ẩn/hiện lại thêm admin:comment:moderate; chỉ dev |
 | `/admin/*` chưa triển khai | AdminNotFoundPage qua guard | Trang không tìm thấy có đường về Dashboard |

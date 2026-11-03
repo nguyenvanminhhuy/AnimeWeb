@@ -7,6 +7,7 @@ import {
   userStatusLabels,
   userStatusStyles,
   userCreatedDate,
+  userRoleLabels,
 } from '@/features/admin-users/utils/user-labels';
 import type { AdminPreviewSession } from '@/types/admin';
 
@@ -15,13 +16,15 @@ export function UserProfile({
   session,
   closeTo,
   onClose,
+  revision = 0,
 }: {
   id: string;
   session: AdminPreviewSession;
   closeTo: string;
   onClose: () => void;
+  revision?: number;
 }) {
-  const { user, loading, error, retry } = useAdminUser(id, session);
+  const { user, loading, error, retry } = useAdminUser(id, session, revision);
   const heading = useRef<HTMLHeadingElement>(null);
   useLayoutEffect(() => {
     heading.current?.focus();
@@ -61,14 +64,12 @@ export function UserProfile({
       ) : !user ? (
         <div role="status">
           <h3 className="tw:text-lg">Không tìm thấy người dùng</h3>
-          <p className="tw:text-[var(--aw-muted)] tw:mb-0">
-            Mã người dùng không tồn tại trong dữ liệu mẫu.
-          </p>
+          <p className="tw:text-[var(--aw-muted)] tw:mb-0">Không tìm thấy tài khoản này.</p>
         </div>
       ) : (
         <>
           <div className="tw:flex tw:flex-col tw:items-center tw:text-center tw:gap-3 tw:mb-6">
-            <Avatar name={user.displayName} size="lg" />
+            <Avatar name={user.displayName} src={user.avatarUrl} size="lg" />
             <h3 className="tw:text-xl tw:mb-0 tw:break-words">{user.displayName}</h3>
             <p className="tw:mb-0 tw:text-[var(--aw-muted)] tw:break-all">{user.email}</p>
             <span className={`tw:rounded-full tw:px-3 tw:py-1 ${userStatusStyles[user.status]}`}>
@@ -78,7 +79,10 @@ export function UserProfile({
           <dl className="tw:grid tw:gap-4 tw:mb-0">
             {[
               { label: 'Mã người dùng', value: user.id },
-              { label: 'Vai trò', value: 'Thành viên' },
+              {
+                label: 'Vai trò',
+                value: user.roles.map((role) => userRoleLabels[role]).join(', '),
+              },
               { label: 'Ngày tạo', value: userCreatedDate(user.createdAt) },
             ].map((field) => (
               <div key={field.label} className="tw:border-t tw:border-[var(--aw-border)] tw:pt-4">
@@ -88,8 +92,8 @@ export function UserProfile({
             ))}
           </dl>
           <p className="tw:mt-6 tw:mb-0 tw:text-[var(--aw-muted)]">
-            Hồ sơ mẫu chỉ đọc. Trạng thái hiển thị không thay đổi tài khoản đăng nhập hoặc quyền
-            thực tế.
+            Khi tài khoản bị khoá, các phiên đăng nhập hiện tại bị thu hồi. Mở khoá yêu cầu đăng
+            nhập lại.
           </p>
         </>
       )}

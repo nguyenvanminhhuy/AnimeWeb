@@ -114,9 +114,8 @@ export function EpisodesScreen() {
         <Button label="Làm mới" variant="quiet" loading={loading} onClick={refresh} />
       </header>
       <p className="tw:p-4 tw:rounded-xl tw:bg-[#a697ff0d] tw:border tw:border-[var(--aw-border)] tw:text-[var(--aw-muted)]">
-        Dữ liệu mẫu ·{' '}
         {canWrite
-          ? 'Thay đổi chỉ lưu trong phiên này; tải lại hoặc đổi phiên sẽ đặt lại. Không thay đổi trang xem phim công khai.'
+          ? 'Bạn được quản lý mùa và tập phim. Nội dung chỉ hiển thị công khai khi đáp ứng điều kiện công bố.'
           : 'Phiên chỉ đọc. Dùng phiên có quyền chỉnh sửa để thêm, sửa hoặc xoá.'}
       </p>
       {notice && (
@@ -299,7 +298,7 @@ export function EpisodesScreen() {
               onCancel={() => setEditor(null)}
               onSaved={() => {
                 setEditor(null);
-                setNotice('Đã lưu mùa/phần trong phiên mẫu.');
+                setNotice('Đã lưu mùa/phần.');
                 refresh();
               }}
             />
@@ -350,7 +349,7 @@ export function EpisodesScreen() {
                 >
                   <table className="tw:w-full tw:min-w-180 tw:text-left tw:mb-0">
                     <caption className="visually-hidden">
-                      Tập phim trong phiên quản trị mẫu, chưa có nguồn phát
+                      Danh sách tập phim và trạng thái công bố
                     </caption>
                     <thead>
                       <tr>
@@ -476,7 +475,7 @@ export function EpisodesScreen() {
           onDeleted={() => {
             setTarget(null);
             setEditor(null);
-            setNotice('Đã xoá khỏi phiên mẫu.');
+            setNotice('Đã xoá.');
             focusResults.current = true;
             if (target.kind === 'season' && target.id === seasonId) {
               const next = new URLSearchParams(params);

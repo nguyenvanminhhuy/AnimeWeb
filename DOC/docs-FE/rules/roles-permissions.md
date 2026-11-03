@@ -1,8 +1,10 @@
 # Role và permission
 
+Cập nhật 2026-11-02: [Đổi vai trò tài khoản](../../docs-BE/account-role-management.md) đã có BE/FE. PATCH `/api/v1/admin/users/{id}/role`, body `{role, version}`; admin cần `admin:user:read` và `admin:user:role:write`. Chọn đúng một role user/manage/admin, chặn tự hạ quyền/admin active cuối, thu hồi phiên khi đổi. Manage chỉ đọc.
+
 Áp dụng cho mọi màn hình công khai, cá nhân và quản trị; là nguồn quy định role/permission khi generate FE.
 
-Cập nhật 2026-10-31 theo yêu cầu bổ sung ba role `user / manage / admin`. Đây là quy định cho thiết kế/generate; source hiện vẫn dùng member demo và hai phiên adminPreview theo permission, chưa gán ba role thật hoặc có middleware/cơ sở dữ liệu phân quyền BE.
+Cập nhật 2026-10-31 theo yêu cầu bổ sung ba role `user / manage / admin`. Đây là quy định cho thiết kế/generate; source hiện đã tích hợp auth/RBAC thật; member/adminPreview chỉ còn dành cho mock DEV.
 
 ## Yêu cầu đã xác nhận
 
@@ -52,12 +54,15 @@ Việc kế thừa ở trên mô tả tập quyền cần map trong RolePermissi
 | `admin:comment:read` | Không | Có | Có | Xem bình luận quản trị, gồm hidden; body deleted bị lược bỏ |
 | `admin:comment:moderate` | Không | Không | Có | Chỉ visible ↔ hidden, có lý do và xác nhận |
 | `admin:user:read` | Không | Có | Có | Danh sách/hồ sơ người dùng theo DTO tối thiểu |
+| `admin:user:status:write` | Không | Không | Có | Khoá/mở khoá theo version; không tự khoá hoặc khoá admin active cuối cùng; thu hồi phiên khi khoá |
+| `admin:user:role:write` | Không | Không | Có |
+| `profile:avatar:write:own` | Có, ảnh của mình | Có, ảnh của mình | Có, ảnh của mình |
 
 Các mã là hợp đồng quyền của FE/mock hiện có và quy ước map role khi generate. Khi nối BE, map theo contract/policy được duyệt; không suy ra các API hoặc permission quản trị đã triển khai trên server.
 
 ### Giới hạn của admin
 
-- Quản lý người dùng hiện chỉ đọc cho cả manage/admin. Chưa cấp quyền tạo/xoá tài khoản, khoá/mở khoá, đổi role/permission hoặc reset mật khẩu người khác.
+- Quản lý người dùng: manage chỉ đọc; admin có `admin:user:status:write` để khoá/mở khoá. Không được tự khoá hoặc khoá admin active cuối cùng; khoá thu hồi phiên, mở khoá cần đăng nhập lại. Admin đổi role với admin:user:role:write, chặn tự hạ quyền/admin active cuối, thu hồi phiên khi đổi; không tạo/xoá tài khoản, sửa permission hoặc reset mật khẩu người khác. Xem [contract](../../docs-BE/account-status-management.md).
 - Kiểm duyệt không cho sửa nội dung/tác giả bình luận người khác, xoá cứng hoặc khôi phục deleted. Quyền sửa bình luận own không thay cho quyền kiểm duyệt và ngược lại.
 - Không tự xoá dây chuyền tài nguyên còn được tham chiếu. Ví dụ: mùa còn tập, tập còn nguồn, nguồn còn phụ đề, thể loại còn phim hoặc tập đã công bố có thể bị chặn xoá theo repository/contract.
 - Không truy cập password/hash/token hoặc dữ liệu cá nhân ngoài phạm vi được cấp. [Đổi mật khẩu](../change-password-screen.md) chỉ dành cho chính tài khoản đang đăng nhập; FE hiện chỉ kiểm tra biểu mẫu, chưa xác minh/thay mật khẩu thật.

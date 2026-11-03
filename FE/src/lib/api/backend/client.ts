@@ -1,4 +1,4 @@
-import { parseApiError } from './error';
+import { ApiError, parseApiError } from './error';
 import type * as D from './types';
 
 /** Inject a transport later. This module deliberately has no fetch, base URL or live connection. */
@@ -70,7 +70,9 @@ export function createBackendClient(
       signal,
       headers: {
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
+        ...(body === undefined
+          ? {}
+          : { 'Content-Type': body instanceof Blob ? body.type : 'application/json' }),
       },
       ...(viewer ? { credentials: 'include' as const } : {}),
     });
@@ -104,6 +106,21 @@ export function createBackendClient(
           signal,
         ),
       me: (signal?: AbortSignal) => get<D.ApiObject<D.ProfileDto>>('/me', undefined, signal),
+      saveAvatar: (image: Blob | null, version: number, signal?: AbortSignal) => {
+        if (!Number.isSafeInteger(version) || version < 1)
+          throw new ApiError(
+            400,
+            'INVALID_VERSION',
+            'Hồ sơ chưa có phiên bản hợp lệ. Hãy tải lại hồ sơ.',
+          );
+        return request<D.ApiObject<D.ProfileDto>>(
+          image ? 'PUT' : 'DELETE',
+          '/me/avatar',
+          { version },
+          image ?? undefined,
+          signal,
+        );
+      },
       logout: (signal?: AbortSignal) => post<void>('/auth/logout', undefined, signal),
       changePassword: (input: D.PasswordInput, signal?: AbortSignal) =>
         post<void>(
@@ -344,6 +361,32 @@ export function createBackendClient(
         ),
       user: (userId: string, signal?: AbortSignal) =>
         get<D.ApiObject<D.AdminUserDto>>(`/admin/users/${id(userId)}`, undefined, signal),
+      setUserRole: (
+        userId: string,
+        role: D.AdminUserDto['roles'][number],
+        version: number,
+        signal?: AbortSignal,
+      ) =>
+        request<D.ApiObject<D.AdminUserDto>>(
+          'PATCH',
+          `/admin/users/${id(userId)}/role`,
+          undefined,
+          { role, version },
+          signal,
+        ),
+      setUserStatus: (
+        userId: string,
+        status: D.AdminUserDto['status'],
+        version: number,
+        signal?: AbortSignal,
+      ) =>
+        request<D.ApiObject<D.AdminUserDto>>(
+          'PATCH',
+          `/admin/users/${id(userId)}/status`,
+          undefined,
+          { status, version },
+          signal,
+        ),
     },
   };
 }

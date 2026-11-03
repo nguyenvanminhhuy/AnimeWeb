@@ -119,11 +119,10 @@ export function CommentsScreen() {
         <Button label="Làm mới" variant="quiet" loading={loading} onClick={refresh} />
       </header>
       <p className="tw:p-4 tw:rounded-xl tw:bg-[#a697ff0d] tw:border tw:border-[var(--aw-border)] tw:text-[var(--aw-muted)]">
-        Dữ liệu mẫu ·{' '}
         {canModerate
-          ? 'Thay đổi kiểm duyệt chỉ lưu trong phiên này, tải lại hoặc đổi phiên sẽ đặt lại.'
+          ? 'Bạn có quyền ẩn hoặc hiện lại bình luận; không sửa nội dung tác giả.'
           : 'Phiên chỉ đọc. Dùng phiên có quyền chỉnh sửa để kiểm duyệt.'}{' '}
-        Không thay đổi bình luận trên trang phim công khai hoặc dữ liệu tài khoản cục bộ.
+        Trạng thái kiểm duyệt quyết định bình luận có hiển thị công khai hay không.
       </p>
       {notice && (
         <p role="status" className="tw:text-[#9fe3c2]">
@@ -368,7 +367,7 @@ export function CommentsScreen() {
                 {!selected ? (
                   <ContentState
                     title="Không tìm thấy bình luận"
-                    description="ID không tồn tại trong phiên mẫu. Đóng chi tiết và chọn bình luận khác."
+                    description="Bình luận không còn tồn tại. Đóng chi tiết và chọn bình luận khác."
                   />
                 ) : (
                   <div data-comment-detail={selected.id} className="tw:grid tw:gap-4">
@@ -461,11 +460,7 @@ export function CommentsScreen() {
           onClose={() => setTarget(null)}
           onSaved={() => {
             setTarget(null);
-            setNotice(
-              target.action === 'hide'
-                ? 'Đã ẩn bình luận trong phiên mẫu.'
-                : 'Đã hiện lại bình luận trong phiên mẫu.',
-            );
+            setNotice(target.action === 'hide' ? 'Đã ẩn bình luận.' : 'Đã hiện lại bình luận.');
             refresh();
           }}
         />

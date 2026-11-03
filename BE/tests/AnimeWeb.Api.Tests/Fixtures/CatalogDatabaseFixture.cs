@@ -53,7 +53,7 @@ public sealed class CatalogDatabaseFixture : IAsyncLifetime
             VALUES ('upgrade_fixture','upgrade-fixture','Existing catalog',ARRAY[]::text[],'Preserved synopsis','/fixture.webp','upcoming','tv',2026,'published')
             """);
         await database.Database.MigrateAsync();
-        Assert.Equal(4, (await database.Database.GetAppliedMigrationsAsync()).Count());
+        Assert.Equal(7, (await database.Database.GetAppliedMigrationsAsync()).Count());
         var upgraded = await database.Anime.SingleAsync(x => x.Id == "upgrade_fixture");
         Assert.Equal("Preserved synopsis", upgraded.Synopsis);
         Assert.Equal(1, upgraded.Version);

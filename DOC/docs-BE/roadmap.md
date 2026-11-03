@@ -4,7 +4,7 @@
 
 Các bước BE trong bảng bên dưới đã được triển khai theo bộ mặc định người dùng xác nhận và contract v0.3: Auth/quyền, cá nhân, Playback metadata, admin, Home/related/ranking. Bảng giữ thứ tự phụ thuộc để tham chiếu; các mục “cần quyết định” trong kế hoạch cũ đã được thay bằng quyết định đầu API contract khi có lựa chọn tương ứng. Xem [hiện trạng](current-status.md) và verification.
 
-Phần tiếp theo chưa làm: nối HTTP adapter/session/form/version vào FE; hỗ trợ player HLS/SRT; kiểm tra media thật/MIME/range/CORS; vận hành HTTPS, limiter nhiều instance, vòng đời/dọn session và deploy khi được yêu cầu. Đây không phải module BE chưa có. Không tự thêm CRUD user, gán role, upload, avatar hoặc quên mật khẩu.
+Phần tiếp theo chưa làm: nối HTTP adapter/session/form/version vào FE; hỗ trợ player HLS/SRT; kiểm tra media thật/MIME/range/CORS; vận hành HTTPS, limiter nhiều instance, vòng đời/dọn session và deploy khi được yêu cầu. Đây không phải module BE chưa có. Không tự thêm CRUD user, sửa permission, upload, avatar hoặc quên mật khẩu.
 
 Đây là thứ tự đề xuất, chưa cam kết thời hạn. Đối chiếu [roadmap chung](../roadmap.md); ghi lựa chọn được xác nhận tại [decisions.md](../decisions.md).
 
@@ -16,7 +16,7 @@ Phần tiếp theo chưa làm: nối HTTP adapter/session/form/version vào FE; 
 | 4. Auth/quyền | Register/login/logout/me/change-password, phiên và quyền user/manage/admin | Thu hồi/hết phiên/blocked, permission và hai user cách ly; không tin demo |
 | 5. Cá nhân | Library/progress/comments, summary và đồng bộ FE | Counts đúng tập/phim, bỏ favorite giữ history, own và concurrency đã chốt |
 | 6. Admin nội dung | Anime/genres → mùa/tập → nguồn/phụ đề, list/detail/options và ghi theo quyền | DB bền vững, publication/public đồng bộ, constraint/delete/concurrency đúng |
-| 7. Admin bổ sung | Comments moderation, users chỉ đọc, Dashboard aggregate | manage chỉ đọc; admin kiểm duyệt theo quyền; summary/audit đúng, không CRUD user |
+| 7. Admin bổ sung | Comments moderation, users có đọc và admin khoá/mở khoá, Dashboard aggregate | manage chỉ đọc; admin kiểm duyệt theo quyền; summary/audit đúng, không CRUD user |
 | 8. Home/related/ranking | Tiêu chí biên tập và định nghĩa view/thống kê, cùng ranking Home/Dashboard | Dữ liệu thật đúng nghĩa nhóm, không fixture giả analytics |
 | 9. Nghiệm thu từng luồng | Adapter/cache/refetch theo phiên, URL/direct link và lỗi | Có bằng chứng theo testing.md sau mỗi module, ghi rõ giới hạn media |
 

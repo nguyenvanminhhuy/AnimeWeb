@@ -80,6 +80,7 @@ export function mapComment(dto: D.CommentDto): Comment {
     animeId: dto.animeId,
     userId: dto.author.id,
     authorName: dto.author.displayName,
+    authorAvatarUrl: dto.author.avatarUrl,
     body: dto.body ?? '',
     status: dto.status,
     createdAt: dto.createdAt,

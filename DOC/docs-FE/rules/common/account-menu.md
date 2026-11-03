@@ -1,10 +1,11 @@
 # Avatar và menu tài khoản
 
-Source: `FE/src/components/navigation/account-menu.tsx`, dùng trong Header công khai và AdminLayout. Dùng [Avatar](avatar.md) size md để hiển thị chữ viết tắt (NFC/vi-VN), thống nhất với trang Profile và không tải ảnh ngoài. Chưa có chức năng upload/đổi avatar.
+Source: `FE/src/components/navigation/account-menu.tsx`, dùng trong Header công khai và AdminLayout. Dùng [Avatar](avatar.md) size md; nhận avatarUrl từ profile server, fallback chữ viết tắt khi không có ảnh/tải lỗi. Đồng bộ với Profile sau đổi/xoá ảnh, không có logic upload hoặc đọc store trong AccountMenu.
 
 | Prop | Ý nghĩa |
 | --- | --- |
 | `displayName` | Tên hiển thị và nhãn truy cập của nút avatar |
+| `avatarUrl` | string hoặc null, URL ảnh do BE trả, chuyển vào Avatar.src |
 | `identity` | Khóa phiên/tài khoản; thay đổi khóa đóng menu |
 | `links` | Danh sách `{label, to}` đã được nơi gọi lọc theo quyền và route có sẵn |
 | `onLogout` | Callback đăng xuất do nơi gọi cung cấp |

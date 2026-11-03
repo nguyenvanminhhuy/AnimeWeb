@@ -24,6 +24,8 @@ internal static class FeatureModel
         sessions.Property(x => x.TokenHash).HasMaxLength(64);
         sessions.HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
         sessions.HasIndex(x => new { x.UserId, x.ExpiresAt });
+        model.Entity<AccountAvatar>().HasKey(x => x.UserId);
+        model.Entity<AccountAvatar>().HasOne<Account>().WithOne().HasForeignKey<AccountAvatar>(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
         model.Entity<AccessRole>().HasKey(x => x.Code);
         model.Entity<AccessPermission>().HasKey(x => x.Code);
         model.Entity<UserRole>().HasKey(x => new { x.UserId, x.RoleCode });

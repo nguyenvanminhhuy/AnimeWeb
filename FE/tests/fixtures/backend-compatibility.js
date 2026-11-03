@@ -29,6 +29,17 @@ window.verifyBackendCompatibility = async () => {
       unauthorizedCount++;
     },
   );
+  const beforeInvalidAvatar = requests.length;
+  for (const invalid of [undefined, 0, NaN]) {
+    let rejected = false;
+    try {
+      await client.auth.saveAvatar(new Blob(['fixture'], { type: 'image/png' }), invalid);
+    } catch (error) {
+      rejected = error instanceof ApiError && error.code === 'INVALID_VERSION';
+    }
+    check(rejected, 'Avatar accepted a missing/invalid version');
+  }
+  check(requests.length === beforeInvalidAvatar, 'Invalid avatar version reached transport');
   await client.auth.login({
     email: 'fixture@example.test',
     password: 'fake-password',
@@ -37,6 +48,13 @@ window.verifyBackendCompatibility = async () => {
   check(
     Object.keys(requests.at(-1).body).sort().join(',') === 'email,password',
     'Auth leaked non-DTO fields',
+  );
+  await client.admin.setUserRole('user/with space', 'manage', 7);
+  check(
+    requests.at(-1).method === 'PATCH' &&
+      requests.at(-1).path === '/api/v1/admin/users/user%2Fwith%20space/role' &&
+      JSON.stringify(requests.at(-1).body) === '{"role":"manage","version":7}',
+    'Role PATCH path/payload/version mismatch',
   );
   response = { status: 204 };
   check(

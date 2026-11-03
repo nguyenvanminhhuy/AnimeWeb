@@ -1,4 +1,5 @@
 import { ApiError } from '@/lib/api/backend/error';
+import { adminApiErrorMessage } from '@/utils/admin-api-error';
 import { useEffect, useRef, useState } from 'react';
 import { AdminGenreError } from '@/utils/admin-genre-validation';
 
@@ -20,7 +21,7 @@ export function useGenreMutation() {
       if (!controller.signal.aborted)
         setError(
           cause instanceof ApiError
-            ? new AdminGenreError(cause.message, cause.fields)
+            ? new AdminGenreError(adminApiErrorMessage(cause), cause.fields)
             : cause instanceof AdminGenreError
               ? cause
               : new AdminGenreError(

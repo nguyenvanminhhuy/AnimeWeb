@@ -43,6 +43,16 @@ export function createBackendRepositories(api: BackendClient, credentials: Crede
   const entries = new Map<string, Map<string, D.LibraryDto>>();
   const authRepository: AuthRepository = {
     mode: 'backend',
+    async readProfile(signal) {
+      const { data } = await api.auth.me(signal);
+      profiles.set(data.id, data);
+      return data;
+    },
+    async saveAvatar(image, version, signal) {
+      const { data } = await api.auth.saveAvatar(image, version, signal);
+      profiles.set(data.id, data);
+      return data;
+    },
     getProfile: (id) => profiles.get(id) ?? null,
     async restore(signal) {
       const saved = credentials.read();
@@ -543,6 +553,12 @@ export function createBackendRepositories(api: BackendClient, credentials: Crede
     },
   };
   const adminUserRepository: AdminUserRepository = {
+    async setRole(id, role, version, signal) {
+      return (await api.admin.setUserRole(id, role, version, signal)).data;
+    },
+    async setStatus(id, status, version, signal) {
+      return (await api.admin.setUserStatus(id, status, version, signal)).data;
+    },
     async list(query, _state, signal) {
       return api.admin.users(query, signal);
     },

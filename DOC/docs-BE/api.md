@@ -23,7 +23,7 @@
 | Auth | Register/login/logout/me/change-password | Phiên thật, role mới user, quyền/blocked/thu hồi; cơ chế phiên còn mở |
 | Home/related/ranking | Tổng hợp nhóm nội dung, liên quan và Top 10 | Tiêu chí riêng, published, cùng nguồn view Home/Dashboard; không tự ghi view khi GET |
 | Admin nội dung | Anime/genres/mùa/tập/nguồn/phụ đề | Permission read/write cụ thể, publication, quan hệ, list/detail/options và concurrency |
-| Admin users/comments/dashboard | Users chỉ đọc, kiểm duyệt và aggregate | Permission read/moderate, audit server, summary đúng scope; không quản trị tài khoản ngoài phạm vi |
+| Admin users/comments/dashboard | Users đọc/khoá/mở khoá theo quyền; kiểm duyệt và aggregate | Permission read/moderate, audit server, summary đúng scope; không quản trị tài khoản ngoài phạm vi |
 
 Đường dẫn cụ thể giữ đúng contract. GET thư viện/tiến độ cần summary anime/tập để tránh FE gọi thêm từng item.
 

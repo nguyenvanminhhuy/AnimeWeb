@@ -1,6 +1,8 @@
 # Tham chiếu feature, dữ liệu và API BE
 
-Ngày đối chiếu source: **2026-11-01**. Repo: `New folder/AnimeWeb`. Phạm vi: **69 thao tác HTTP** hiện có, gồm health và OpenAPI; không bao gồm API chỉ được đề xuất. “Biến” trong tài liệu này là field dữ liệu, DTO, tham số và cấu hình của feature, không phải biến cục bộ trong từng hàm C#.
+Lỗi DELETE anime cập nhật 2026-11-03: [STALE_VERSION / ANIME_PUBLISHED / ANIME_IN_USE](admin-mutation-errors.md), thay cho CONFLICT chung ở thao tác này. Các constraint và quyền xoá giữ nguyên; không thêm cascade hoặc migration.
+
+Ngày đối chiếu source: **2026-11-02**. Repo: `Anime-Web`. Phạm vi: **74 thao tác HTTP** hiện có, gồm health và OpenAPI; không bao gồm API chỉ được đề xuất. “Biến” trong tài liệu này là field dữ liệu, DTO, tham số và cấu hình của feature, không phải biến cục bộ trong từng hàm C#.
 
 Tài liệu được dẫn xuất từ Controller/DTO/Service tại [Features](../../BE/src/AnimeWeb.Api/Features), [Shared](../../BE/src/AnimeWeb.Api/Shared) và [persistence](../../BE/src/AnimeWeb.Api/Infrastructure/Persistence). [API contract](../api-contract.md) giữ quyết định nghiệp vụ; tài liệu này giải thích chi tiết triển khai và không tạo một contract độc lập. Nếu code/contract đổi, cập nhật bảng tương ứng ở đây. JSON OpenAPI tại `/openapi/v1.json` chỉ bật trong Development.
 
@@ -86,6 +88,9 @@ Query rỗng nên omit. Không gửi `mock`, `state`, `fail`, `actor`, `userId` 
 | POST | `/api/v1/auth/logout` | Session | Không body/query | 204 |
 | GET | `/api/v1/me` | Session | Không query | 200 `Obj<ProfileDto>` |
 | POST | `/api/v1/me/change-password` | Session | `PasswordInput` | 204 |
+| PUT | `/api/v1/me/avatar` | `profile:avatar:write:own` | Query version >=1, body PNG <=2 MiB/512px | 200 `Obj<ProfileDto>`; [validation/ownership](account-avatar.md) |
+| DELETE | `/api/v1/me/avatar` | `profile:avatar:write:own` | Query version >=1 | 200 `Obj<ProfileDto>` |
+| GET | `/api/v1/common/avatars/{id}/{key}` | Public | URL do BE trả | PNG image/png, nosniff; 404 khi ảnh cũ/không tồn tại |
 
 ### Request fields
 
@@ -97,7 +102,7 @@ Query rỗng nên omit. Không gửi `mock`, `state`, `fail`, `actor`, `userId` 
 | PasswordInput | `currentPassword` | string | Có | 8–128; phải khớp password hiện tại, sai trả 400 field currentPassword |
 | PasswordInput | `newPassword` | string | Có | 8–128, không toàn whitespace, khác currentPassword |
 
-Không nhận confirmation/roles/permissions/userId. Confirmation chỉ kiểm tra ở FE. Đăng ký luôn role user. Không có endpoint refresh token, sửa profile/avatar hoặc quên mật khẩu.
+Không nhận confirmation/roles/permissions/userId trong đăng ký. Confirmation chỉ kiểm tra ở FE. Đăng ký luôn role user. Có đổi/xoá avatar own; chưa có refresh token, sửa tên/email hoặc quên mật khẩu.
 
 ### Response fields và vòng đời phiên
 
@@ -107,6 +112,7 @@ Không nhận confirmation/roles/permissions/userId. Confirmation chỉ kiểm t
 | ProfileDto | `displayName`, `email` | string | Dữ liệu riêng của tài khoản đang đăng nhập |
 | ProfileDto | `roles` | string[] | Role đang được gán, sắp code |
 | ProfileDto | `permissions` | string[] | Tập quyền distinct từ DB, sắp code |
+| ProfileDto | `avatarUrl`, `version` | string/null, int64 >=1 | URL ảnh công khai hiện tại, version chung account cho mutation avatar |
 | LoginDto | `accessToken` | string | Token opaque ngẫu nhiên, hiện 64 ký tự hex; chỉ trả khi register/login |
 | LoginDto | `tokenType` | string | `Bearer` |
 | LoginDto | `expiresAt` | time | Hết hạn tuyệt đối 7 ngày |
@@ -124,9 +130,9 @@ Header API riêng tư: `Authorization: Bearer <accessToken>`. DB chỉ lưu SHA-
 | `comment:create`, `comment:update:own`, `comment:delete:own` | Có | Có | Có |
 | `admin:dashboard:read`, `admin:user:read` | Không | Có | Có |
 | `admin:anime:read`, `admin:genre:read`, `admin:episode:read`, `admin:playback:read`, `admin:comment:read` | Không | Có | Có |
-| `admin:anime:write`, `admin:genre:write`, `admin:episode:write`, `admin:playback:write`, `admin:comment:moderate` | Không | Không | Có |
+| `admin:anime:write`, `admin:genre:write`, `admin:episode:write`, `admin:playback:write`, `admin:comment:moderate`, `admin:user:status:write`, `admin:user:role:write` | Không | Không | Có |
 
-Đây là mapping mặc định được seed; API kiểm tra permission thực tế. Admin không bypass ownership/constraint. Users chỉ đọc, không API gán role/khóa/xóa/reset password người khác. Admin đầu tiên tạo qua CLI explicit, xem [BE README](../../BE/README.md#admin-đầu-tiên-và-xác-thực).
+Đây là mapping mặc định được seed; API kiểm tra permission thực tế. Admin không bypass ownership/constraint. Users có đọc và admin khoá/mở khoá/đổi role; không xóa/reset password người khác. Admin đầu tiên tạo qua CLI explicit, xem [BE README](../../BE/README.md#admin-đầu-tiên-và-xác-thực).
 
 ## Health và OpenAPI
 
@@ -506,6 +512,8 @@ Nguồn mp4/hls và subtitle vtt/srt là metadata, không là bằng chứng pla
 | --- | --- | --- | --- | --- |
 | GET | `/api/v1/admin/users` | `admin:user:read` | q/status/sort/page/pageSize | 200 `SummaryPage<AdminUserDto,UserSummary>` |
 | GET | `/api/v1/admin/users/{id}` | `admin:user:read` | Path id | 200 `Obj<AdminUserDto>` |
+| PATCH | `/api/v1/admin/users/{id}/status` | `admin:user:read` + `admin:user:status:write` | Path id, body status + version >=1 | 200 `Obj<AdminUserDto>`; xem [guard/transaction/lỗi](account-status-management.md) |
+| PATCH | `/api/v1/admin/users/{id}/role` | `admin:user:read` + `admin:user:role:write` | Path id, body role (user/manage/admin) + version >=1 | 200 `Obj<AdminUserDto>`; [guard/phiên/concurrency](account-role-management.md) |
 | GET | `/api/v1/admin/dashboard` | `admin:dashboard:read` | Không query | 200 `Obj<DashboardDto>` |
 
 | API/DTO | Param/field | Kiểu | Mặc định/ý nghĩa |
@@ -516,6 +524,7 @@ Nguồn mp4/hls và subtitle vtt/srt là metadata, không là bằng chứng pla
 | Users query | `page`, `pageSize` | int | Pagination chung |
 | AdminUserDto | `id`, `displayName`, `email`, `status` | string | Thông tin tối thiểu được phép đọc |
 | AdminUserDto | `createdAt`, `roles` | time, string[] | Thời điểm tạo, role codes; không có passwordHash/token |
+| AdminUserDto | `version`, `avatarUrl` | int64 >=1, string/null | Version chung status/role/avatar/password; URL avatar hiện tại |
 | UserSummary | `total`, `active`, `blocked` | int | Toàn bộ user trước q/status/page |
 | DashboardDto | `totalAnime` | int | Tất cả anime, gồm draft |
 | DashboardDto | `publishedEpisodes` | int | Tập status published, kể cả anime cha draft trong scope admin |
@@ -528,7 +537,7 @@ Nguồn mp4/hls và subtitle vtt/srt là metadata, không là bằng chứng pla
 | RecentAnimeDto | `publicSlug`, `anime`, `episodeCount`, `lastPublishedAt` | string?, AnimeCardDto, int, time? | Count tập published; null slug nếu draft; null ngày khi chưa có tập published |
 | DashboardDto | `topViewed` | RankingDto[] | Top 10 public, cùng service với Home |
 
-Users không có POST/PATCH/DELETE/ban/assignRole/resetPassword. manage/admin đều chỉ đọc. Metadata/statistics không lấy từ một page hiện tại; public ranking không lộ draft dù Dashboard có số liệu nội dung draft.
+Users có GET list/detail và PATCH trạng thái; manage chỉ đọc, admin có khoá/mở khoá. Có PATCH role theo admin:user:role:write; không có endpoint admin tạo/xoá/reset password. Metadata/statistics không lấy từ một page hiện tại; public ranking không lộ draft dù Dashboard có số liệu nội dung draft.
 
 ## Entity lưu trữ và field nội bộ
 

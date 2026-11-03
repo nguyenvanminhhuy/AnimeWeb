@@ -81,7 +81,7 @@ export async function verifyAdminAnimeCrud(browser, baseURL) {
       form.requestSubmit();
     });
     await listReady();
-    await page.getByText('Đã thêm phim trong phiên mẫu.', { exact: true }).waitFor();
+    await page.getByText('Đã thêm phim.', { exact: true }).waitFor();
     const added = page.locator('tbody tr').filter({ hasText: 'Phim kiểm thử quản trị' });
     assert.equal(await added.count(), 1);
     assert.equal(await added.getByRole('link', { name: /^Xem chi tiết / }).count(), 0);
@@ -138,14 +138,13 @@ export async function verifyAdminAnimeCrud(browser, baseURL) {
     await dialog.waitFor({ state: 'hidden' });
     await listReady();
     assert.equal(await edited.count(), 0);
-    await page.getByText('Đã xoá phim khỏi phiên mẫu.', { exact: true }).waitFor();
+    await page.getByText('Đã xoá phim.', { exact: true }).waitFor();
     await page.locator('[data-anime-id="anime-01"]').getByRole('button', { name: /^Xoá / }).click();
-    await dialog.getByRole('button', { name: 'Xác nhận xoá', exact: true }).click();
-    await dialog.getByRole('alert').waitFor();
-    assert.match(
-      await dialog.getByRole('alert').innerText(),
-      /Chuyển phim về bản nháp trước khi xoá/,
+    assert.equal(
+      await dialog.getByRole('button', { name: 'Xác nhận xoá', exact: true }).isDisabled(),
+      true,
     );
+    assert.match(await dialog.innerText(), /Chuyển về bản nháp trước khi xoá/);
     await dialog.getByRole('button', { name: 'Huỷ', exact: true }).click();
     await page.locator('[data-anime-id="anime-01"]').getByRole('link', { name: /^Sửa / }).click();
     await title().waitFor();

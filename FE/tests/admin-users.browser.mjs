@@ -197,12 +197,8 @@ export async function verifyAdminUsers(browser, baseURL) {
     await ready();
     assert.equal(new URL(page.url()).searchParams.get('page'), '3');
     assert.equal(await page.getByLabel('Trạng thái', { exact: true }).inputValue(), '');
-    assert.equal(
-      await page
-        .getByRole('button', { name: /Thêm người dùng|Khoá tài khoản|Mở khoá|Xoá|Cấp quyền/ })
-        .count(),
-      0,
-    );
+    assert.ok((await page.getByRole('button', { name: /^Đổi vai trò / }).count()) > 0);
+    assert.ok((await page.getByRole('button', { name: /^(Khoá|Mở khoá) tài khoản / }).count()) > 0);
     await enter('/admin/users?userId=admin-user-001&mock=detail-error');
     await ready();
     await page.getByRole('button', { name: 'Thử lại hồ sơ', exact: true }).waitFor();
@@ -239,7 +235,7 @@ export async function verifyAdminUsers(browser, baseURL) {
     assert.deepEqual(external, []);
     assert.deepEqual(writes, []);
     console.log(
-      'PASS Admin Users: guest/member/read guard, readonly across preview modes, 24/18/6 fixtures, debounce/IME/Enter/status/sort/pageSize, pagination/SPA/history, profile URL/focus/close/reload, query clamp, detail error/retry/not found/loading/logout, list error/retry/empty/forbidden, 375/768/1440 and no personal storage/HTTP writes.',
+      'PASS Admin Users: guest/member/read guard, read/write controls per permission, 24/18/6 fixtures, debounce/IME/Enter/status/sort/pageSize, pagination/SPA/history, profile URL/focus/close/reload, query clamp, detail error/retry/not found/loading/logout, list error/retry/empty/forbidden, 375/768/1440 and no personal storage/HTTP writes.',
     );
   } finally {
     await context.close();

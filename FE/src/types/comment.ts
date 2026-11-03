@@ -5,6 +5,7 @@ export interface Comment {
   animeId: string;
   userId: string;
   authorName: string;
+  authorAvatarUrl?: string | null;
   body: string;
   status: 'visible' | 'hidden' | 'deleted';
   createdAt: string;

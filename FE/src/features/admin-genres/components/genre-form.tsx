@@ -68,9 +68,7 @@ export function GenreForm({
     >
       <h2 className="tw:text-xl tw:mb-2">{row ? 'Sửa thể loại' : 'Thêm thể loại'}</h2>
       <p className="tw:mb-5 tw:text-[var(--aw-muted)]">
-        {row
-          ? 'Đổi tên vẫn giữ nguyên liên kết với phim trong phiên mẫu.'
-          : 'Tạo thể loại để phân nhóm nội dung.'}
+        {row ? 'Đổi tên vẫn giữ nguyên liên kết với phim.' : 'Tạo thể loại để phân nhóm nội dung.'}
       </p>
       {error && (
         <p role="alert" tabIndex={-1} className="tw:text-[#edacbc]">

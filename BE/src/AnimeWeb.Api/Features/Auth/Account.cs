@@ -1,6 +1,6 @@
 namespace AnimeWeb.Api.Features.Auth;
 
-public sealed class Account
+public sealed class Account : global::AnimeWeb.Api.Shared.VersionedEntity
 {
     public string Id { get; set; } = Guid.NewGuid().ToString("N");
     public string DisplayName { get; set; } = "";
@@ -8,7 +8,14 @@ public sealed class Account
     public string NormalizedEmail { get; set; } = "";
     public string PasswordHash { get; set; } = "";
     public string Status { get; set; } = "active";
+    public string? AvatarKey { get; set; }
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+}
+
+public sealed class AccountAvatar
+{
+    public string UserId { get; set; } = "";
+    public byte[] Content { get; set; } = [];
 }
 
 public sealed class LoginSession

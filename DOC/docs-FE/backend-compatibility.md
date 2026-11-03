@@ -31,7 +31,7 @@ Client nhận callback lấy bearer token và callback xử lý 401 của reques
 | Admin Anime/Genres | Create version 0, update/delete version đã đọc; publicationStatus và alternativeTitles giữ qua form; danh sách và detail tách biệt |
 | Admin Seasons/Episodes | List theo page/meta; form nhận context hoặc detail ngoài trang; episode number hỗ trợ số lẻ/0, duration nullable, thumbnail và version |
 | Admin Sources/Subtitles | Provider direct, URL HTTP(S) tuyệt đối, expiresAt nullable; mp4/hls, vtt/srt; refetch sau thay default vì version track cũ cũng đổi |
-| Admin Comments/Users/Dashboard | Summary toàn danh sách, panel detail độc lập pagination; hide/restore versioned; User chỉ đọc; Dashboard map cùng RankingDto với Home |
+| Admin Comments/Users/Dashboard | Summary toàn danh sách, panel detail độc lập pagination; hide/restore versioned; User có đọc và admin khoá/mở khoá; Dashboard map cùng RankingDto với Home |
 
 Lỗi field được đưa về form; lỗi xung đột không tự ghi đè hoặc tự tăng version ở client. Người dùng tải lại dữ liệu trước khi lưu tiếp. Mock cũng kiểm tra version cho các mutation đã chuyển đổi để phát hiện cách gọi sai ngay khi chưa kết nối BE.
 

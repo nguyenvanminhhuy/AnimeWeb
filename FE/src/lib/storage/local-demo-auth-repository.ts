@@ -8,6 +8,8 @@ function demoLogin(profile: Profile): LoginDto {
     expiresAt: new Date(Date.now() + 7 * 86400000).toISOString(),
     profile: {
       ...profile,
+      avatarUrl: null,
+      version: 1,
       roles: ['user'],
       permissions: [
         'catalog:read',
@@ -97,6 +99,12 @@ async function wait(state: AuthState, signal: AbortSignal) {
 }
 export const localDemoAuthRepository: AuthRepository = {
   mode: 'mock',
+  async readProfile() {
+    throw new DemoAuthError('Chức năng này cần phiên đăng nhập máy chủ.');
+  },
+  async saveAvatar() {
+    throw new DemoAuthError('Đổi ảnh đại diện cần phiên đăng nhập máy chủ.');
+  },
   async restore(signal) {
     signal.throwIfAborted();
     const id = demoAccount.readSession();

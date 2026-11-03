@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
 import { ContentState } from '@/components/common/content-state';
@@ -9,6 +9,8 @@ import { useAdminUsers } from '@/features/admin-users/hooks/use-admin-users';
 import { UsersFilters } from '@/features/admin-users/components/users-filters';
 import { UsersTable } from '@/features/admin-users/components/users-table';
 import { UserProfile } from '@/features/admin-users/components/user-profile';
+import { UserAccessDialog } from '@/features/admin-users/components/user-access-dialog';
+import type { AdminUser } from '@/types/admin-user';
 import { usersHref, usersParams } from '@/features/admin-users/utils/users-query';
 
 export function AdminUsersPage() {
@@ -18,7 +20,13 @@ export function AdminUsersPage() {
 function UsersContent() {
   const navigate = useNavigate();
   const { adminPreview } = useSession();
-  const { canRead, query, userId, result, loading, error, mock, refresh } = useAdminUsers();
+  const { canRead, canWrite, query, userId, result, loading, error, mock, refresh } =
+    useAdminUsers();
+  const canChangeRole = canRead && !!adminPreview?.permissions.includes('admin:user:role:write');
+  const [changeKind, setChangeKind] = useState<'status' | 'role'>('status');
+  const [target, setTarget] = useState<AdminUser | null>(null);
+  const [notice, setNotice] = useState('');
+  const [profileRevision, setProfileRevision] = useState(0);
   const heading = useRef<HTMLHeadingElement>(null);
   const closingId = useRef<string | null>(null);
   useEffect(() => {
@@ -56,16 +64,22 @@ function UsersContent() {
       ) : (
         <>
           <p className="tw:rounded-xl tw:border tw:border-[var(--aw-border)] tw:bg-[#a697ff0d] tw:p-4 tw:mb-6 tw:text-[var(--aw-muted)]">
-            Dữ liệu người dùng hư cấu · Chỉ đọc. Chưa hỗ trợ thay đổi tài khoản, khoá/mở khoá hoặc
-            cấp quyền.
+            {canWrite
+              ? 'Bạn có thể khoá/mở khoá tài khoản theo quyền. Thao tác đổi vai trò yêu cầu quyền riêng; không thể tự hạ quyền hoặc làm mất quản trị viên hoạt động cuối cùng.'
+              : 'Bạn có quyền xem danh sách và hồ sơ; chỉ admin được khoá/mở khoá hoặc đổi vai trò tài khoản.'}
           </p>
+          {notice && (
+            <p role="status" className="tw:text-[#9fe3c2]">
+              {notice}
+            </p>
+          )}
           {result && (
             <dl
-              aria-label="Thống kê người dùng mẫu"
+              aria-label="Thống kê người dùng"
               className="tw:grid tw:grid-cols-3 tw:gap-4 tw:mb-6 tw:max-phone:grid-cols-1"
             >
               {[
-                { key: 'total', label: 'Tổng tài khoản mẫu', style: 'tw:text-[#c5baff]' },
+                { key: 'total', label: 'Tổng tài khoản', style: 'tw:text-[#c5baff]' },
                 { key: 'active', label: 'Đang hoạt động', style: 'tw:text-[#9fe3c2]' },
                 { key: 'blocked', label: 'Đã khoá', style: 'tw:text-[#edacbc]' },
               ].map((item) => (
@@ -145,7 +159,31 @@ function UsersContent() {
                 </div>
               ) : result?.data.length ? (
                 <>
-                  <UsersTable users={result.data} query={query} mock={mock} selectedId={userId} />
+                  <UsersTable
+                    users={result.data}
+                    query={query}
+                    mock={mock}
+                    selectedId={userId}
+                    currentUserId={adminPreview?.id}
+                    onChangeRole={
+                      canChangeRole
+                        ? (user) => {
+                            setNotice('');
+                            setChangeKind('role');
+                            setTarget(user);
+                          }
+                        : undefined
+                    }
+                    onChangeStatus={
+                      canWrite
+                        ? (user) => {
+                            setNotice('');
+                            setChangeKind('status');
+                            setTarget(user);
+                          }
+                        : undefined
+                    }
+                  />
                   <Pagination
                     showSinglePage
                     label="Phân trang người dùng"
@@ -158,12 +196,13 @@ function UsersContent() {
               ) : (
                 <ContentState
                   title="Không có người dùng phù hợp"
-                  description="Thử đổi từ khóa hoặc đặt lại bộ lọc để xem dữ liệu mẫu."
+                  description="Thử đổi từ khóa hoặc đặt lại bộ lọc để xem danh sách tài khoản."
                 />
               )}
             </section>
             {userId && adminPreview && (
               <UserProfile
+                revision={profileRevision}
                 id={userId}
                 session={adminPreview}
                 closeTo={usersHref(query, mock)}
@@ -173,6 +212,30 @@ function UsersContent() {
               />
             )}
           </div>
+          {target && (changeKind === 'role' ? canChangeRole : canWrite) && adminPreview && (
+            <UserAccessDialog
+              kind={changeKind}
+              key={`${changeKind}:${target.id}:${target.version}`}
+              user={target}
+              session={adminPreview}
+              onClose={() => setTarget(null)}
+              onRefresh={() => {
+                setTarget(null);
+                setProfileRevision((value) => value + 1);
+                refresh();
+              }}
+              onChanged={(user) => {
+                setTarget(null);
+                setNotice(
+                  changeKind === 'role'
+                    ? `Đã đổi vai trò tài khoản ${user.email}. Tài khoản cần đăng nhập lại.`
+                    : `Đã ${user.status === 'blocked' ? 'khoá' : 'mở khoá'} tài khoản ${user.email}.`,
+                );
+                setProfileRevision((value) => value + 1);
+                refresh();
+              }}
+            />
+          )}
         </>
       )}
     </>

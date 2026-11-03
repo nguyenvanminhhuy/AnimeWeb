@@ -103,7 +103,6 @@
   font-size: 20px;
   color: var(--aw-text);
 }
-.aw-session-note,
 .aw-notice {
   overflow-wrap: anywhere;
   color: #c4b8ef;

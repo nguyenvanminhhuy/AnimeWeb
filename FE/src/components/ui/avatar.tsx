@@ -1,6 +1,16 @@
 import type { ControlSize } from '@/types/control';
+import { useState } from 'react';
 
-export function Avatar({ name, size = 'md' }: { name: string; size?: ControlSize }) {
+export function Avatar({
+  name,
+  src,
+  size = 'md',
+}: {
+  name: string;
+  src?: string | null;
+  size?: ControlSize;
+}) {
+  const [failed, setFailed] = useState<string | null>(null);
   const words = name.normalize('NFC').trim().split(/\s+/).filter(Boolean);
   const initials = (
     words.length > 1 ? words[0][0] + words.at(-1)![0] : (words[0]?.slice(0, 2) ?? 'TK')
@@ -13,9 +23,18 @@ export function Avatar({ name, size = 'md' }: { name: string; size?: ControlSize
   return (
     <span
       aria-hidden="true"
-      className={`tw:inline-flex tw:shrink-0 tw:items-center tw:justify-center tw:rounded-full tw:bg-[#a697ff25] tw:border tw:border-[#a697ff55] tw:text-[#c5baff] tw:font-semibold ${sizes[size]}`}
+      className={`tw:inline-flex tw:overflow-hidden tw:shrink-0 tw:items-center tw:justify-center tw:rounded-full tw:bg-[#a697ff25] tw:border tw:border-[#a697ff55] tw:text-[#c5baff] tw:font-semibold ${sizes[size]}`}
     >
-      {initials}
+      {src && failed !== src ? (
+        <img
+          src={src}
+          alt=""
+          className="tw:w-full tw:h-full tw:object-cover"
+          onError={() => setFailed(src)}
+        />
+      ) : (
+        initials
+      )}
     </span>
   );
 }

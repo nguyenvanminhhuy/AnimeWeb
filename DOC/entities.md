@@ -1,5 +1,7 @@
 # Entity và quan hệ dữ liệu
 
+Cập nhật avatar 2026-11-02: Account thêm AvatarKey nullable, AccountAvatar dùng UserId làm PK/FK 1–1 với Content bytea. Ảnh được thay/xoá cùng Account.Version trong transaction; ProfileDto trả avatarUrl/version, không trả bytes hoặc filename trong JSON. Xem [contract avatar](docs-BE/account-avatar.md).
+
 Anime, Genre, AnimeGenre, Season và Episode đã có model/configuration/migration BE. Người dùng đã xác nhận mô hình một anime nhiều mùa/phần và movie một mùa/một tập. CompleteBackendFeatures đã bổ sung account/session/RBAC, library/progress, comments/audit, sources/tracks và view sessions/events theo [contract v0.3](api-contract.md). Entity nội dung/personal/comment/source/track có version concurrency token; không serialize EF entity làm DTO.
 
 ## Danh mục nội dung

@@ -1,4 +1,5 @@
 import { isMockApi } from '@/config/api';
+import { adminApiErrorMessage } from '@/utils/admin-api-error';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { adminGenreRepository } from '@/lib/api/repositories';
@@ -50,13 +51,13 @@ export function useAdminGenres() {
             error: '',
           });
       },
-      () => {
+      (cause) => {
         if (!controller.signal.aborted)
           setResponse({
             key,
             resolvedKey: key,
             data: null,
-            error: 'Không thể tải thể loại. Vui lòng thử lại.',
+            error: adminApiErrorMessage(cause, 'Không thể tải thể loại. Vui lòng thử lại.'),
           });
       },
     );

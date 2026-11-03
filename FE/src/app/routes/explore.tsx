@@ -12,13 +12,13 @@ import { Link } from 'react-router-dom';
 import { paths } from '@/config/paths';
 
 export function ExplorePage() {
-  const { query, result, error, retry, mock } = useExploreCatalog();
+  const { query, result, options, error, retry, mock } = useExploreCatalog();
   const activeFilters = [
     {
       key: 'genre',
       label:
-        (result?.options?.genres ?? genreOptions).find((option) => option.value === query.genre)
-          ?.label ?? '',
+        (options?.genres ?? genreOptions).find((option) => option.value === query.genre)?.label ??
+        '',
     },
     { key: 'year', label: query.year },
     {
@@ -68,7 +68,7 @@ export function ExplorePage() {
       </header>
 
       <ExploreFilters
-        options={result?.options}
+        options={options}
         query={query}
         suggestions={result?.data.map((anime) => anime.title) ?? []}
       />

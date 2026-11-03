@@ -1,5 +1,7 @@
 # Bàn giao yêu cầu dữ liệu FE để triển khai API BE
 
+Cập nhật 2026-11-02: [Khoá/mở khoá tài khoản](docs-BE/account-status-management.md) đã triển khai BE và FE. Admin dùng PATCH `/api/v1/admin/users/{id}/status` với status/version; manage chỉ đọc. Khoá thu hồi phiên, mở khoá yêu cầu đăng nhập lại. Migration AccountStatusManagement đã thêm Version và quyền mới.
+
 ## Đường dẫn API BE dành cho FE
 
 **Đọc [DOC/docs-BE/feature-reference.md](docs-BE/feature-reference.md) để tích hợp API BE đã code**: danh sách endpoint theo feature, method/path, path/query/body, field/kiểu dữ liệu, response, validation và permission. [API contract v0.3](api-contract.md) giữ các quyết định nghiệp vụ; tài liệu handoff này giữ flow và baseline repository mock FE.
@@ -236,7 +238,7 @@ Lỗi dùng envelope contract `error.code/message/fields/requestId`; `fields` ma
 
 ## 9. Phân quyền và phạm vi BE cần triển khai
 
-Theo [roles-permissions.md](docs-FE/rules/roles-permissions.md): user dùng public + own; manage thêm admin read; admin thêm write nội dung/moderate. Users chỉ read cho cả hai. BE kiểm tra permission cụ thể/ownership/trạng thái, không tin tên role client. Không wildcard admin bypass; guest đọc public published; không lộ draft qua related/ranking/tập/playback.
+Theo [roles-permissions.md](docs-FE/rules/roles-permissions.md): user dùng public + own; manage thêm admin read; admin thêm write nội dung/moderate. Users: manage chỉ đọc, admin khoá/mở khoá và đổi role theo permission ghi riêng. BE kiểm tra permission cụ thể/ownership/trạng thái, không tin tên role client. Không wildcard admin bypass; guest đọc public published; không lộ draft qua related/ranking/tập/playback.
 
 Quyền theo nhóm: admin:dashboard:read; admin:anime:read/write; admin:genre:read/write; admin:episode:read/write; admin:playback:read/write; admin:user:read; admin:comment:read/moderate. Ký hiệu read/write hoặc read/moderate rút gọn các mã riêng, không serialize nguyên chuỗi có dấu `/` thành permission. Role mới đăng ký user; adminPreview/dev seed không là cơ chế login production. Đây là quy định cần triển khai, chưa có authentication/authorization hoặc RolePermission thực thi tại BE.
 
@@ -247,4 +249,4 @@ Quyền theo nhóm: admin:dashboard:read; admin:anime:read/write; admin:genre:re
 3. Tạo HTTP adapter/mapper FE; với getCatalog/local storage cần sửa hook sang list/detail server như đã ghi, không chỉ thay URL.
 4. Kiểm tra form, list/meta/options, direct link edit/panel, filter/history, refresh sau mutation, hai user, quyền đọc/ghi và lỗi.
 
-Không có yêu cầu triển khai CRUD user, upload avatar/video, quên mật khẩu, cấp role hoặc view event tự động chỉ vì tài liệu liệt kê feature. Những phần đó chưa có lời gọi FE. API mới phục vụ đúng các flow trên; cơ chế auth/định nghĩa view/concurrency còn phải chốt theo module.
+Không có yêu cầu triển khai CRUD user, upload avatar/video, quên mật khẩu, sửa permission hoặc view event tự động chỉ vì tài liệu liệt kê feature. Những phần đó chưa có lời gọi FE. API mới phục vụ đúng các flow trên; cơ chế auth/định nghĩa view/concurrency còn phải chốt theo module.

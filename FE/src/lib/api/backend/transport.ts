@@ -7,7 +7,12 @@ export const httpTransport: BackendTransport = async (request) => {
     response = await fetch(request.path, {
       method: request.method,
       headers: { Accept: 'application/json', ...request.headers },
-      body: request.body === undefined ? undefined : JSON.stringify(request.body),
+      body:
+        request.body instanceof Blob
+          ? request.body
+          : request.body === undefined
+            ? undefined
+            : JSON.stringify(request.body),
       signal: request.signal,
       credentials: request.credentials ?? 'same-origin',
       cache: 'no-store',

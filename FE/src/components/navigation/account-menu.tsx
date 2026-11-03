@@ -5,12 +5,19 @@ import { Avatar } from '@/components/ui/avatar';
 
 export interface AccountMenuProps {
   displayName: string;
+  avatarUrl?: string | null;
   identity: string;
   links: readonly { label: string; to: string }[];
   onLogout: () => void;
 }
 
-export function AccountMenu({ displayName, identity, links, onLogout }: AccountMenuProps) {
+export function AccountMenu({
+  displayName,
+  avatarUrl,
+  identity,
+  links,
+  onLogout,
+}: AccountMenuProps) {
   const [open, setOpen] = useState(false);
   const container = useRef<HTMLDivElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
@@ -58,7 +65,7 @@ export function AccountMenu({ displayName, identity, links, onLogout }: AccountM
         aria-expanded={open}
         aria-controls={id}
         onClick={() => setOpen((value) => !value)}
-        label={<Avatar name={displayName} />}
+        label={<Avatar name={displayName} src={avatarUrl} />}
       />
       {open && (
         <nav

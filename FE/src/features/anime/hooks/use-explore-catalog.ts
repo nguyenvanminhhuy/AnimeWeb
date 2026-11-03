@@ -20,6 +20,8 @@ export function useExploreCatalog() {
   const state: MockState =
     mock === 'loading' || mock === 'empty' || mock === 'error' ? mock : 'ready';
   const [attempt, setAttempt] = useState(0);
+  // Filter choices belong to the catalog, not to one result page. Preserve them during reloads/errors.
+  const [options, setOptions] = useState<CatalogResult['options']>();
   const requestKey = `${queryString}:${state}:${attempt}`;
   const [response, setResponse] = useState<{
     key: string;
@@ -43,13 +45,15 @@ export function useExploreCatalog() {
       animeRepository
         .list(query, state)
         .then((data) => {
-          if (active)
+          if (active) {
+            setOptions(data.options);
             setResponse({
               key: requestKey,
               resolvedKey: `${catalogParams({ ...query, page: data.meta.page })}:${state}:${attempt}`,
               result: data,
               error: '',
             });
+          }
         })
         .catch(() => {
           if (active)
@@ -75,6 +79,7 @@ export function useExploreCatalog() {
   return {
     query: { ...query, page: resolvedPage },
     result,
+    options,
     error,
     mock,
     retry: () => {

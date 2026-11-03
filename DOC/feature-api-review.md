@@ -57,7 +57,7 @@ Nguồn route: [app/router.tsx](../FE/src/app/router.tsx), [config/paths.ts](../
 | Mùa/tập `/admin/episodes` | Chọn phim/mùa/status, CRUD mùa inline, list tập | Seasons/episodes CRUD + lookup | Cha/con hợp lệ; không tự cascade mùa còn tập hoặc tập bị ràng buộc |
 | Form `/admin/episodes/new`, `/admin/episodes/:episodeId/edit` | Số tập/thứ tự/thời lượng/status, validation | Episode detail/create/update | Published không có nghĩa có nguồn; không cộng số vào ID để chuyển tập |
 | Nguồn/phụ đề `/admin/playback` | Chọn phim→mùa→tập, CRUD nguồn/track, bật/tắt, mặc định | Source/subtitle APIs | Nguồn còn track/tập còn nguồn bị chặn xoá; một track mặc định mỗi nguồn |
-| Người dùng `/admin/users` | List/search/status/sort/paging, summary và panel hồ sơ | User list/detail chỉ đọc | Cả manage/admin chưa có khoá/xoá/cấp role/reset mật khẩu người khác |
+| Người dùng `/admin/users` | List/search/status/sort/paging, summary và panel hồ sơ | User list/detail và PATCH status/role + version | Manage chỉ đọc; admin khoá/mở khoá, có đổi role cho admin; không xoá/reset mật khẩu người khác |
 | Bình luận `/admin/comments` | Filter/sort/paging, panel, ẩn/hiện lại có lý do | Comment list/detail/moderation | Chỉ visible↔hidden; không sửa body/tác giả, xoá cứng hoặc phục hồi deleted |
 
 Sáu list admin có Pagination trên/dưới, nút trang ở giữa, pageSize chỉ trên bên phải. Dùng chung meta/query. Dashboard và Top 10 không có phân trang riêng; các danh sách con chưa phân trang không cần thêm API chỉ để có Pagination.
@@ -155,7 +155,7 @@ Không thêm API sửa hồ sơ/upload avatar/quên mật khẩu/xoá lịch s�
 | Episodes | POST `/admin/episodes`, PATCH/DELETE `/admin/episodes/:episodeId` | animeId/seasonId/number/title/sortOrder/durationSeconds/status |
 | Sources | GET/POST `/admin/playback-sources`, PATCH/DELETE `/admin/playback-sources/:sourceId` | episodeId/providerKey/label/language/type/url/enabled; list q/enabled/sort/page/pageSize |
 | Subtitles | GET `/admin/playback-sources/:sourceId/subtitles`, POST `/admin/subtitles`, PATCH/DELETE `/admin/subtitles/:subtitleId` | playbackSourceId/label/language/format/url/isDefault; chuyển mặc định trong transaction |
-| Users | GET `/admin/users`, GET `/admin/users/:userId` | q/status/sort/page/pageSize, summary và hồ sơ tối thiểu; chỉ đọc |
+| Users | GET `/admin/users`, GET `/admin/users/:userId`, PATCH `/admin/users/:userId/status`, PATCH `/admin/users/:userId/role` | q/status/sort/page/pageSize, summary, hồ sơ có version; PATCH body status/version, quyền admin:user:status:write |
 | Comments | GET `/admin/comments`, GET `/admin/comments/:commentId` | q/animeId/status/sort/page/pageSize, summary/author/thời gian/moderation; bỏ body deleted |
 | Moderation | POST `/admin/comments/:commentId/moderations` | action hide/restore + reason; actor/time server cấp, audit phù hợp |
 
@@ -172,7 +172,7 @@ Nguồn chính: [roles-permissions.md](docs-FE/rules/roles-permissions.md).
 | manage | Có | Có | Theo permission | Không |
 | admin | Có | Có | Theo permission | Theo permission và ràng buộc |
 
-Permission đã quy định trong tài liệu/FE mock: admin:dashboard:read, admin:anime:read/write, admin:genre:read/write, admin:episode:read/write, admin:playback:read/write, admin:comment:read/moderate, admin:user:read. Các ký hiệu read/write, read/moderate rút gọn hai mã permission riêng, không phải mã chứa dấu `/`. Chưa có policy thực thi các quyền này tại BE. **Users vẫn chỉ đọc cho cả manage/admin**; không tự thêm cấp role/khoá/xoá/reset mật khẩu người khác. Admin không bỏ ownership hoặc khôi phục comment deleted.
+Permission đã quy định trong tài liệu/FE mock: admin:dashboard:read, admin:anime:read/write, admin:genre:read/write, admin:episode:read/write, admin:playback:read/write, admin:comment:read/moderate, admin:user:read. Các ký hiệu read/write, read/moderate rút gọn hai mã permission riêng, không phải mã chứa dấu `/`. BE đã thực thi policy quyền. Users: manage chỉ đọc; admin có `admin:user:status:write` để khoá/mở khoá, thu hồi phiên và kiểm tra version. Đã có PATCH role theo admin:user:role:write; không xoá/reset mật khẩu người khác. Admin không bỏ ownership hoặc khôi phục comment deleted.
 
 FE runtime vẫn member/adminPreview; AdminUser.roles còn member. Ví dụ GET me trong contract đã đổi sang user ở lượt đồng bộ tài liệu; khi triển khai vẫn phải đồng bộ DB/DTO/session/guard về user/manage/admin, không chỉ đổi nhãn UI. BE Program chưa có authentication/authorization pipeline bảo vệ các API cá nhân/quản trị.
 
@@ -230,7 +230,7 @@ Trước mỗi feature: đối chiếu source hiện có → lấy nhu cầu t�
 - [ ] Auth/đổi mật khẩu/logout thật; user không vào admin, manage chỉ đọc, admin ghi đúng permission.
 - [ ] Favorite/history/progress bền vững, tách tài khoản; bỏ yêu thích không mất history; đồng bộ nhiều thiết bị theo chính sách.
 - [ ] Comments visible/own/moderation/deleted đúng; plain text, actor/permission server quyết định.
-- [ ] CRUD admin bền vững, concurrency/publication/quan hệ đúng; enabled không tự chứng minh phát được; users vẫn chỉ đọc.
+- [ ] CRUD admin bền vững, concurrency/publication/quan hệ đúng; enabled không tự chứng minh phát được; users có đọc và admin khoá/mở khoá.
 - [ ] Ranking cùng nguồn, view semantics/chống trùng/thời điểm tổng hợp rõ; không dùng fixture làm số vận hành.
 - [ ] API tests với PostgreSQL test và fake provider/media local; lỗi/quyền/huỷ request có kiểm chứng.
 - [ ] FE responsive/keyboard/loading/empty/error/retry/build đạt; kết quả mới nối vào verification.

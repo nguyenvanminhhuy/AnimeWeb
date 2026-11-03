@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef, useState } from 'react';
+import { adminApiErrorMessage } from '@/utils/admin-api-error';
 import { Button } from '@/components/ui/button';
 import { adminPlaybackRepository } from '@/lib/api/repositories';
 import type { AdminPreviewSession } from '@/types/admin';
@@ -58,8 +59,7 @@ export function DeleteMediaDialog({
       );
       if (!controller.signal.aborted) onDeleted();
     } catch (reason) {
-      if (!controller.signal.aborted)
-        setError(reason instanceof Error ? reason.message : 'Không thể xoá.');
+      if (!controller.signal.aborted) setError(adminApiErrorMessage(reason, 'Không thể xoá.'));
     } finally {
       if (!controller.signal.aborted) {
         setPending(false);
@@ -82,11 +82,11 @@ export function DeleteMediaDialog({
         Xoá {target.kind === 'source' ? 'nguồn phát' : 'phụ đề'}?
       </h2>
       <p id="delete-media-description">
-        “{target.label}” sẽ bị xoá khỏi phiên mẫu, không thể hoàn tác.{' '}
+        “{target.label}” sẽ bị xoá, không thể hoàn tác.{' '}
         {target.kind === 'source'
           ? 'Nguồn còn phụ đề sẽ bị chặn; không xoá dây chuyền.'
           : 'Nếu đây là phụ đề mặc định, nguồn sẽ không còn phụ đề mặc định.'}{' '}
-        Tệp tài nguyên và dữ liệu công khai không thay đổi.
+        Thông tin phát công khai sẽ được cập nhật; tệp media gốc không bị xoá.
       </p>
       {error && (
         <p role="alert" className="tw:text-[#ffb4bc]">

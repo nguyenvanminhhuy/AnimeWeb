@@ -1,5 +1,7 @@
 # Khám phá
 
+Cập nhật 2026-11-02: bộ lọc ghép điều kiện theo AND; URL là nguồn year/status/format/genre, mỗi lần đổi điều kiện trở về page 1. Danh sách năm/thể loại lấy từ BE được giữ riêng trong useExploreCatalog, không xoá khi đang tải/kết quả rỗng/lỗi. Các Selectbox dùng value theo query; nếu giá trị từ URL chưa có trong options thì tạm giữ option đó để form không gửi rỗng. Không thay danh sách BE bằng fixture khi đổi bộ lọc. Kiểm thử hồi quy: tests/explore-filter-options.browser.mjs dùng adapter HTTP và fake API, bao gồm năm 2012 ngoài catalogYears mẫu, thể loại science-fiction, chọn liên tiếp, sort/pageSize/reload/history và error/retry.
+
 Triển khai ngày 2026-10-28 tại `/anime`, dùng React + TypeScript + Vite, React Router, giao diện tối/tím và artwork cục bộ của Trang chủ. Giao diện là mặc định từ prompt screen-generation, chưa phải quyết định thương hiệu mới. Xem [quy tắc route](rules/routes.md).
 
 ## Chạy

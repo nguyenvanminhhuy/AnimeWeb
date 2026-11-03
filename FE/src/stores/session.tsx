@@ -2,7 +2,8 @@ import { isMockApi } from '@/config/api';
 import { isDemoUser } from '@/utils/auth';
 import { scheduleDeadline } from '@/utils/deadline';
 import { backendCredentials } from '@/lib/api/backend/credentials';
-import type { LoginDto } from '@/lib/api/backend/types';
+import type { LoginDto, ProfileDto } from '@/lib/api/backend/types';
+import { ApiError } from '@/lib/api/backend/error';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { demoAccount } from '@/lib/storage/demo-account';
@@ -16,6 +17,10 @@ interface Session {
   user: DemoUser | null;
   displayName: string;
   email: string;
+  avatarUrl: string | null;
+  canEditAvatar: boolean;
+  saveAvatar: (image: Blob | null, signal: AbortSignal) => Promise<void>;
+  refreshProfile: (signal: AbortSignal) => Promise<void>;
   favorites: string[];
   progress: Progress[];
   permissions: readonly string[];
@@ -49,6 +54,13 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const [adminPreview, setAdminPreview] = useState<AdminPreviewSession | null>(null);
   const current = useRef({ user, account });
   current.current = { user, account };
+  function applyProfile(next: ProfileDto, generation: number) {
+    if (generation !== authRevision.current || current.current.user !== next.id) return;
+    setProfile(next);
+    setCredentials((previous) =>
+      previous?.profile.id === next.id ? { ...previous, profile: next } : previous,
+    );
+  }
   function invalidateSession(message = 'Phiên đã hết hạn. Vui lòng đăng nhập lại.') {
     authRevision.current++;
     backendCredentials.write(null);
@@ -123,7 +135,6 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   function mutatePersonal(
     owner: string,
     task: (snapshot: NonNullable<typeof account>) => Promise<PersonalSnapshot>,
-    message?: string,
   ) {
     const generation = authRevision.current;
     personalRevision.current++;
@@ -140,7 +151,6 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         const saved = { version: 1 as const, ...next };
         current.current = { user: owner, account: saved };
         setAccount(saved);
-        if (message) setNotice(message);
       } catch (error) {
         if (current.current.user === owner && generation === authRevision.current)
           setNotice(error instanceof Error ? error.message : 'Không lưu được dữ liệu.');
@@ -158,6 +168,47 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     roles: credentials?.profile.roles ?? (user ? ['user'] : []),
     displayName: adminPreview?.displayName ?? profile?.displayName ?? '',
     email: profile?.email ?? '',
+    avatarUrl: profile?.avatarUrl ?? null,
+    canEditAvatar:
+      authRepository.mode === 'backend' &&
+      !!credentials?.profile.permissions.includes('profile:avatar:write:own'),
+    async refreshProfile(signal) {
+      const generation = authRevision.current;
+      const next = await authRepository.readProfile(signal);
+      signal.throwIfAborted();
+      applyProfile(next, generation);
+    },
+    async saveAvatar(image, signal) {
+      if (!credentials || authRepository.mode !== 'backend')
+        throw new Error('Vui lòng đăng nhập lại.');
+      const generation = authRevision.current;
+      try {
+        let version = credentials.profile.version;
+        if (!Number.isSafeInteger(version) || version < 1) {
+          const latest = await authRepository.readProfile(signal);
+          signal.throwIfAborted();
+          applyProfile(latest, generation);
+          version = latest.version;
+          if (!Number.isSafeInteger(version) || version < 1)
+            throw new Error(
+              'Máy chủ chưa hỗ trợ ảnh đại diện. Hãy khởi động lại BE và đăng nhập lại.',
+            );
+        }
+        signal.throwIfAborted();
+        if (generation !== authRevision.current || current.current.user !== credentials.profile.id)
+          throw new DOMException('Phiên đã thay đổi.', 'AbortError');
+        const next = await authRepository.saveAvatar(image, version, signal);
+        signal.throwIfAborted();
+        applyProfile(next, generation);
+      } catch (error) {
+        if (error instanceof ApiError && error.status === 409 && !signal.aborted) {
+          const next = await authRepository.readProfile(signal);
+          signal.throwIfAborted();
+          applyProfile(next, generation);
+        }
+        throw error;
+      }
+    },
     favorites: account?.favorites ?? [],
     progress: account?.progress ?? [],
     permissions:
@@ -199,6 +250,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
                 'admin:episode:write',
                 'admin:playback:write',
                 'admin:comment:moderate',
+                'admin:user:status:write',
+                'admin:user:role:write',
               ]
             : []),
         ],
@@ -275,21 +328,17 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       if (!user || !account) return;
       const actor = { id: user, permissions: session.permissions };
       const isFavorite = !current.current.account?.favorites.includes(id);
-      mutatePersonal(
-        user,
-        (snapshot) => {
-          const entry = snapshot.library?.find((row) => row.animeId === id);
-          const version = entry?.version ?? (snapshot.favorites.includes(id) ? 1 : 0);
-          return personalRepository.setFavorite(
-            actor,
-            id,
-            isFavorite,
-            version,
-            new AbortController().signal,
-          );
-        },
-        'Đã cập nhật yêu thích.',
-      );
+      mutatePersonal(user, (snapshot) => {
+        const entry = snapshot.library?.find((row) => row.animeId === id);
+        const version = entry?.version ?? (snapshot.favorites.includes(id) ? 1 : 0);
+        return personalRepository.setFavorite(
+          actor,
+          id,
+          isFavorite,
+          version,
+          new AbortController().signal,
+        );
+      });
     },
     saveProgress(owner, entry) {
       const snapshot = current.current;

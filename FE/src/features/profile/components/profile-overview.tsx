@@ -7,6 +7,7 @@ import { Artwork } from '@/components/common/artwork';
 interface ProfileOverviewProps {
   displayName: string;
   email: string;
+  avatarUrl?: string | null;
   stats: { label: string; value: number; to: string }[];
   libraryTo: string;
   historyTo: string;
@@ -15,6 +16,7 @@ interface ProfileOverviewProps {
 export function ProfileOverview({
   displayName,
   email,
+  avatarUrl,
   stats,
   libraryTo,
   historyTo,
@@ -34,7 +36,7 @@ export function ProfileOverview({
         <div className="tw:absolute tw:inset-0 tw:z-[-1] tw:bg-[#141925b3]" />
         <div className="tw:flex tw:items-center tw:justify-between tw:gap-6 tw:flex-wrap">
           <div className="tw:flex tw:items-center tw:gap-5 tw:min-w-0 tw:max-phone:flex-col tw:max-phone:items-start">
-            <Avatar name={displayName} size="lg" />
+            <Avatar name={displayName} src={avatarUrl} size="lg" />
             <div className="tw:min-w-0">
               <p className="tw:text-[var(--aw-accent)] tw:mb-2 tw:font-medium">
                 Thành viên Anime Web
@@ -111,8 +113,7 @@ export function ProfileInfo({
         </div>
       </dl>
       <p className="tw:p-3 tw:rounded-lg tw:bg-[#a697ff0c] tw:text-[var(--aw-muted)] tw:mb-0 tw:leading-relaxed">
-        Hồ sơ mẫu và thư viện chỉ thuộc trình duyệt hiện tại. Thông tin đang được hiển thị ở chế độ
-        chỉ đọc.
+        Thông tin tài khoản và thư viện được quản lý theo tài khoản của bạn.
       </p>
       <Button
         as="link"

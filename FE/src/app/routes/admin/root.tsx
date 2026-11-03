@@ -13,7 +13,7 @@ import { useSession } from '@/stores/session';
 import { paths, routePatterns } from '@/config/paths';
 
 export function AdminRoot() {
-  const { user, adminPreview, permissions, displayName, logout, notice, initializing } =
+  const { user, adminPreview, permissions, displayName, avatarUrl, logout, notice, initializing } =
     useSession();
   const location = useLocation();
   const navigate = useNavigate();
@@ -88,6 +88,7 @@ export function AdminRoot() {
     );
   return (
     <AdminLayout
+      avatarUrl={avatarUrl}
       displayName={displayName}
       pageLabel={
         isComments
