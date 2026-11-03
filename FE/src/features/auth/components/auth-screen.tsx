@@ -137,7 +137,7 @@ export function AuthScreen({ mode }: { mode: AuthMode }) {
           <p className="aw-auth-switch tw:mx-0 tw:text-body tw:text-center tw:mt-6 tw:mb-0 tw:leading-[1.8]">
             {register ? 'Đã có tài khoản?' : 'Chưa có tài khoản?'}{' '}
             <Link to={register ? paths.loginTo(returnTo) : paths.registerTo(returnTo)}>
-              {register ? 'Đăng nhập' : 'Đăng ký ngay'} <Icon name="external-link" size="sm" />
+              {register ? 'Đăng nhập' : 'Đăng ký ngay'} <Icon name="arrow-right" size="sm" />
             </Link>
           </p>
         </section>

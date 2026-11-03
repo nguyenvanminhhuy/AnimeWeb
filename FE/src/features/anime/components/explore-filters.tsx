@@ -58,7 +58,7 @@ export function ExploreFilters({ query, suggestions = [], options }: ExploreFilt
       id={exploreFormId}
       action={paths.explore}
       method="get"
-      className="aw-explore-filters aw-surface tw:p-6 tw:rounded-xl tw:max-mobile:p-4"
+      className="aw-explore-filters aw-surface tw:p-5 tw:rounded-xl tw:max-mobile:p-4"
       role="search"
       aria-label="Tìm và lọc anime"
       onSubmit={(event) => {
@@ -89,14 +89,14 @@ export function ExploreFilters({ query, suggestions = [], options }: ExploreFilt
               composingRef.current = false;
               scheduleSearch(event.currentTarget);
             }}
-            maxLength={100}
+            maxLength={200}
             placeholder="Tên anime, tên tiếng Anh…"
           />
         </div>
       </div>
       <Input variant="unstyled" type="hidden" name="page" value="1" />
-      <section className="tw:mt-5.5" aria-label="Bộ lọc">
-        <div className="aw-explore-filter-grid tw:gap-4.5 tw:grid tw:grid-cols-4 tw:mt-4.25 tw:max-tablet:grid-cols-2">
+      <section className="tw:mt-4" aria-label="Bộ lọc">
+        <div className="aw-explore-filter-grid tw:gap-4 tw:grid tw:grid-cols-4 tw:max-tablet:grid-cols-2 tw:max-mobile:gap-3">
           <div className="aw-explore-field tw:grid tw:text-body">
             <label htmlFor="explore-genre">Thể loại</label>
             <Selectbox id="explore-genre" name="genre" value={query.genre} onChange={submitFilter}>

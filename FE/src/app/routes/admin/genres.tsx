@@ -151,7 +151,7 @@ function GenresContent() {
                     tabIndex={0}
                     className="aw-surface tw:rounded-xl tw:overflow-x-auto tw:border tw:border-[var(--aw-border)]"
                   >
-                    <table className="tw:w-full tw:min-w-140 tw:mb-0 tw:text-left tw:align-middle">
+                    <table className="aw-admin-records tw:w-full tw:min-w-140 tw:mb-0 tw:text-left tw:align-middle">
                       <caption className="visually-hidden">Thể loại và số phim sử dụng</caption>
                       <thead className="tw:bg-[#ffffff04] tw:text-[var(--aw-muted)]">
                         <tr>
@@ -181,42 +181,49 @@ function GenresContent() {
                             <th scope="row" className="tw:p-4 tw:font-semibold tw:min-w-40">
                               {row.name}
                             </th>
-                            <td className="tw:p-4 tw:text-[var(--aw-muted)] tw:break-words">
-                              {row.slug}
+                            <td
+                              data-label="Slug"
+                              className="tw:p-4 tw:text-[var(--aw-muted)] tw:break-words"
+                            >
+                              <div className="aw-admin-record-value">{row.slug}</div>
                             </td>
-                            <td className="tw:p-4">
-                              <Link
-                                aria-label={`Xem ${row.animeCount} phim thuộc ${row.name}`}
-                                to={`${paths.adminAnime}?${new URLSearchParams({ genre: row.slug })}`}
-                              >
-                                {row.animeCount}
-                              </Link>
+                            <td data-label="Số phim" className="tw:p-4">
+                              <div className="aw-admin-record-value">
+                                <Link
+                                  aria-label={`Xem ${row.animeCount} phim thuộc ${row.name}`}
+                                  to={`${paths.adminAnime}?${new URLSearchParams({ genre: row.slug })}`}
+                                >
+                                  {row.animeCount}
+                                </Link>
+                              </div>
                             </td>
                             {canWrite && (
-                              <td className="tw:p-4">
-                                <div className="tw:inline-flex tw:flex-nowrap tw:items-center tw:gap-2 tw:whitespace-nowrap">
-                                  <Button
-                                    variant="quiet"
-                                    size="sm"
-                                    startIcon={<Icon name="edit" size="sm" />}
-                                    aria-label={`Sửa ${row.name}`}
-                                    title={`Sửa ${row.name}`}
-                                    onClick={() =>
-                                      setEditor((current) => ({
-                                        row,
-                                        revision: current.revision + 1,
-                                        focus: true,
-                                      }))
-                                    }
-                                  />
-                                  <Button
-                                    variant="quiet"
-                                    size="sm"
-                                    startIcon={<Icon name="trash" size="sm" />}
-                                    aria-label={`Xoá ${row.name}`}
-                                    title={`Xoá ${row.name}`}
-                                    onClick={() => setSelected(row)}
-                                  />
+                              <td data-label="Thao tác" className="tw:p-4">
+                                <div className="aw-admin-record-value">
+                                  <div className="tw:inline-flex tw:flex-nowrap tw:items-center tw:gap-2 tw:whitespace-nowrap">
+                                    <Button
+                                      variant="quiet"
+                                      size="sm"
+                                      startIcon={<Icon name="edit" size="sm" />}
+                                      aria-label={`Sửa ${row.name}`}
+                                      title={`Sửa ${row.name}`}
+                                      onClick={() =>
+                                        setEditor((current) => ({
+                                          row,
+                                          revision: current.revision + 1,
+                                          focus: true,
+                                        }))
+                                      }
+                                    />
+                                    <Button
+                                      variant="quiet"
+                                      size="sm"
+                                      startIcon={<Icon name="trash" size="sm" />}
+                                      aria-label={`Xoá ${row.name}`}
+                                      title={`Xoá ${row.name}`}
+                                      onClick={() => setSelected(row)}
+                                    />
+                                  </div>
                                 </div>
                               </td>
                             )}

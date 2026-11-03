@@ -8,6 +8,11 @@ namespace AnimeWeb.Api.Tests.Integration;
 [Route("_tests/pipeline")]
 public sealed class PipelineProbeController : ControllerBase
 {
+    private static readonly byte[] payload = Enumerable.Range(0, 256 * 1024).Select(i => (byte)(i % 251)).ToArray();
+    [HttpGet("media")]
+    public IActionResult Media() => File(payload, "application/octet-stream", enableRangeProcessing: true);
+    [HttpGet("client")]
+    public IActionResult Client() => Ok(new { ip = HttpContext.Connection.RemoteIpAddress?.ToString(), scheme = Request.Scheme });
     [HttpPost("validation")]
     public IActionResult Validate(ProbeRequest request) => NoContent();
 

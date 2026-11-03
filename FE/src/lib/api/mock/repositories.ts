@@ -1,4 +1,21 @@
 import { mockAnimeRepository } from '@/lib/api/mock/mock-anime-repository';
+import type { Operations } from '@/types/operations';
+export const operationsRepository = {
+  async get(signal: AbortSignal): Promise<Operations> {
+    signal.throwIfAborted();
+    throw new Error('Giám sát vận hành chỉ có khi kết nối BE.');
+  },
+};
+import type { AuditQuery, AuditResult } from '@/types/audit';
+export const adminAuditRepository = {
+  async list(query: AuditQuery, signal?: AbortSignal): Promise<AuditResult> {
+    signal?.throwIfAborted();
+    return {
+      data: [],
+      meta: { page: query.page, pageSize: query.pageSize, total: 0, totalPages: 0 },
+    };
+  },
+};
 export const animeRepository = mockAnimeRepository;
 import { localDemoAuthRepository } from '@/lib/storage/local-demo-auth-repository';
 export const authRepository = localDemoAuthRepository;

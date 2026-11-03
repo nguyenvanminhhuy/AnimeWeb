@@ -1,5 +1,7 @@
 # Role và permission
 
+Cập nhật 2026-11-03: admin:audit:read cấp manage/admin, user không có; route /admin/audit-logs chỉ đọc. Lưu trữ/khôi phục phim cần admin:anime:write, manage không được ghi; không bỏ qua version hoặc constraint. [Chi tiết](../../docs-BE/archive-search-audit.md).
+
 Cập nhật 2026-11-02: [Đổi vai trò tài khoản](../../docs-BE/account-role-management.md) đã có BE/FE. PATCH `/api/v1/admin/users/{id}/role`, body `{role, version}`; admin cần `admin:user:read` và `admin:user:role:write`. Chọn đúng một role user/manage/admin, chặn tự hạ quyền/admin active cuối, thu hồi phiên khi đổi. Manage chỉ đọc.
 
 Áp dụng cho mọi màn hình công khai, cá nhân và quản trị; là nguồn quy định role/permission khi generate FE.

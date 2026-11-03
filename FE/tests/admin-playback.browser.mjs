@@ -104,7 +104,7 @@ export async function verifyAdminPlayback(browser, baseURL) {
     await page.getByLabel('Bật nguồn phát', { exact: true }).check();
     await page.getByRole('button', { name: 'Lưu nguồn phát', exact: true }).click();
     await page.getByRole('alert').filter({ hasText: 'Xác nhận thay đổi trạng thái' }).waitFor();
-    await page.getByLabel('Xác nhận bật nguồn trong phiên mẫu.', { exact: true }).check();
+    await page.getByLabel('Xác nhận bật nguồn phát.', { exact: true }).check();
     await save('nguồn phát');
     await page.getByRole('link', { name: 'Phụ đề của Nguồn chính', exact: true }).click();
     await page.getByRole('button', { name: 'Thêm phụ đề', exact: true }).click();

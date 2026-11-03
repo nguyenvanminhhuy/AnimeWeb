@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
@@ -13,6 +13,7 @@ import { paths } from '@/config/paths';
 import type { WatchDetail } from '@/types/player';
 
 export function WatchPage() {
+  const positions = useRef(new Map<string, number>());
   const [theater, setTheater] = useState(false);
   const [autoNext, setAutoNext] = useState(false);
   const { data, loading, error, retry } = useWatchEpisode();
@@ -34,6 +35,7 @@ export function WatchPage() {
     );
   return (
     <WatchContent
+      positions={positions.current}
       detail={data}
       refreshPlayback={retry}
       theater={theater}
@@ -45,6 +47,7 @@ export function WatchPage() {
 }
 
 function WatchContent({
+  positions,
   detail,
   theater,
   autoNext,
@@ -52,6 +55,7 @@ function WatchContent({
   toggleAutoNext,
   refreshPlayback,
 }: {
+  positions: Map<string, number>;
   detail: WatchDetail;
   theater: boolean;
   autoNext: boolean;
@@ -64,6 +68,7 @@ function WatchContent({
   const location = useLocation();
   const [params, setParams] = useSearchParams();
   const [sourceId, setSourceId] = useState('');
+  const positionKey = `${user ?? 'guest'}:${detail.episode.id}`;
   const source = detail.sources.find((entry) => entry.id === sourceId) ?? detail.sources[0];
   const currentSeason = detail.anime.seasons.find((entry) => entry.id === detail.episode.seasonId);
   const selectedSeason =
@@ -133,6 +138,8 @@ function WatchContent({
             source={source}
             onEnded={onEnded}
             onRefresh={refreshPlayback}
+            getResumePosition={() => positions.get(positionKey)}
+            onPositionSnapshot={(seconds) => positions.set(positionKey, seconds)}
           />
           <div className="tw:flex tw:flex-wrap tw:gap-3 tw:items-center tw:justify-between tw:py-4">
             <nav aria-label="Chuyển tập" className="tw:flex tw:gap-2">

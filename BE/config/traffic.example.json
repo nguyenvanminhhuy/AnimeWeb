@@ -1,0 +1,28 @@
+{
+  "Proxy": {
+    "KnownProxies": ["127.0.0.1", "::1"],
+    "ForwardLimit": 1
+  },
+  "RateLimits": {
+    "PublicRead": 600,
+    "UserRead": 240,
+    "UserWrite": 60,
+    "Progress": 30,
+    "View": 120,
+    "Telemetry": 20,
+    "Auth": 10
+  },
+  "CatalogCache": {
+    "Enabled": true,
+    "Seconds": 10
+  },
+  "ViewSessionCleanup": {
+    "Enabled": true,
+    "RetentionMinutes": 60,
+    "IntervalMinutes": 5,
+    "BatchSize": 1000
+  },
+  "Playback": {
+    "PublicMediaBaseUrl": null
+  }
+}

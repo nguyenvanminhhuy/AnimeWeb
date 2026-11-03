@@ -13,6 +13,7 @@ import { useSession } from '@/stores/session';
 import { paths } from '@/config/paths';
 import type { AdminAnimeRow } from '@/types/admin-anime';
 import { DeleteAnimeDialog } from '@/features/admin-anime/components/delete-anime-dialog';
+import { ArchiveAnimeDialog } from '@/features/admin-anime/components/archive-anime-dialog';
 
 export function AdminAnimePage() {
   const navigate = useNavigate();
@@ -22,6 +23,7 @@ export function AdminAnimePage() {
   const location = useLocation();
   const canWrite = canRead && permissions.includes('admin:anime:write');
   const [selected, setSelected] = useState<AdminAnimeRow | null>(null);
+  const [archiveTarget, setArchiveTarget] = useState<AdminAnimeRow | null>(null);
   const [notice, setNotice] = useState<string>(location.state?.adminAnimeNotice ?? '');
   const focusResults = useRef(false);
   const heading = useRef<HTMLHeadingElement>(null);
@@ -149,6 +151,7 @@ export function AdminAnimePage() {
                   canWrite={canWrite}
                   returnTo={returnTo}
                   onDelete={setSelected}
+                  onArchive={setArchiveTarget}
                 />
                 <Pagination
                   showSinglePage
@@ -185,6 +188,27 @@ export function AdminAnimePage() {
             setSelected(null);
             setNotice('Đã xoá phim.');
             focusResults.current = true;
+            refresh();
+          }}
+        />
+      )}
+      {canWrite && adminPreview && archiveTarget && (
+        <ArchiveAnimeDialog
+          key={`${adminPreview.id}:${archiveTarget.anime.id}`}
+          row={archiveTarget}
+          session={adminPreview}
+          onClose={() => setArchiveTarget(null)}
+          onRefresh={() => {
+            setArchiveTarget(null);
+            refresh();
+          }}
+          onSaved={() => {
+            setNotice(
+              archiveTarget.publicationStatus === 'archived'
+                ? 'Đã khôi phục phim về bản nháp.'
+                : 'Đã lưu trữ phim.',
+            );
+            setArchiveTarget(null);
             refresh();
           }}
         />

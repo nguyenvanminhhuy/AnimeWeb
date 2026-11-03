@@ -1,5 +1,6 @@
 import {
   faArrowDown,
+  faBoxArchive,
   faArrowLeft,
   faArrowRight,
   faArrowUpRightFromSquare,
@@ -22,6 +23,7 @@ import {
 import { faHeart as faHeartOutline } from '@fortawesome/free-regular-svg-icons';
 
 export const iconDefinitions = {
+  archive: faBoxArchive,
   search: faMagnifyingGlass,
   heart: faHeartOutline,
   'heart-filled': faHeart,

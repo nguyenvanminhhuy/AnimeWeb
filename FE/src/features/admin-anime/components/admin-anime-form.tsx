@@ -46,7 +46,7 @@ export function AdminAnimeForm({
       ? {
           ...row.anime,
           version: row.version,
-          publicationStatus: row.publicationStatus,
+          publicationStatus: row.publicationStatus === 'archived' ? 'draft' : row.publicationStatus,
           alternativeTitles: row.alternativeTitles,
         }
       : empty,
@@ -77,6 +77,13 @@ export function AdminAnimeForm({
     errors[name] && (
       <p id={`anime-error-${name}`} className="tw:text-[#edacbc] tw:mt-2 tw:mb-0">
         {errors[name]}
+      </p>
+    );
+  if (row?.publicationStatus === 'archived')
+    return (
+      <p role="status">
+        Phim đã lưu trữ. Khôi phục phim từ danh sách trước khi chỉnh sửa.{' '}
+        <Button as="link" to={returnTo} variant="quiet" label="Về danh sách" />
       </p>
     );
   return (

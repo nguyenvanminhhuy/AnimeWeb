@@ -1,5 +1,11 @@
 # API contract v0.3
 
+Cập nhật [load/progress/operations](docs-BE/load-progress-operations.md): PUT me/progress/{episodeId} trả409 PROGRESS_CONFLICT, FE tạm chặn ghi và cho chọn tiến độ. GET admin/operations cần admin:dashboard:read, trả snapshot runtime + probe DB; POST common/episodes/{episodeId}/playback-reports nhận kind enum, trả204, rate Telemetry riêng. Không nhận URL/message tuỳ ý, không lưu counter vào database. Không migration/schema mới.
+
+Cập nhật vận hành nhiều user: [concurrent-viewers.md](docs-BE/concurrent-viewers.md). 429 thêm Retry-After; hạn mức theo account/IP và nhóm request. Home/options/ranking cache ngắn hạn, rank có độ trễ tối đa TTL. Playback DTO giữ field cũ; URL media local ở Development có thể là path `/media/...` theo FE origin, deployment dùng Playback:PublicMediaBaseUrl; thiếu cấu hình nguồn local ngoài dev trả 503 MEDIA_NOT_CONFIGURED. Không thêm endpoint/schema hoặc cache payload cá nhân.
+
+Cập nhật 2026-11-03: [Lưu trữ/tìm không dấu/nhật ký](docs-BE/archive-search-audit.md) đã triển khai. PATCH `/api/v1/admin/anime/{id}/archive` nhận `{archived, version}`, cần admin:anime:write, trả AdminAnimeDto; khôi phục về draft, không cascade. GET `/api/v1/admin/audit-logs` cần admin:audit:read (manage/admin), q/action/resourceType/page/pageSize → `{data: AuditDto[], meta}`; không API ghi/xoá log. AnimeCardDto thêm available, PublicationStatus thêm archived (input tạo/sửa vẫn chỉ draft/published). Library/history giữ archived, watching chỉ published. Common/admin anime search không dấu, literal wildcard và AND filters. Migration ArchiveSearchAudit bắt buộc; player nâng cấp trên API hiện có.
+
 Cập nhật 2026-11-03: DELETE admin anime trả 409 STALE_VERSION / ANIME_PUBLISHED / ANIME_IN_USE theo [hợp đồng lỗi quản trị](docs-BE/admin-mutation-errors.md). Không thay điều kiện xoá, không thêm cascade. FE phân biệt cần tải lại, về bản nháp hoặc dữ liệu đang được sử dụng.
 
 Cập nhật 2026-11-02: [Avatar tài khoản](docs-BE/account-avatar.md): PUT/DELETE `/api/v1/me/avatar?version=...` theo `profile:avatar:write:own`; GET `/api/v1/common/avatars/{id}/{key}` trả PNG công khai. ProfileDto thêm avatarUrl/version, AdminUserDto thêm avatarUrl. Avatar lưu DB, client chuẩn hoá ảnh, server kiểm tra bytes/kích thước độc lập; không phải API upload file/video chung.

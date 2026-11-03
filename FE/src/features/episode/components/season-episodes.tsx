@@ -31,7 +31,6 @@ export function SeasonEpisodes({ detail }: { detail: AnimeDetail }) {
     >
       <div className="aw-detail-section-heading tw:gap-4.5 tw:flex tw:items-center tw:justify-between tw:mb-4.5 tw:max-mobile:items-start tw:max-mobile:flex-wrap">
         <div>
-          <span className="aw-eyebrow">TIẾP THEO TRÊN HÀNH TRÌNH</span>
           <h2 id="episodes-title">
             Mùa &amp; tập <span>{detail.episodes.length}</span>
           </h2>
@@ -90,7 +89,7 @@ export function SeasonEpisodes({ detail }: { detail: AnimeDetail }) {
                         phút · {saved ? 'Có tiến độ demo' : 'Chưa có video'}
                       </small>
                     </span>
-                    <Icon name="external-link" size="sm" />
+                    <Icon name="arrow-right" size="sm" />
                   </Link>
                 </li>
               );

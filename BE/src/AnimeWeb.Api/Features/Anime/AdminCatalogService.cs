@@ -29,6 +29,10 @@ public sealed class GenreInput : VersionInput
     [Required, StringLength(100)] public string Name { get; set; } = "";
     [Required, StringLength(100), RegularExpression("^[a-z0-9]+(-[a-z0-9]+)*$")] public string Slug { get; set; } = "";
 }
+public sealed class ArchiveAnimeInput : VersionInput
+{
+    [Required] public bool? Archived { get; set; }
+}
 public sealed record AdminAnimeDto(AnimeCardDto Anime, string[] AlternativeTitles, string PublicationStatus,
     string? PublicSlug, int PublishedEpisodes, long Version);
 public sealed record AdminGenreDto(string Id, string Name, string Slug, int AnimeCount, long Version);
@@ -40,9 +44,9 @@ public sealed class AdminCatalogService(AnimeWebDbContext db)
     public async Task<AdminAnimeResult> ListAsync(AdminQuery filters, CancellationToken ct)
     {
         var query = db.Anime.AsNoTracking();
-        var search = filters.Q?.Trim().ToLower();
-        if (!string.IsNullOrEmpty(search)) query = query.Where(x => x.Title.ToLower().Contains(search)
-            || x.Subtitle.ToLower().Contains(search) || x.AlternativeTitles.Any(t => t.ToLower().Contains(search)));
+        var search = CatalogSearch.Normalize(filters.Q);
+        if (!string.IsNullOrEmpty(search)) query = query.Where(x => CatalogSearch.Fold(x.Title).Contains(search)
+            || CatalogSearch.Fold(x.Subtitle).Contains(search) || x.AlternativeTitles.Any(t => CatalogSearch.Fold(t).Contains(search)));
         if (filters.Genre is not null) query = query.Where(x => x.Genres.Any(g => g.Slug == filters.Genre));
         if (filters.Status is not null)
         {
@@ -85,8 +89,8 @@ public sealed class AdminCatalogService(AnimeWebDbContext db)
     public Task<PagedResponse<AnimeOptionDto>> OptionsAsync(AdminQuery filters, CancellationToken ct)
     {
         var query = db.Anime.AsNoTracking();
-        var search = filters.Q?.Trim().ToLower();
-        if (!string.IsNullOrEmpty(search)) query = query.Where(x => x.Title.ToLower().Contains(search));
+        var search = CatalogSearch.Normalize(filters.Q);
+        if (!string.IsNullOrEmpty(search)) query = query.Where(x => CatalogSearch.Fold(x.Title).Contains(search));
         return query.OrderBy(x => x.Title).ThenBy(x => x.Id)
             .Select(x => new AnimeOptionDto(x.Id, x.Title, x.Status, x.PublicationStatus, x.PublicationStatus == "published" ? x.Slug : null))
             .PageAsync(filters, ct);
@@ -106,6 +110,9 @@ public sealed class AdminCatalogService(AnimeWebDbContext db)
             await db.Database.ExecuteSqlInterpolatedAsync($"SELECT pg_advisory_xact_lock(hashtextextended({id}, 0))", ct);
             anime = await db.Anime.Include(x => x.Genres).SingleOrDefaultAsync(x => x.Id == id, ct) ?? throw ApiFailure.NotFound();
             FeatureRules.Version(anime, input.Version);
+            if (anime.PublicationStatus == "archived")
+                throw new ApiFailure(409, "ANIME_ARCHIVED", "Restore the anime to draft before editing it.");
+            db.Entry(anime).Property(x => x.Version).IsModified = true;
             if (input.Format == "movie" && (await db.Seasons.CountAsync(x => x.AnimeId == id, ct) > 1
                 || await db.Episodes.CountAsync(x => x.Season.AnimeId == id, ct) > 1)) throw ApiFailure.Conflict();
         }
@@ -130,6 +137,20 @@ public sealed class AdminCatalogService(AnimeWebDbContext db)
         await transaction.CommitAsync(ct);
         return await GetAsync(anime.Id, ct);
     }
+    public async Task<AdminAnimeDto> ArchiveAsync(string id, ArchiveAnimeInput input, CancellationToken ct)
+    {
+        var archived = input.Archived ?? throw ApiFailure.Invalid("archived");
+        await using var transaction = await db.Database.BeginTransactionAsync(ct);
+        await db.Database.ExecuteSqlInterpolatedAsync($"SELECT pg_advisory_xact_lock(hashtextextended({id}, 0))", ct);
+        var anime = await db.Anime.SingleOrDefaultAsync(x => x.Id == id, ct) ?? throw ApiFailure.NotFound();
+        FeatureRules.Version(anime, input.Version);
+        if (!archived && anime.PublicationStatus != "archived")
+            throw new ApiFailure(409, "ANIME_NOT_ARCHIVED", "Only archived anime can be restored.");
+        anime.PublicationStatus = archived ? "archived" : "draft";
+        await db.SaveChangesAsync(ct);
+        await transaction.CommitAsync(ct);
+        return await GetAsync(id, ct);
+    }
     public async Task DeleteAsync(string id, long version, CancellationToken ct)
     {
         await using var transaction = await db.Database.BeginTransactionAsync(ct);
@@ -139,6 +160,8 @@ public sealed class AdminCatalogService(AnimeWebDbContext db)
             throw new ApiFailure(409, "STALE_VERSION", "The anime changed. Reload before confirming deletion.");
         if (anime.PublicationStatus == "published")
             throw new ApiFailure(409, "ANIME_PUBLISHED", "Unpublish the anime before deleting it.");
+        if (anime.PublicationStatus == "archived")
+            throw new ApiFailure(409, "ANIME_ARCHIVED", "Restore the anime before deleting it.");
         if (await db.Seasons.AnyAsync(x => x.AnimeId == id, ct)
             || await db.LibraryEntries.AnyAsync(x => x.AnimeId == id, ct)
             || await db.Comments.AnyAsync(x => x.AnimeId == id, ct)

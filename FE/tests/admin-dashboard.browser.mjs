@@ -60,7 +60,11 @@ export async function verifyAdminDashboard(browser, baseURL) {
     assert.equal(await page.getByRole('navigation', { name: 'Điều hướng chính' }).count(), 0);
     assert.equal(
       await page.getByRole('navigation', { name: 'Điều hướng quản trị' }).locator('a').count(),
-      7,
+      8,
+    );
+    assert.equal(
+      await page.getByRole('link', { name: 'Giám sát vận hành', exact: true }).count(),
+      1,
     );
     assert.equal(await page.evaluate(() => localStorage.getItem('aw:session:v1')), null);
     await page.evaluate(() => {
@@ -83,7 +87,9 @@ export async function verifyAdminDashboard(browser, baseURL) {
         await page.getByRole('navigation', { name: 'Điều hướng quản trị' }).waitFor();
         assert.equal(
           await page
-            .getByRole('link', { name: 'Dashboard', exact: true })
+            .getByRole('navigation', { name: 'Điều hướng quản trị' })
+            .locator('a')
+            .first()
             .evaluate((link) => document.activeElement === link),
           true,
         );

@@ -94,7 +94,7 @@ export function UsersFilters({ query, mock }: { query: AdminUsersQuery; mock: st
       <Input type="hidden" name="page" value="1" />
       <Input type="hidden" name="pageSize" value={query.pageSize} />
       {mock && <Input type="hidden" name="mock" value={mock} />}
-      <div className="tw:grid tw:grid-cols-2 tw:gap-4 tw:max-phone:grid-cols-1">
+      <div className="tw:grid tw:grid-cols-2 tw:gap-4 tw:max-mobile:grid-cols-2">
         {fields.map((field) => (
           <div key={field.name} className="tw:min-w-0">
             <label htmlFor={`users-${field.name}`} className="tw:block tw:mb-2">
