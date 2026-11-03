@@ -1,10 +1,10 @@
 using System.Text.Json.Serialization;
+using System.Threading.RateLimiting;
 using AnimeWeb.Api.Features.Anime;
 using AnimeWeb.Api.Features.Auth;
 using AnimeWeb.Api.Features.Comments;
 using AnimeWeb.Api.Features.Episodes;
 using AnimeWeb.Api.Features.Library;
-using AnimeWeb.Api.Features.Operations;
 using AnimeWeb.Api.Features.Playback;
 using AnimeWeb.Api.Infrastructure.Persistence;
 using AnimeWeb.Api.Infrastructure.Persistence.Seeding;
@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -30,15 +31,11 @@ builder.Services.AddOptions<CorsOptions>()
         "Cors:AllowedOrigins must contain HTTP(S) origins without paths or wildcards.")
     .ValidateOnStart();
 builder.Services.AddDbContext<AnimeWebDbContext>((services, options) =>
-    options.UseNpgsql(services.GetRequiredService<IOptions<DatabaseOptions>>().Value.AnimeWeb)
-        .AddInterceptors(services.GetRequiredService<DatabaseDiagnosticsInterceptor>()));
-builder.Services.AddSingleton<RuntimeDiagnostics>();
-builder.Services.AddSingleton<DatabaseDiagnosticsInterceptor>();
+    options.UseNpgsql(services.GetRequiredService<IOptions<DatabaseOptions>>().Value.AnimeWeb));
 builder.Services.AddControllers(options =>
     {
         options.ModelMetadataDetailsProviders.Add(new SystemTextJsonValidationMetadataProvider());
         options.Conventions.Add(new ApiContractConvention());
-        options.Filters.AddService<CatalogCacheInvalidationFilter>();
     })
     .AddJsonOptions(options =>
     {
@@ -60,22 +57,10 @@ builder.Services.AddControllers(options =>
         };
     });
 builder.Services.AddCors();
-builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<AnimeService>();
 builder.Services.AddScoped<EpisodeService>();
 builder.Services.AddOpenApi();
 builder.Services.AddSingleton(TimeProvider.System);
-builder.Services.AddSingleton<PublicCatalogCache>();
-builder.Services.AddScoped<CatalogCacheInvalidationFilter>();
-builder.Services.AddOptions<PlaybackOptions>().BindConfiguration("Playback")
-    .Validate(options => PlaybackOptions.IsValid(options.PublicMediaBaseUrl, builder.Environment.IsDevelopment()),
-        "Playback:PublicMediaBaseUrl must be an HTTPS base URL without credentials, query or fragment (HTTP is allowed in Development).")
-    .ValidateOnStart();
-builder.Services.AddOptions<ViewSessionCleanupOptions>().BindConfiguration("ViewSessionCleanup")
-    .Validate(options => options.RetentionMinutes is >= 15 and <= 10080 && options.IntervalMinutes is >= 1 and <= 60
-        && options.BatchSize is >= 1 and <= 10000, "Invalid playback session cleanup bounds.").ValidateOnStart();
-builder.Services.AddScoped<ViewSessionCleanup>();
-builder.Services.AddHostedService<ViewSessionCleanupWorker>();
 builder.Services.AddScoped<IPasswordHasher<Account>, PasswordHasher<Account>>();
 builder.Services.AddScoped<AccountService>();
 builder.Services.AddScoped<AvatarService>();
@@ -98,7 +83,24 @@ builder.Services.AddAuthorization(options =>
         options.AddPolicy(permission, policy => policy.RequireAuthenticatedUser()
             .RequireClaim("accountStatus", "active").RequireClaim("permission", permission));
 });
-builder.Services.AddTrafficControls(builder.Configuration);
+builder.Services.AddRateLimiter(options =>
+{
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+        RateLimitPartition.GetFixedWindowLimiter(context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            _ => new FixedWindowRateLimiterOptions { PermitLimit = builder.Configuration.GetValue("RateLimits:Global", 120), Window = TimeSpan.FromMinutes(1), QueueLimit = 0 }));
+    options.AddPolicy("auth", context => RateLimitPartition.GetFixedWindowLimiter(
+        context.Connection.RemoteIpAddress?.ToString() ?? "unknown", _ => new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = builder.Configuration.GetValue("RateLimits:Auth", 10),
+            Window = TimeSpan.FromMinutes(1),
+            QueueLimit = 0
+        }));
+    options.OnRejected = async (context, ct) =>
+    {
+        context.HttpContext.Response.StatusCode = 429;
+        await context.HttpContext.Response.WriteAsJsonAsync(ApiErrors.Create(context.HttpContext, 429), ct);
+    };
+});
 
 var app = builder.Build();
 
@@ -146,8 +148,6 @@ if (args.Contains("--seed-demo"))
     return;
 }
 
-app.UseForwardedHeaders();
-app.UseMiddleware<RequestDiagnosticsMiddleware>();
 app.UseMiddleware<ApiExceptionMiddleware>();
 app.UseStatusCodePages(async context =>
 {
@@ -166,8 +166,8 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
-app.UseAuthentication();
 app.UseRateLimiter();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();

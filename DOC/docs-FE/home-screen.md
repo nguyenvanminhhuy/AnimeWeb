@@ -1,7 +1,5 @@
 # Trang chủ
 
-Bố cục hiện tại (2026-11-03): Featured → Tiếp tục xem → Mới cập nhật → Top 10 → Đề xuất; ranking mobile cuộn ngang, đủ 10 item. Xem [UI/UX polish](uiux-polish.md).
-
 Đã triển khai ngày 2026-10-24, dùng mặc định của prompt screen-generation: tiếng Việt, nền xanh đen, màu nhấn tím và tên trung tính Anime Web. Đây là lựa chọn triển khai tạm thời, chưa phải quyết định thương hiệu đã xác nhận.
 
 ## Chạy và mở
@@ -22,7 +20,7 @@ Trong phiên triển khai đã xác nhận server `http://127.0.0.1:4174/` bằn
 
 ## Top phim được xem nhiều nhất — 2026-10-31
 
-Top 10 hiện đặt sau Mới cập nhật (bố cục cập nhật 2026-11-03), dùng [TopViewedAnime chung](rules/common/top-viewed-anime.md) cùng Dashboard. HomeCatalog.topViewed do repository trả từ cùng nguồn thống kê mẫu, thứ tự lượt xem giảm dần rồi ID, loại phim upcoming; bộ lọc thể loại của phần đề xuất không tác động Top 10. Có hạng, poster, tên phim, tổng lượt xem và link chi tiết. Hiện rõ “Số liệu mẫu”; không có analytics/API thật và không tự cộng lượt xem khi nhấn link. Component hai cột, mobile một cột, giữ font 14px.
+Thêm Top 10 sau khu Tiếp tục xem và trước Mới cập nhật, dùng [TopViewedAnime chung](rules/common/top-viewed-anime.md) cùng Dashboard. HomeCatalog.topViewed do repository trả từ cùng nguồn thống kê mẫu, thứ tự lượt xem giảm dần rồi ID, loại phim upcoming; bộ lọc thể loại của phần đề xuất không tác động Top 10. Có hạng, poster, tên phim, tổng lượt xem và link chi tiết. Hiện rõ “Số liệu mẫu”; không có analytics/API thật và không tự cộng lượt xem khi nhấn link. Component hai cột, mobile một cột, giữ font 14px.
 
 ## Source
 

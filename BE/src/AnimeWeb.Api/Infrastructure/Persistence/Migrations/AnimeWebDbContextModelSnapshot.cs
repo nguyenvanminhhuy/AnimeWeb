@@ -98,7 +98,7 @@ namespace AnimeWeb.Api.Infrastructure.Persistence.Migrations
                         {
                             t.HasCheckConstraint("CK_Anime_Format", "\"Format\" IN ('tv', 'movie', 'ova', 'ona', 'special')");
 
-                            t.HasCheckConstraint("CK_Anime_Publication", "\"PublicationStatus\" IN ('draft', 'published', 'archived')");
+                            t.HasCheckConstraint("CK_Anime_Publication", "\"PublicationStatus\" IN ('draft', 'published')");
 
                             t.HasCheckConstraint("CK_Anime_ReleaseYear", "\"ReleaseYear\" BETWEEN 1 AND 9999");
 
@@ -168,57 +168,6 @@ namespace AnimeWeb.Api.Infrastructure.Persistence.Migrations
 
                             t.HasCheckConstraint("CK_Genres_Slug", "\"Slug\" ~ '^[a-z0-9]+(-[a-z0-9]+)*$'");
                         });
-                });
-
-            modelBuilder.Entity("AnimeWeb.Api.Features.Audit.AuditEntry", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("Action")
-                        .IsRequired()
-                        .HasMaxLength(2048)
-                        .HasColumnType("character varying(2048)");
-
-                    b.Property<string>("ActorId")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("ActorName")
-                        .IsRequired()
-                        .HasMaxLength(2048)
-                        .HasColumnType("character varying(2048)");
-
-                    b.PrimitiveCollection<string[]>("ChangedFields")
-                        .IsRequired()
-                        .HasColumnType("text[]");
-
-                    b.Property<DateTimeOffset>("OccurredAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("ResourceId")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("ResourceType")
-                        .IsRequired()
-                        .HasMaxLength(2048)
-                        .HasColumnType("character varying(2048)");
-
-                    b.Property<string>("TargetLabel")
-                        .IsRequired()
-                        .HasMaxLength(2048)
-                        .HasColumnType("character varying(2048)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OccurredAt", "Id")
-                        .IsDescending();
-
-                    b.ToTable("AuditEntries");
                 });
 
             modelBuilder.Entity("AnimeWeb.Api.Features.Auth.AccessPermission", b =>
@@ -303,10 +252,6 @@ namespace AnimeWeb.Api.Infrastructure.Persistence.Migrations
                         new
                         {
                             Code = "admin:user:read"
-                        },
-                        new
-                        {
-                            Code = "admin:audit:read"
                         },
                         new
                         {
@@ -621,11 +566,6 @@ namespace AnimeWeb.Api.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            RoleCode = "manage",
-                            PermissionCode = "admin:audit:read"
-                        },
-                        new
-                        {
                             RoleCode = "admin",
                             PermissionCode = "catalog:read"
                         },
@@ -713,11 +653,6 @@ namespace AnimeWeb.Api.Infrastructure.Persistence.Migrations
                         {
                             RoleCode = "admin",
                             PermissionCode = "admin:user:read"
-                        },
-                        new
-                        {
-                            RoleCode = "admin",
-                            PermissionCode = "admin:audit:read"
                         },
                         new
                         {

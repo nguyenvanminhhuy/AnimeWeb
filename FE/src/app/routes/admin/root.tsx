@@ -26,27 +26,23 @@ export function AdminRoot() {
   const isEpisodes = useMatch({ path: paths.adminEpisodes + '/*', end: false });
   const isPlayback = useMatch(routePatterns.adminPlayback);
   const isComments = useMatch(routePatterns.adminComments);
-  const isAudit = useMatch(routePatterns.adminAudit);
-  const isOperations = useMatch(routePatterns.adminOperations);
   const returnTo = location.pathname + location.search + location.hash;
   const canRead =
     adminPreview &&
     permissions.includes(
-      isAudit
-        ? 'admin:audit:read'
-        : isComments
-          ? 'admin:comment:read'
-          : isPlayback
-            ? 'admin:playback:read'
-            : isEpisodes
-              ? 'admin:episode:read'
-              : isUsers
-                ? 'admin:user:read'
-                : isGenres
-                  ? 'admin:genre:read'
-                  : isAnime
-                    ? 'admin:anime:read'
-                    : 'admin:dashboard:read',
+      isComments
+        ? 'admin:comment:read'
+        : isPlayback
+          ? 'admin:playback:read'
+          : isEpisodes
+            ? 'admin:episode:read'
+            : isUsers
+              ? 'admin:user:read'
+              : isGenres
+                ? 'admin:genre:read'
+                : isAnime
+                  ? 'admin:anime:read'
+                  : 'admin:dashboard:read',
     );
   if (initializing) return <p role="status">Đang khôi phục phiên…</p>;
   if (!canRead)
@@ -95,29 +91,25 @@ export function AdminRoot() {
       avatarUrl={avatarUrl}
       displayName={displayName}
       pageLabel={
-        isOperations
-          ? 'Giám sát vận hành'
-          : isAudit
-            ? 'Lịch sử quản trị'
-            : isComments
-              ? 'Quản lý bình luận'
-              : isPlayback
-                ? 'Nguồn phát và phụ đề'
-                : isEpisodes
-                  ? 'Mùa/phần và tập phim'
-                  : isDashboard
-                    ? 'Tổng quan'
-                    : isNew
-                      ? 'Thêm phim'
-                      : isEdit
-                        ? 'Sửa phim'
-                        : isAnime
-                          ? 'Quản lý anime'
-                          : isGenres
-                            ? 'Quản lý thể loại'
-                            : isUsers
-                              ? 'Quản lý người dùng'
-                              : 'Không tìm thấy'
+        isComments
+          ? 'Quản lý bình luận'
+          : isPlayback
+            ? 'Nguồn phát và phụ đề'
+            : isEpisodes
+              ? 'Mùa/phần và tập phim'
+              : isDashboard
+                ? 'Tổng quan'
+                : isNew
+                  ? 'Thêm phim'
+                  : isEdit
+                    ? 'Sửa phim'
+                    : isAnime
+                      ? 'Quản lý anime'
+                      : isGenres
+                        ? 'Quản lý thể loại'
+                        : isUsers
+                          ? 'Quản lý người dùng'
+                          : 'Không tìm thấy'
       }
       previewWritable={
         permissions.includes('admin:anime:write') ||
@@ -127,26 +119,6 @@ export function AdminRoot() {
         permissions.includes('admin:comment:moderate')
       }
       menu={[
-        ...(permissions.includes('admin:dashboard:read')
-          ? [
-              {
-                label: 'Giám sát vận hành',
-                to: paths.adminOperations,
-                icon: 'history' as const,
-                end: true,
-              },
-            ]
-          : []),
-        ...(permissions.includes('admin:audit:read')
-          ? [
-              {
-                label: 'Lịch sử quản trị',
-                to: paths.adminAudit,
-                icon: 'history' as const,
-                end: true,
-              },
-            ]
-          : []),
         ...(permissions.includes('admin:dashboard:read')
           ? [{ label: 'Dashboard', to: paths.admin, icon: 'history' as const, end: true }]
           : []),

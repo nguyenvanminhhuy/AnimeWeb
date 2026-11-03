@@ -59,13 +59,26 @@ export function HomePage() {
   return (
     <div className="aw-shell tw:mx-auto">
       <FeaturedBanner items={data.featured} />
+      <div className="aw-home-intro tw:py-5.75 tw:gap-3.75 tw:flex tw:justify-between tw:text-body">
+        <span>
+          <i className="aw-status-dot tw:inline-block tw:w-1.25 tw:h-1.25 tw:rounded-[50%]" /> GÓC
+          NHỎ CHO TÍN ĐỒ ANIME
+        </span>
+        <span>
+          Nội dung mẫu, cảm hứng không giới hạn <span aria-hidden="true">✧</span>
+        </span>
+      </div>
       <ContinueWatching />
+      <div className="tw:mt-8">
+        <TopViewedAnime items={data.topViewed} />
+      </div>
       <section
         className="aw-section tw:mt-10.5 tw:max-phone:mt-7.5"
         aria-labelledby="updated-title"
       >
         <div className="aw-section-heading tw:gap-4.5 tw:flex tw:items-center tw:justify-between tw:mb-5.5">
           <div>
+            <span className="aw-eyebrow">LUÔN CÓ ĐIỀU MỚI ĐỂ XEM</span>
             <h2 id="updated-title">
               Mới cập nhật<span className="aw-heading-dot">.</span>
             </h2>
@@ -74,7 +87,7 @@ export function HomePage() {
             className="aw-text-link tw:text-body tw:whitespace-nowrap"
             to={`${paths.explore}?sort=newest&page=1`}
           >
-            Xem tất cả <Icon name="arrow-right" size="sm" />
+            Xem tất cả <Icon name="external-link" size="sm" />
           </Link>
         </div>
         <div className="aw-anime-grid tw:gap-5 tw:grid tw:grid-cols-6 tw:max-tablet:grid-cols-3 tw:max-phone:grid-cols-2 tw:max-phone:gap-x-3.5">
@@ -83,15 +96,13 @@ export function HomePage() {
           ))}
         </div>
       </section>
-      <div className="tw:mt-8">
-        <TopViewedAnime items={data.topViewed} />
-      </div>
       <section
         className="aw-section aw-recommendations tw:mt-10.5 tw:pt-8 tw:max-phone:mt-7.5"
         aria-labelledby="recommended-title"
       >
         <div className="aw-section-heading tw:gap-4.5 tw:flex tw:items-center tw:justify-between tw:mb-5.5">
           <div>
+            <span className="aw-eyebrow">CHỌN MỘT THẾ GIỚI ĐỂ ĐẮM CHÌM</span>
             <h2 id="recommended-title">
               Có thể bạn sẽ thích<span className="aw-heading-dot">.</span>
             </h2>
@@ -130,6 +141,7 @@ export function HomePage() {
       </section>
       <aside className="aw-discover-strip tw:p-7.5 tw:gap-5 tw:rounded-[12px] tw:flex tw:items-center tw:justify-between tw:mt-11.25 tw:max-phone:p-6 tw:max-phone:items-start tw:max-phone:flex-col">
         <div>
+          <span className="aw-eyebrow">CÂU CHUYỆN TIẾP THEO ĐANG CHỜ</span>
           <h2>Hôm nay, bạn muốn đi đâu?</h2>
           <p>Tìm một thế giới phù hợp với tâm trạng của bạn.</p>
         </div>
@@ -138,7 +150,7 @@ export function HomePage() {
           variant="glass"
           to={paths.explore}
           label="Khám phá anime"
-          endIcon={<Icon name="arrow-right" size="sm" />}
+          endIcon={<Icon name="external-link" size="sm" />}
         />
       </aside>
     </div>

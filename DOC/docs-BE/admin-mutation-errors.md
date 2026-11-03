@@ -1,7 +1,5 @@
 # Lỗi quản trị và xoá anime
 
-Thêm 2026-11-03: ANIME_ARCHIVED (409) yêu cầu khôi phục phim về draft trước sửa/xoá; ANIME_NOT_ARCHIVED (409) từ chối khôi phục phim chưa lưu trữ. Dùng [lưu trữ](archive-search-audit.md) khi phim còn dữ liệu liên quan, không xoá dây chuyền. Các lỗi version/FK/xoá bên dưới giữ nguyên.
-
 Cập nhật 2026-11-03: giữ nguyên ràng buộc xoá, bổ sung lỗi rõ nghĩa và hướng xử lý FE. Không thêm xoá dây chuyền, xoá mềm hoặc tự chuyển trạng thái để vượt điều kiện.
 
 ## DELETE /api/v1/admin/anime/{id}?version=...

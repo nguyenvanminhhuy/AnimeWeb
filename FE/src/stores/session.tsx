@@ -14,8 +14,6 @@ import { personalRepository, authRepository } from '@/lib/api/repositories';
 import type { AdminPreviewSession } from '@/types/admin';
 import { adminPreviewSession } from '@/testing/mocks/fixtures/admin-session';
 interface Session {
-  progressConflicts: { episodeId: string; remote?: Progress }[];
-  resolveProgressConflict: (episodeId: string) => Promise<Progress | undefined>;
   user: DemoUser | null;
   displayName: string;
   email: string;
@@ -48,14 +46,6 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const user = profile?.id ?? null;
   const [account, setAccount] = useState(() => (user ? demoAccount.read(user) : null));
   const [notice, setNotice] = useState('');
-  const blockedProgress = useRef(new Set<string>());
-  const [progressConflicts, setProgressConflicts] = useState<
-    { owner: string; episodeId: string; remote?: Progress }[]
-  >([]);
-  useEffect(() => {
-    blockedProgress.current.clear();
-    setProgressConflicts([]);
-  }, [user]);
   const [initializing, setInitializing] = useState(true);
   const authRevision = useRef(0);
   const personalRevision = useRef(0);
@@ -144,9 +134,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       : null);
   function mutatePersonal(
     owner: string,
-    task: (
-      snapshot: NonNullable<typeof account>,
-    ) => Promise<PersonalSnapshot | NonNullable<typeof account>>,
+    task: (snapshot: NonNullable<typeof account>) => Promise<PersonalSnapshot>,
   ) {
     const generation = authRevision.current;
     personalRevision.current++;
@@ -170,40 +158,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     };
     // Read versions when each queued write starts, including pause/ended/unmount in the same tick.
     mutationQueue.current = mutationQueue.current.then(run, run);
-    return mutationQueue.current;
   }
   const session: Session = {
-    progressConflicts: progressConflicts.filter((conflict) => conflict.owner === user),
-    async resolveProgressConflict(episodeId) {
-      const owner = current.current.user;
-      if (!owner) throw new Error('Vui lòng đăng nhập lại.');
-      const key = `${owner}:${episodeId}`,
-        revision = authRevision.current;
-      let remote: Progress | undefined,
-        failed = false;
-      await mutatePersonal(owner, async () => {
-        try {
-          const next = await personalRepository.snapshot(
-            { id: owner, permissions: session.permissions },
-            new AbortController().signal,
-          );
-          if (revision !== authRevision.current || current.current.user !== owner)
-            throw new DOMException('Phiên đã thay đổi.', 'AbortError');
-          remote = next.progress.find((row) => row.episodeId === episodeId);
-          blockedProgress.current.delete(key);
-          setProgressConflicts((rows) =>
-            rows.filter((row) => row.owner !== owner || row.episodeId !== episodeId),
-          );
-          return next;
-        } catch (error) {
-          failed = true;
-          throw error;
-        }
-      });
-      if (failed || revision !== authRevision.current)
-        throw new Error('Chưa tải được tiến độ mới. Hãy thử lại.');
-      return remote;
-    },
     user,
     initializing,
     invalidateSession,
@@ -394,42 +350,13 @@ export function SessionProvider({ children }: { children: ReactNode }) {
           (!Number.isFinite(entry.durationSeconds) || entry.durationSeconds <= 0))
       )
         return;
-      mutatePersonal(owner, async (latest) => {
-        const key = `${owner}:${entry.episodeId}`,
-          revision = authRevision.current;
-        if (blockedProgress.current.has(key)) return latest;
+      mutatePersonal(owner, (latest) => {
         const existing = latest.progress.find((row) => row.episodeId === entry.episodeId);
-        try {
-          return await personalRepository.saveProgress(
-            { id: owner, permissions: session.permissions },
-            { ...entry, version: existing?.version ?? (existing ? 1 : 0) },
-            new AbortController().signal,
-          );
-        } catch (error) {
-          if (!(error instanceof ApiError) || error.status !== 409) throw error;
-          if (revision !== authRevision.current || current.current.user !== owner) return latest;
-          blockedProgress.current.add(key);
-          setProgressConflicts((rows) => [
-            ...rows.filter((row) => row.owner !== owner || row.episodeId !== entry.episodeId),
-            { owner, episodeId: entry.episodeId },
-          ]);
-          try {
-            const next = await personalRepository.snapshot(
-              { id: owner, permissions: session.permissions },
-              new AbortController().signal,
-            );
-            if (revision !== authRevision.current || current.current.user !== owner) return latest;
-            const remote = next.progress.find((row) => row.episodeId === entry.episodeId);
-            setProgressConflicts((rows) =>
-              rows.map((row) =>
-                row.owner === owner && row.episodeId === entry.episodeId ? { ...row, remote } : row,
-              ),
-            );
-            return next;
-          } catch {
-            return latest;
-          }
-        }
+        return personalRepository.saveProgress(
+          { id: owner, permissions: session.permissions },
+          { ...entry, version: existing?.version ?? (existing ? 1 : 0) },
+          new AbortController().signal,
+        );
       });
     },
   };

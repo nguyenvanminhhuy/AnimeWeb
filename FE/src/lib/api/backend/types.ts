@@ -20,7 +20,7 @@ export interface VersionInput {
 }
 export type Role = 'user' | 'manage' | 'admin';
 export type AnimeFormat = 'tv' | 'movie' | 'ova' | 'ona' | 'special';
-export type PublicationStatus = 'draft' | 'published' | 'archived';
+export type PublicationStatus = 'draft' | 'published';
 export interface GenreDto {
   id: string;
   slug: string;
@@ -37,7 +37,6 @@ export interface AnimeSummaryDto {
   genres: GenreDto[];
 }
 export interface AnimeCardDto extends AnimeSummaryDto {
-  available?: boolean;
   subtitle: string;
   synopsis: string;
   bannerUrl: string | null;
@@ -207,7 +206,7 @@ export interface AdminAnimeInput extends VersionInput {
   releaseYear: number;
   status: AnimeSummaryDto['status'];
   format: AnimeFormat;
-  publicationStatus: Exclude<PublicationStatus, 'archived'>;
+  publicationStatus: PublicationStatus;
   genreIds: string[];
   posterUrl: string;
   bannerUrl: string | null;

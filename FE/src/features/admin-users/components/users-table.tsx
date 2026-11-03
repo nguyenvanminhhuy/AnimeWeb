@@ -34,7 +34,7 @@ export function UsersTable({
       tabIndex={0}
       className="aw-surface tw:rounded-xl tw:border tw:border-[var(--aw-border)] tw:overflow-x-auto"
     >
-      <table className="aw-admin-records tw:w-full tw:min-w-215 tw:mb-0 tw:text-left tw:align-middle">
+      <table className="tw:w-full tw:min-w-215 tw:mb-0 tw:text-left tw:align-middle">
         <caption className="visually-hidden">Danh sách tài khoản và trạng thái truy cập</caption>
         <thead className="tw:bg-[#ffffff04] tw:text-[var(--aw-muted)]">
           <tr>
@@ -62,73 +62,65 @@ export function UsersTable({
                   </div>
                 </div>
               </th>
-              <td data-label="Trạng thái" className="tw:p-4">
-                <div className="aw-admin-record-value">
-                  <span
-                    className={`tw:inline-block tw:rounded-full tw:px-3 tw:py-1 tw:whitespace-nowrap ${userStatusStyles[user.status]}`}
-                  >
-                    {userStatusLabels[user.status]}
-                  </span>
-                </div>
+              <td className="tw:p-4">
+                <span
+                  className={`tw:inline-block tw:rounded-full tw:px-3 tw:py-1 tw:whitespace-nowrap ${userStatusStyles[user.status]}`}
+                >
+                  {userStatusLabels[user.status]}
+                </span>
               </td>
-              <td data-label="Vai trò" className="tw:p-4 tw:whitespace-nowrap">
-                <div className="aw-admin-record-value">
-                  {user.roles.map((role) => userRoleLabels[role]).join(', ')}
-                </div>
+              <td className="tw:p-4 tw:whitespace-nowrap">
+                {user.roles.map((role) => userRoleLabels[role]).join(', ')}
               </td>
-              <td data-label="Ngày tạo" className="tw:p-4 tw:whitespace-nowrap">
-                <div className="aw-admin-record-value">
-                  <time dateTime={user.createdAt}>{userCreatedDate(user.createdAt)}</time>
-                </div>
+              <td className="tw:p-4 tw:whitespace-nowrap">
+                <time dateTime={user.createdAt}>{userCreatedDate(user.createdAt)}</time>
               </td>
-              <td data-label="Thao tác" className="tw:p-4">
-                <div className="aw-admin-record-value">
-                  <div className="tw:inline-flex tw:flex-nowrap tw:items-center tw:gap-2">
+              <td className="tw:p-4">
+                <div className="tw:inline-flex tw:flex-nowrap tw:items-center tw:gap-2">
+                  <Button
+                    id={`user-profile-${user.id}`}
+                    as="link"
+                    variant="quiet"
+                    size="sm"
+                    startIcon={<Icon name="eye" size="sm" />}
+                    aria-label={`Xem hồ sơ ${user.displayName}`}
+                    title={`Xem hồ sơ ${user.displayName}`}
+                    aria-current={selectedId === user.id ? 'true' : undefined}
+                    to={usersHref(query, mock, user.id)}
+                    preventScrollReset
+                  />
+                  {onChangeRole && (
                     <Button
-                      id={`user-profile-${user.id}`}
-                      as="link"
                       variant="quiet"
                       size="sm"
-                      startIcon={<Icon name="eye" size="sm" />}
-                      aria-label={`Xem hồ sơ ${user.displayName}`}
-                      title={`Xem hồ sơ ${user.displayName}`}
-                      aria-current={selectedId === user.id ? 'true' : undefined}
-                      to={usersHref(query, mock, user.id)}
-                      preventScrollReset
+                      startIcon={<Icon name="edit" size="sm" />}
+                      aria-label={`Đổi vai trò ${user.email}`}
+                      title={
+                        user.id === currentUserId
+                          ? 'Không thể tự hạ quyền'
+                          : `Đổi vai trò ${user.email}`
+                      }
+                      disabled={user.id === currentUserId}
+                      onClick={() => onChangeRole(user)}
                     />
-                    {onChangeRole && (
-                      <Button
-                        variant="quiet"
-                        size="sm"
-                        startIcon={<Icon name="edit" size="sm" />}
-                        aria-label={`Đổi vai trò ${user.email}`}
-                        title={
-                          user.id === currentUserId
-                            ? 'Không thể tự hạ quyền'
-                            : `Đổi vai trò ${user.email}`
-                        }
-                        disabled={user.id === currentUserId}
-                        onClick={() => onChangeRole(user)}
-                      />
-                    )}
-                    {onChangeStatus && (
-                      <Button
-                        variant="quiet"
-                        size="sm"
-                        startIcon={
-                          <Icon name={user.status === 'active' ? 'lock' : 'unlock'} size="sm" />
-                        }
-                        aria-label={`${user.status === 'active' ? 'Khoá' : 'Mở khoá'} tài khoản ${user.email}`}
-                        title={
-                          user.id === currentUserId
-                            ? 'Không thể tự khoá tài khoản'
-                            : `${user.status === 'active' ? 'Khoá' : 'Mở khoá'} tài khoản ${user.email}`
-                        }
-                        disabled={user.id === currentUserId}
-                        onClick={() => onChangeStatus(user)}
-                      />
-                    )}
-                  </div>
+                  )}
+                  {onChangeStatus && (
+                    <Button
+                      variant="quiet"
+                      size="sm"
+                      startIcon={
+                        <Icon name={user.status === 'active' ? 'lock' : 'unlock'} size="sm" />
+                      }
+                      aria-label={`${user.status === 'active' ? 'Khoá' : 'Mở khoá'} tài khoản ${user.email}`}
+                      title={
+                        user.id === currentUserId
+                          ? 'Không thể tự khoá tài khoản'
+                          : `${user.status === 'active' ? 'Khoá' : 'Mở khoá'} tài khoản ${user.email}`
+                      }
+                      disabled={user.id === currentUserId}
+                      onClick={() => onChangeStatus(user)}
+                    />
+                  )}
                 </div>
               </td>
             </tr>

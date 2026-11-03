@@ -27,7 +27,7 @@ public sealed class PostgreSqlTests
         var database = scope.ServiceProvider.GetRequiredService<AnimeWebDbContext>();
         await database.Database.MigrateAsync();
         var applied = (await database.Database.GetAppliedMigrationsAsync()).ToArray();
-        Assert.Equal(8, applied.Length);
+        Assert.Equal(7, applied.Length);
         Assert.EndsWith("_InitialInfrastructure", applied[0]);
         Assert.EndsWith("_InitialCatalog", applied[1]);
         Assert.EndsWith("_InitialEpisodes", applied[2]);
@@ -35,7 +35,6 @@ public sealed class PostgreSqlTests
         Assert.EndsWith("_AccountStatusManagement", applied[4]);
         Assert.EndsWith("_AccountRoleManagement", applied[5]);
         Assert.EndsWith("_AccountAvatar", applied[6]);
-        Assert.EndsWith("_ArchiveSearchAudit", applied[7]);
         await database.Database.MigrateAsync();
         Assert.Equal(applied, (await database.Database.GetAppliedMigrationsAsync()).ToArray());
         Assert.Empty(await database.Database.GetPendingMigrationsAsync());

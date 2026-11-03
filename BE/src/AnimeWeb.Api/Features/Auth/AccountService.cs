@@ -85,20 +85,13 @@ public sealed class AccountService(AnimeWebDbContext db, IPasswordHasher<Account
 
     public async Task<ProfileDto> ProfileAsync(string userId, CancellationToken ct)
     {
-        var user = await db.Accounts.AsNoTracking().Where(x => x.Id == userId)
-            .Select(x => new { x.Id, x.DisplayName, x.Email, x.AvatarKey, x.Version }).SingleAsync(ct);
-        var access = await AccessAsync(userId, ct);
-        return new(user.Id, user.DisplayName, user.Email, access.Roles, access.Permissions, AvatarService.Url(user.Id, user.AvatarKey), user.Version);
-    }
-
-    public async Task<(string[] Roles, string[] Permissions)> AccessAsync(string userId, CancellationToken ct)
-    {
+        var user = await db.Accounts.AsNoTracking().SingleAsync(x => x.Id == userId, ct);
         var roles = await db.UserRoles.Where(x => x.UserId == userId).Select(x => x.RoleCode).OrderBy(x => x).ToArrayAsync(ct);
         var permissions = await (from role in db.UserRoles
                                  join permission in db.RolePermissions on role.RoleCode equals permission.RoleCode
                                  where role.UserId == userId
                                  select permission.PermissionCode).Distinct().OrderBy(x => x).ToArrayAsync(ct);
-        return (roles, permissions);
+        return new(user.Id, user.DisplayName, user.Email, roles, permissions, AvatarService.Url(user.Id, user.AvatarKey), user.Version);
     }
 
     public Task LogoutAsync(string tokenHash, CancellationToken ct) => db.LoginSessions

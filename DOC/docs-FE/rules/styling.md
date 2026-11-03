@@ -39,7 +39,7 @@ Nút hành động và CTA dùng [Button](common/button.md). Component tự qu�
 
 Control nhập/chọn dùng [Input](common/input.md), [Combobox](common/combobox.md), [Selectbox](common/selectbox.md); style nền đăng ký tại `src/styles/common/form-controls.css` trước layout/page. Input có variant unstyled cho field shell đặc thù; không lặp lại toàn bộ style mặc định trong màn hình mới.
 
-Input/Combobox/Selectbox khi focus giữ viền mặc định và viền lỗi, không đổi màu viền hoặc thêm box-shadow (kể cả variant unstyled). Theo phương án UI/UX đã chốt ngày 2026-11-03, dùng outline tím nhạt 2px, offset 3px qua `:focus-visible` để nhận biết vị trí bàn phím; không tắt dấu hiệu focus này trong CSS page/field shell. Không thêm border focus-within. Button, Link và textarea giữ cách hiển thị focus hiện có.
+Theo yêu cầu giao diện, Input/Combobox/Selectbox khi focus giữ viền mặc định và viền lỗi, không thêm màu viền focus, outline/ring hoặc box-shadow (kể cả variant unstyled). Không thêm lại hiệu ứng này trong CSS page hoặc field shell focus-within. Quy tắc chỉ áp dụng ba control này; Button, Link và textarea giữ cách hiển thị focus hiện có.
 
 Button và control dùng chung có [size sm/md/lg](common/sizes.md), giữ font 14px. `styles/common/control-sizes.css` đăng ký ở layer overrides để size có hiệu lực sau CSS page, chỉ điều khiển min-height/padding dọc/font/line-height của các control được gắn size. Unstyled không chọn size giữ kiểu feature; không thêm important để điều chỉnh kích thước.
 

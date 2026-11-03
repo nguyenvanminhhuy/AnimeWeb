@@ -6,8 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace AnimeWeb.Api.Tests.Fixtures;
 
-public sealed class ApiFactory(string? connectionString = null, int authLimit = 1000, TimeProvider? clock = null,
-    IReadOnlyDictionary<string, string?>? settings = null) : WebApplicationFactory<Program>
+public sealed class ApiFactory(string? connectionString = null, int authLimit = 1000, TimeProvider? clock = null) : WebApplicationFactory<Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -23,11 +22,8 @@ public sealed class ApiFactory(string? connectionString = null, int authLimit = 
                 ["RateLimits:Auth"] = authLimit.ToString(System.Globalization.CultureInfo.InvariantCulture),
                 ["RateLimits:Global"] = "10000"
                 ,
-                ["CatalogCache:Enabled"] = "false",
-                ["ViewSessionCleanup:Enabled"] = "false",
                 ["Logging:LogLevel:Default"] = "Warning"
             }));
-        if (settings is not null) builder.ConfigureAppConfiguration((_, configuration) => configuration.AddInMemoryCollection(settings));
         builder.ConfigureServices(services =>
         {
             if (clock is not null) services.AddSingleton(clock);

@@ -8,13 +8,6 @@ import type { AdminPreviewSession } from '@/types/admin';
 import type { MockState } from '@/lib/api/contracts/anime-repository';
 
 export interface AdminAnimeRepository {
-  archive(
-    id: string,
-    archived: boolean,
-    version: number,
-    signal: AbortSignal,
-    session: AdminPreviewSession,
-  ): Promise<AdminAnimeRow>;
   list(
     query: AdminAnimeQuery,
     state: MockState,

@@ -1,11 +1,5 @@
 # Tài liệu backend
 
-Đã bổ sung [kiểm thử HTTP tải duy trì, xung đột tiến độ nhiều thiết bị và giám sát vận hành](load-progress-operations.md). Có report local và trang /admin/operations; không kết luận năng lực production từ benchmark loopback.
-
-Cập nhật 2026-11-03: [nhiều người cùng truy cập/xem phim](concurrent-viewers.md) — rate limit theo user/nhóm, proxy tin cậy, cache DTO công khai có invalidation, dọn phiên xem cũ, media base URL và kiểm thử đồng thời. Không thay schema.
-
-Cập nhật 2026-11-03: [Lưu trữ phim, tìm không dấu, player và nhật ký quản trị](archive-search-audit.md) đã triển khai BE/FE; migration ArchiveSearchAudit.
-
 Xoá anime đã có [mã lỗi riêng và quy trình FE](admin-mutation-errors.md): STALE_VERSION, ANIME_PUBLISHED, ANIME_IN_USE; giữ FK/version/transaction, không cascade.
 
 Đã thêm [đổi/xoá ảnh đại diện](account-avatar.md) tại Trang cá nhân: PUT/DELETE me/avatar và GET common/avatars; lưu PNG nhỏ trong database, kiểm tra own/version, ProfileDto có avatarUrl/version.

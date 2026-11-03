@@ -35,6 +35,7 @@ export function CommentsPanel({ animeId }: { animeId: string }) {
     >
       <div className="aw-detail-section-heading tw:gap-4.5 tw:flex tw:items-center tw:justify-between tw:mb-4.5 tw:max-mobile:items-start tw:max-mobile:flex-wrap">
         <div>
+          <span className="aw-eyebrow">CÙNG NHAU CHIA SẺ CẢM NHẬN</span>
           <h2 id="comments-title">
             Bình luận <span>{comments.loading ? '…' : comments.total}</span>
           </h2>
@@ -59,7 +60,7 @@ export function CommentsPanel({ animeId }: { animeId: string }) {
             variant="glass"
             to={paths.loginTo(returnTo)}
             label="Đăng nhập để bình luận"
-            endIcon={<Icon name="arrow-right" size="sm" />}
+            endIcon={<Icon name="external-link" size="sm" />}
           />
         </div>
       ) : !comments.canCreate ? (

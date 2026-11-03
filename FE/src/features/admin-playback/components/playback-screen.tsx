@@ -189,7 +189,7 @@ export function PlaybackScreen() {
               e.preventDefault();
               change('q', search.trim());
             }}
-            className="aw-surface tw:rounded-xl tw:p-5 tw:grid tw:grid-cols-3 tw:gap-4 tw:max-mobile:grid-cols-2"
+            className="aw-surface tw:rounded-xl tw:p-5 tw:grid tw:grid-cols-3 tw:gap-4 tw:max-phone:grid-cols-1"
           >
             <div>
               <label htmlFor="playback-anime">Phim</label>
@@ -341,7 +341,7 @@ export function PlaybackScreen() {
                       tabIndex={0}
                       className="aw-surface tw:rounded-xl tw:overflow-x-auto tw:border tw:border-[var(--aw-border)]"
                     >
-                      <table className="aw-admin-records tw:w-full tw:min-w-180 tw:text-left tw:mb-0">
+                      <table className="tw:w-full tw:min-w-180 tw:text-left tw:mb-0">
                         <caption className="visually-hidden">
                           Cấu hình nguồn phát theo tập phim
                         </caption>
@@ -381,73 +381,60 @@ export function PlaybackScreen() {
                                   {s.url}
                                 </span>
                               </th>
-                              <td data-label="Định dạng" className="tw:p-4">
-                                <div className="aw-admin-record-value">{s.type.toUpperCase()}</div>
+                              <td className="tw:p-4">{s.type.toUpperCase()}</td>
+                              <td className="tw:p-4">{s.language}</td>
+                              <td className="tw:p-4 tw:whitespace-nowrap">
+                                <span
+                                  className={
+                                    s.enabled ? 'tw:text-[#9fe3c2]' : 'tw:text-[var(--aw-muted)]'
+                                  }
+                                >
+                                  {s.enabled ? 'Đang bật' : 'Đang tắt'}
+                                </span>
+                                <span className="tw:block tw:text-[var(--aw-muted)]">
+                                  Chưa kiểm chứng
+                                </span>
                               </td>
-                              <td data-label="Ngôn ngữ" className="tw:p-4">
-                                <div className="aw-admin-record-value">{s.language}</div>
-                              </td>
-                              <td data-label="Trạng thái" className="tw:p-4 tw:whitespace-nowrap">
-                                <div className="aw-admin-record-value">
-                                  <span
-                                    className={
-                                      s.enabled ? 'tw:text-[#9fe3c2]' : 'tw:text-[var(--aw-muted)]'
-                                    }
-                                  >
-                                    {s.enabled ? 'Đang bật' : 'Đang tắt'}
-                                  </span>
-                                  <span className="tw:block tw:text-[var(--aw-muted)]">
-                                    Chưa kiểm chứng
-                                  </span>
-                                </div>
-                              </td>
-                              <td data-label="Phụ đề" className="tw:p-4">
-                                <div className="aw-admin-record-value">
-                                  <Link
-                                    aria-label={`Phụ đề của ${s.label}`}
-                                    to={(() => {
-                                      const next = new URLSearchParams(params);
-                                      next.set('sourceId', s.id);
-                                      return `${paths.adminPlayback}?${next}`;
-                                    })()}
-                                    aria-current={sourceId === s.id ? 'true' : undefined}
-                                  >
-                                    {
-                                      data.subtitles.filter((t) => t.playbackSourceId === s.id)
-                                        .length
-                                    }{' '}
-                                    phụ đề
-                                  </Link>
-                                </div>
+                              <td className="tw:p-4">
+                                <Link
+                                  aria-label={`Phụ đề của ${s.label}`}
+                                  to={(() => {
+                                    const next = new URLSearchParams(params);
+                                    next.set('sourceId', s.id);
+                                    return `${paths.adminPlayback}?${next}`;
+                                  })()}
+                                  aria-current={sourceId === s.id ? 'true' : undefined}
+                                >
+                                  {data.subtitles.filter((t) => t.playbackSourceId === s.id).length}{' '}
+                                  phụ đề
+                                </Link>
                               </td>
                               {canWrite && (
-                                <td data-label="Thao tác" className="tw:p-4">
-                                  <div className="aw-admin-record-value">
-                                    <div className="tw:inline-flex tw:flex-nowrap tw:items-center tw:gap-2 tw:whitespace-nowrap">
-                                      <Button
-                                        startIcon={<Icon name="edit" size="sm" />}
-                                        aria-label={`Sửa nguồn ${s.label}`}
-                                        title={`Sửa nguồn ${s.label}`}
-                                        size="sm"
-                                        variant="quiet"
-                                        onClick={() => edit(s.id, s)}
-                                      />
-                                      <Button
-                                        startIcon={<Icon name="trash" size="sm" />}
-                                        aria-label={`Xoá nguồn ${s.label}`}
-                                        title={`Xoá nguồn ${s.label}`}
-                                        size="sm"
-                                        variant="quiet"
-                                        onClick={() =>
-                                          setTarget({
-                                            kind: 'source',
-                                            id: s.id,
-                                            version: s.version,
-                                            label: s.label,
-                                          })
-                                        }
-                                      />
-                                    </div>
+                                <td className="tw:p-4">
+                                  <div className="tw:inline-flex tw:flex-nowrap tw:items-center tw:gap-2 tw:whitespace-nowrap">
+                                    <Button
+                                      startIcon={<Icon name="edit" size="sm" />}
+                                      aria-label={`Sửa nguồn ${s.label}`}
+                                      title={`Sửa nguồn ${s.label}`}
+                                      size="sm"
+                                      variant="quiet"
+                                      onClick={() => edit(s.id, s)}
+                                    />
+                                    <Button
+                                      startIcon={<Icon name="trash" size="sm" />}
+                                      aria-label={`Xoá nguồn ${s.label}`}
+                                      title={`Xoá nguồn ${s.label}`}
+                                      size="sm"
+                                      variant="quiet"
+                                      onClick={() =>
+                                        setTarget({
+                                          kind: 'source',
+                                          id: s.id,
+                                          version: s.version,
+                                          label: s.label,
+                                        })
+                                      }
+                                    />
                                   </div>
                                 </td>
                               )}

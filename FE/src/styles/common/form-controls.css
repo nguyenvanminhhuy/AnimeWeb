@@ -26,12 +26,6 @@
   outline: none;
   box-shadow: none;
 }
-.aw-input:focus-visible,
-.aw-input-unstyled:focus-visible,
-.aw-selectbox:focus-visible {
-  outline: 2px solid #c7baff;
-  outline-offset: 3px;
-}
 .aw-input[aria-invalid='true'],
 .aw-selectbox[aria-invalid='true'] {
   border-color: #e6a1b1;

@@ -28,13 +28,12 @@ public sealed class SessionAuthentication(IOptionsMonitor<AuthenticationSchemeOp
         var token = header[7..];
         if (token.Length != 64 || !token.All(Uri.IsHexDigit)) return AuthenticateResult.Fail("Invalid session.");
         var hash = AccountService.Hash(token);
-        var session = await db.LoginSessions.AsNoTracking()
-            .Where(x => x.TokenHash == hash && x.RevokedAt == null && x.ExpiresAt > time.GetUtcNow())
-            .Select(x => new { x.UserId, x.User.Status }).SingleOrDefaultAsync(Context.RequestAborted);
+        var session = await db.LoginSessions.AsNoTracking().Include(x => x.User)
+            .SingleOrDefaultAsync(x => x.TokenHash == hash && x.RevokedAt == null && x.ExpiresAt > time.GetUtcNow(), Context.RequestAborted);
         if (session is null) return AuthenticateResult.Fail("Invalid session.");
-        var profile = await accounts.AccessAsync(session.UserId, Context.RequestAborted);
+        var profile = await accounts.ProfileAsync(session.UserId, Context.RequestAborted);
         var claims = new List<Claim> { new(ClaimTypes.NameIdentifier, session.UserId),
-            new("sessionHash", hash), new("accountStatus", session.Status) };
+            new("sessionHash", hash), new("accountStatus", session.User.Status) };
         claims.AddRange(profile.Roles.Select(role => new Claim(ClaimTypes.Role, role)));
         claims.AddRange(profile.Permissions.Select(permission => new Claim("permission", permission)));
         return AuthenticateResult.Success(new(new ClaimsPrincipal(new ClaimsIdentity(claims, SchemeName)), SchemeName));

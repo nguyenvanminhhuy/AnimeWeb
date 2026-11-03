@@ -1,7 +1,5 @@
 import { ApiError, parseApiError } from './error';
 import type * as D from './types';
-import type { AuditQuery, AuditResult } from '@/types/audit';
-import type { Operations } from '@/types/operations';
 
 /** Inject a transport later. This module deliberately has no fetch, base URL or live connection. */
 export interface BackendRequest {
@@ -170,8 +168,6 @@ export function createBackendClient(
         ),
     },
     playback: {
-      report: (episodeId: string, kind: string, signal: AbortSignal) =>
-        post<void>(`/common/episodes/${id(episodeId)}/playback-reports`, { kind }, signal),
       get: (episodeId: string, signal?: AbortSignal) =>
         get<D.ApiObject<D.PlaybackDto>>(
           `/common/episodes/${id(episodeId)}/playback`,
@@ -261,10 +257,6 @@ export function createBackendClient(
         ),
     },
     admin: {
-      operations: (signal: AbortSignal) =>
-        get<D.ApiObject<Operations>>('/admin/operations', undefined, signal),
-      auditLogs: (query: AuditQuery, signal?: AbortSignal) =>
-        get<AuditResult>('/admin/audit-logs', { ...query }, signal),
       dashboard: (signal?: AbortSignal) =>
         get<D.ApiObject<D.DashboardDto>>('/admin/dashboard', undefined, signal),
       anime: (query: CatalogQuery, signal?: AbortSignal) =>
@@ -293,12 +285,6 @@ export function createBackendClient(
         patch<D.ApiObject<D.AdminAnimeDto>>(`/admin/anime/${id(animeId)}`, input, signal),
       removeAnime: (animeId: string, version: number, signal?: AbortSignal) =>
         remove(`/admin/anime/${id(animeId)}`, version, signal),
-      archiveAnime: (animeId: string, archived: boolean, version: number, signal?: AbortSignal) =>
-        patch<D.ApiObject<D.AdminAnimeDto>>(
-          `/admin/anime/${id(animeId)}/archive`,
-          { archived, version },
-          signal,
-        ),
       genres: (query: AdminQuery, signal?: AbortSignal) =>
         get<D.ApiPage<D.AdminGenreDto>>('/admin/genres', query, signal),
       genre: (genreId: string, signal?: AbortSignal) =>

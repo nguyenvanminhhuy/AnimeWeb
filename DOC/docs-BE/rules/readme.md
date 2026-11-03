@@ -1,9 +1,5 @@
 # Quy tắc generate code backend
 
-Áp dụng [quy tắc vận hành nhiều user](../concurrent-viewers.md): chỉ tin IP forward từ proxy đã cấu hình, budget cá nhân theo actor server/nhóm request; không cache dữ liệu riêng tư hoặc playback URL. Cache DTO public phải bounded/TTL/chống nạp trùng/invalidation sau mutation commit; cleanup chỉ xoá phiên xem hết hạn, không xoá ViewEvents/progress. Kiểm thử đồng thời bằng fixture, không suy số user production từ unit/integration tests.
-
-Cập nhật đã triển khai: [lưu trữ/tìm không dấu/nhật ký](../archive-search-audit.md). Common chỉ published; archived giữ quan hệ và dữ liệu cá nhân, khôi phục draft qua mutation versioned riêng. Mutation admin ghi AuditEntry cùng transaction, không log bí mật hoặc tạo log cho thao tác thất bại. Không thêm API sửa/xoá log; dùng admin:audit:read cho manage/admin.
-
 Áp dụng khi tạo/sửa code trong `BE/`. Đọc AGENTS.md tại SRC, Anime-Web và thư mục con nếu có. Yêu cầu hiện tại của người dùng được ưu tiên; chỉ xem lựa chọn đã xác nhận trong [decisions.md](../../decisions.md) là quyết định dự án.
 
 ## Nguồn đặc tả

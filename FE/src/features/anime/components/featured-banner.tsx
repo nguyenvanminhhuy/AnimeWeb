@@ -16,7 +16,7 @@ export function FeaturedBanner({ items }: { items: Anime[] }) {
   if (!item) return null;
   return (
     <section
-      className="aw-hero tw:relative tw:isolate tw:mt-7 tw:min-h-133.75 tw:rounded-2xl tw:overflow-hidden tw:max-phone:mt-4 tw:max-phone:min-h-0"
+      className="aw-hero tw:relative tw:isolate tw:mt-7 tw:min-h-133.75 tw:rounded-[16px] tw:overflow-hidden tw:max-phone:mt-4 tw:max-phone:min-h-155"
       aria-label="Anime nổi bật"
     >
       <Artwork
@@ -27,9 +27,15 @@ export function FeaturedBanner({ items }: { items: Anime[] }) {
         eager
       />
       <div className="aw-hero-shade tw:absolute tw:inset-0 tw:z-[-2]" />
-      <div className="aw-hero-content tw:px-12 tw:pt-12 tw:pb-25 tw:max-w-162.5 tw:max-tablet:pl-8 tw:max-phone:px-5 tw:max-phone:pt-12 tw:max-phone:pb-24">
+      <div className="aw-hero-content tw:px-12 tw:pt-12 tw:pb-25 tw:max-w-162.5 tw:max-tablet:pl-8 tw:max-phone:px-5.5 tw:max-phone:pt-32.5 tw:max-phone:pb-22.5">
+        <p className="aw-eyebrow">
+          <span aria-hidden="true">✦</span> TÂM ĐIỂM HÔM NAY{' '}
+          <span className="aw-demo tw:px-1.5 tw:py-0.75 tw:rounded-[4px] tw:whitespace-nowrap">
+            NỘI DUNG MẪU
+          </span>
+        </p>
+        <p className="aw-hero-subtitle tw:text-body tw:mb-2">{item.subtitle}</p>
         <h1>{item.title}</h1>
-        <p className="aw-hero-subtitle tw:text-body tw:mb-4">{item.subtitle}</p>
         <div className="aw-hero-meta tw:gap-2.5 tw:flex tw:flex-wrap tw:items-center tw:text-body">
           <span className="aw-status-dot tw:inline-block tw:w-1.25 tw:h-1.25 tw:rounded-[50%]" />
           {statusOptions.find((option) => option.value === item.status)?.label}
@@ -37,11 +43,6 @@ export function FeaturedBanner({ items }: { items: Anime[] }) {
           {item.releaseYear}
           <span>·</span>
           {item.episodeLabel}
-          {isMockApi && (
-            <span className="aw-demo tw:px-1.5 tw:py-1 tw:rounded tw:whitespace-nowrap">
-              NỘI DUNG MẪU
-            </span>
-          )}
           {isMockApi && (
             <span className="aw-language tw:px-1 tw:py-px tw:text-body tw:rounded-[3px]">
               VIETSUB
@@ -89,7 +90,7 @@ export function FeaturedBanner({ items }: { items: Anime[] }) {
         <span className="aw-hero-caption tw:text-body tw:max-phone:hidden">
           ĐI XA HƠN NHỮNG ĐIỀU BẠN BIẾT.
         </span>
-        <div className="aw-slide-controls tw:gap-1 tw:flex tw:items-center tw:max-phone:ml-auto">
+        <div className="aw-slide-controls tw:gap-2.25 tw:flex tw:items-center tw:max-phone:ml-auto">
           <span className="aw-slide-counter tw:text-body tw:mr-3">
             0{index + 1} <span>/ 0{items.length}</span>
           </span>

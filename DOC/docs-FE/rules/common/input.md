@@ -48,7 +48,7 @@ Style mặc định dành cho input nhập liệu; checkbox/radio/range/file n�
 ## Style và generate
 
 - Class `aw-input` hoặc `aw-input-unstyled`; CSS tại `styles/common/form-controls.css`, đăng ký trong common/index.css trước layout/page. Không import CSS từ TSX.
-- Default có placeholder, invalid và disabled; readOnly có border dashed. Focus giữ viền bình thường, không đổi màu viền, không box-shadow; dùng outline 2px tím nhạt khi :focus-visible để nhận biết bàn phím, áp dụng cả unstyled và Combobox. Unstyled còn lại do feature sở hữu style.
+- Default có placeholder, invalid và disabled; readOnly có border dashed. Focus giữ viền bình thường, không đổi màu viền, không outline/ring/box-shadow, áp dụng cả unstyled và Combobox. Unstyled còn lại do feature sở hữu style.
 - Unstyled không truyền size giữ kích thước feature; truyền size rõ sẽ áp dụng min-height/padding dọc. Native size dạng số phải chuyển sang htmlSize; xem [sizes.md](sizes.md).
 - Khi generate/sửa màn hình, dùng Input thay thẻ input riêng; giữ native props, keyboard, ref, validation và submit. Không tạo state/query/repository trong Input. Label, hint/error và permission thuộc nơi gọi.
 - Kiểm tra form submit, lỗi/focus, disabled/readOnly, controlled/uncontrolled, 14px và responsive. Xem thêm [Combobox](combobox.md), [Selectbox](selectbox.md).

@@ -36,7 +36,7 @@ export async function verifyIcons(browser, baseURL) {
       assert.equal(await icon.getAttribute('focusable'), 'false');
     }
     assert.equal(await page.getByRole('button', { name: 'Search', exact: true }).count(), 1);
-    assert.equal(await page.locator('#registry svg path').count(), 21);
+    assert.equal(await page.locator('#registry svg path').count(), 20);
     for (const name of ['eye', 'pen-to-square', 'trash-can', 'lock', 'lock-open'])
       assert.equal(await page.locator(`#registry svg[data-icon="${name}"]`).count(), 1);
     assert.equal(await page.locator('[data-name="heart"]').getAttribute('data-prefix'), 'far');

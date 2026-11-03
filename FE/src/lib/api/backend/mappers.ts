@@ -11,7 +11,6 @@ import type { WatchDetail } from '@/types/player';
 export function mapAnime(dto: D.AnimeSummaryDto | D.AnimeDetailDto | D.AnimeCardDto): Anime {
   return {
     id: dto.id,
-    available: 'available' in dto ? dto.available !== false : true,
     slug: dto.slug,
     title: dto.title,
     posterUrl: dto.posterUrl || '/images/fallback.svg',

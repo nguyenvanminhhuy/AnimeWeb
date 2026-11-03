@@ -4,9 +4,6 @@ import { anime } from '@/testing/mocks/fixtures/anime';
 import { createAnimeDetail } from '@/testing/mocks/fixtures/anime-details';
 
 export const mockPlaybackRepository: PlaybackRepository = {
-  async report(_id, _kind, signal) {
-    signal.throwIfAborted();
-  },
   async startView(_episodeId, input, signal) {
     signal.throwIfAborted();
     const id = crypto.randomUUID(),

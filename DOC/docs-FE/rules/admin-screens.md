@@ -1,9 +1,5 @@
 # Sinh màn hình quản trị
 
-[Giám sát vận hành](../../docs-BE/load-progress-operations.md#giám-sát-vận-hành) ở /admin/operations, admin/manage cần admin:dashboard:read. Dùng snapshot server, ghi rõ phạm vi một tiến trình/từ startup/P95 bucket; không trình bày counter in-memory thành lịch sử audit hoặc cam kết năng lực production.
-
-Áp dụng [lưu trữ/nhật ký mới](../../docs-BE/archive-search-audit.md): lưu trữ phim còn quan hệ thay vì xoá dây chuyền; khôi phục về draft qua endpoint riêng, không sửa archived bằng form. Route /admin/audit-logs cần admin:audit:read, manage/admin chỉ đọc; không tạo API sửa/xoá log. Giữ xác nhận/version/permission và Pagination trên/dưới.
-
 Quy tắc lỗi/xác nhận mới: áp dụng [lỗi quản trị và xoá anime](../../docs-BE/admin-mutation-errors.md). Dùng adminApiErrorMessage cho API errors, giữ field validation. Không hiển thị nội dung “phiên mẫu/reset khi reload” ở flow backend. Không diễn giải mọi 409 là stale; không tự retry hoặc xoá dây chuyền để vượt constraint. Với delete anime stale/404, yêu cầu tải lại danh sách và xác nhận snapshot mới; giữ query/returnTo.
 
 Áp dụng khi người dùng gọi Dashboard hoặc trang quản lý. [Dashboard](../admin-dashboard-screen.md), [CRUD anime](../admin-anime-screen.md), [CRUD thể loại](../admin-genres-screen.md), [Mùa/phần và tập](../admin-episodes-screen.md), [Nguồn và phụ đề](../admin-playback-screen.md), [Kiểm duyệt bình luận](../admin-comments-screen.md) và [Người dùng](../admin-users-screen.md) đã kết nối API BE. Người dùng hỗ trợ đọc và admin khoá/mở khoá; áp dụng [quyền BE](../../docs-BE/auth-permissions.md) và [API chung](../../api-contract.md).
@@ -101,7 +97,4 @@ Sau triển khai, chạy format/build theo AGENTS (bao gồm architecture/typech
 
 Cập nhật tài liệu màn hình tại DOC/docs-FE và chỉ nối thêm bằng chứng vào verification.md. Bàn giao tên màn hình/route, cách mở phiên mẫu, thành phần đã tái sử dụng, kiểm chứng thực tế và giới hạn API/mock. Chỉ thêm rule/module/common thật sự cần cho màn hình đã gọi.
 
-Các thao tác xem/sửa/xoá trong hàng dữ liệu dùng Button icon-only size sm với Icon eye/edit/trash (vùng chạm nâng lên tối thiểu 44px trong card mobile), aria-label có tên đối tượng và title. Nhóm thao tác dùng inline-flex, items-center, flex-nowrap và gap chung để các nút luôn cùng một hàng; dưới 768px dùng card từ cùng table/rows với nhãn data-label, giữ đầy đủ dữ liệu và các thao tác cùng hàng; tablet/desktop giữ bảng có cuộn ngang nội bộ. Giữ nguyên guard quyền và hộp xác nhận xoá có nhãn chữ đầy đủ; không thay icon thành cơ chế bỏ qua xác nhận.
-
-
-Bố cục responsive đã chốt 2026-11-03: xem [UI/UX polish](../uiux-polish.md). Giữ hai Pagination và guard/callback hiện có, không render đồng thời hai bản mobile/desktop của cùng danh sách.
+Các thao tác xem/sửa/xoá trong hàng dữ liệu dùng Button icon-only size sm với Icon eye/edit/trash, aria-label có tên đối tượng và title. Nhóm thao tác dùng inline-flex, items-center, flex-nowrap và gap chung để các nút luôn cùng một hàng; bảng có thể cuộn ngang trên mobile. Giữ nguyên guard quyền và hộp xác nhận xoá có nhãn chữ đầy đủ; không thay icon thành cơ chế bỏ qua xác nhận.

@@ -24,6 +24,10 @@
     box-shadow: 0 20px 40px #0005;
     align-self: start;
   }
+  .aw-detail-hero .aw-eyebrow {
+    font-size: var(--aw-font-size-base);
+    letter-spacing: 1.6px;
+  }
   .aw-detail-subtitle {
     color: #b7adcd;
     overflow-wrap: anywhere;
@@ -32,7 +36,7 @@
     font-size: clamp(32px, 4vw, 48px);
     line-height: 1.15;
     font-weight: 750;
-    letter-spacing: -0.025em;
+    letter-spacing: -1.3px;
     margin: 0 0 18px;
     overflow-wrap: anywhere;
   }
@@ -57,8 +61,8 @@
     color: #b5accb;
   }
   .aw-detail-section + .aw-detail-section {
-    margin-top: 32px;
-    padding-top: 24px;
+    margin-top: 35px;
+    padding-top: 30px;
     border-top: 1px solid #ffffff12;
   }
   .aw-detail-section h2,
@@ -66,7 +70,7 @@
     font-size: 25px;
     font-weight: 700;
     letter-spacing: -0.7px;
-    margin: 0 0 16px;
+    margin: 7px 0 18px;
   }
   .aw-detail-section .aw-eyebrow,
   .aw-detail-related .aw-eyebrow {
@@ -89,9 +93,13 @@
     border: 1px solid var(--aw-border);
     align-self: start;
   }
+  .aw-detail-info .aw-eyebrow {
+    font-size: var(--aw-font-size-base);
+    letter-spacing: 1.1px;
+  }
   .aw-detail-info h2 {
     font-size: 19px;
-    margin: 0 0 16px;
+    margin: 12px 0 22px;
   }
   .aw-detail-info dl {
     margin: 0;
@@ -306,6 +314,10 @@
     .aw-detail h1 {
       font-size: 29px;
       letter-spacing: -0.8px;
+    }
+    .aw-detail-hero .aw-eyebrow {
+      font-size: var(--aw-font-size-base);
+      letter-spacing: 0.6px;
     }
     .aw-detail-subtitle {
       letter-spacing: 1.5px;

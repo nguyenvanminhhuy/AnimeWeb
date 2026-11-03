@@ -1,7 +1,5 @@
 # Tham chiếu feature, dữ liệu và API BE
 
-Bổ sung 2026-11-03: PATCH admin/anime/{id}/archive và GET admin/audit-logs, [field/query/quyền/lỗi](archive-search-audit.md). AnimeCardDto có available, PublicationStatus thêm archived, tìm common/admin không dấu. Inventory 74 thao tác bên dưới là mốc đối chiếu trước phần bổ sung này.
-
 Lỗi DELETE anime cập nhật 2026-11-03: [STALE_VERSION / ANIME_PUBLISHED / ANIME_IN_USE](admin-mutation-errors.md), thay cho CONFLICT chung ở thao tác này. Các constraint và quyền xoá giữ nguyên; không thêm cascade hoặc migration.
 
 Ngày đối chiếu source: **2026-11-02**. Repo: `Anime-Web`. Phạm vi: **74 thao tác HTTP** hiện có, gồm health và OpenAPI; không bao gồm API chỉ được đề xuất. “Biến” trong tài liệu này là field dữ liệu, DTO, tham số và cấu hình của feature, không phải biến cục bộ trong từng hàm C#.

@@ -1,9 +1,5 @@
 # Màn hình Xem phim
 
-Cập nhật [tiến độ nhiều thiết bị](../docs-BE/load-progress-operations.md#cùng-tài-khoản-xem-nhiều-thiết-bị): 409 dừng autosave của tập, player tạm dừng, chọn vị trí hiện tại hoặc tiến độ đã lưu sau refresh version; không auto ghi đè/auto phát. Player gửi report kind enum best effort khi lỗi, không gửi URL hoặc nội dung tuỳ ý.
-
-Cập nhật 2026-11-03: player có điều khiển volume/mute/rate/subtitle, nhớ tuỳ chọn trình duyệt và giữ vị trí qua đổi/refresh nguồn theo account+episode. [Hành vi hiện tại và giới hạn](../docs-BE/archive-search-audit.md#player) thay cho mô tả fixture cũ bên dưới; không thêm API hoặc media provider.
-
 Route công khai `/watch/:episodeId`. Ví dụ: `/watch/episode-01-03`, ngoại truyện `/watch/episode-01-side-a`, điện ảnh `/watch/episode-04-01`. Dùng cùng fixture với Trang chủ, Chi tiết anime và Thư viện; không yêu cầu đăng nhập để mở player.
 
 ## Giao diện và hành vi

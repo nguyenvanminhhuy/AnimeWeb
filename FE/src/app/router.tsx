@@ -24,18 +24,6 @@ export const router = createBrowserRouter([
     element: <AdminRoot />,
     children: [
       { index: true, element: <AdminDashboardPage /> },
-      {
-        path: routePatterns.adminOperations,
-        lazy: async () => ({
-          Component: (await import('@/app/routes/admin/operations')).AdminOperationsPage,
-        }),
-      },
-      {
-        path: routePatterns.adminAudit,
-        lazy: async () => ({
-          Component: (await import('@/app/routes/admin/audit')).AdminAuditPage,
-        }),
-      },
       { path: routePatterns.adminAnime, element: <AdminAnimePage /> },
       { path: routePatterns.adminAnimeNew, element: <AdminAnimeFormPage /> },
       { path: routePatterns.adminAnimeEdit, element: <AdminAnimeFormPage /> },

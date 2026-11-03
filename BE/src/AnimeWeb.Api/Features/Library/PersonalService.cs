@@ -6,7 +6,6 @@ using AnimeWeb.Api.Shared.Errors;
 using AnimeWeb.Api.Shared.Pagination;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Npgsql;
 
 namespace AnimeWeb.Api.Features.Library;
 
@@ -45,10 +44,9 @@ public sealed class PersonalService(AnimeWebDbContext db, TimeProvider time)
     private static ProgressRow Row(ProgressDto p, AnimeCardDto anime) => new(p.EpisodeId, p.AnimeId, p.EpisodeNumber,
         p.PositionSeconds, p.DurationSeconds, p.Completed, p.UpdatedAt, p.Version, anime);
     private IQueryable<WatchProgress> PublicProgress(string user) => db.WatchProgress.AsNoTracking().Where(p =>
-        p.UserId == user && p.Episode.Status == "published" && (p.Episode.Season.Anime.PublicationStatus == "published"
-            || p.Episode.Season.Anime.PublicationStatus == "archived"));
+        p.UserId == user && p.Episode.Status == "published" && p.Episode.Season.Anime.PublicationStatus == "published");
     private IQueryable<LibraryEntry> PublicLibrary(string user) => db.LibraryEntries.AsNoTracking()
-        .Where(p => p.UserId == user && (p.Anime.PublicationStatus == "published" || p.Anime.PublicationStatus == "archived"));
+        .Where(p => p.UserId == user && p.Anime.PublicationStatus == "published");
     private IQueryable<WatchProgress> Latest(string user)
     {
         var all = PublicProgress(user);
@@ -56,7 +54,7 @@ public sealed class PersonalService(AnimeWebDbContext db, TimeProvider time)
             && (other.UpdatedAt > p.UpdatedAt || other.UpdatedAt == p.UpdatedAt && other.EpisodeId.CompareTo(p.EpisodeId) < 0)))
             ;
     }
-    private IQueryable<WatchProgress> Watching(string user) => Latest(user).Where(p => !p.Completed && p.Episode.Season.Anime.PublicationStatus == "published");
+    private IQueryable<WatchProgress> Watching(string user) => Latest(user).Where(p => !p.Completed);
     private static IQueryable<ProgressDto> Project(IQueryable<WatchProgress> query) => query.Select(p => new ProgressDto(
         p.EpisodeId, p.Episode.Season.AnimeId, p.Episode.Number, p.PositionSeconds, p.Episode.DurationSeconds,
         p.Completed, p.UpdatedAt, p.Version));
@@ -111,9 +109,8 @@ public sealed class PersonalService(AnimeWebDbContext db, TimeProvider time)
 
     public async Task<LibraryDto> SaveLibraryAsync(string user, string animeId, LibraryInput input, CancellationToken ct)
     {
+        if (!await db.Anime.AnyAsync(x => x.Id == animeId && x.PublicationStatus == "published", ct)) throw ApiFailure.NotFound();
         var entry = await db.LibraryEntries.SingleOrDefaultAsync(x => x.UserId == user && x.AnimeId == animeId, ct);
-        if (!await db.Anime.AnyAsync(x => x.Id == animeId && (x.PublicationStatus == "published"
-            || entry != null && x.PublicationStatus == "archived"), ct)) throw ApiFailure.NotFound();
         if (entry is null)
         {
             FeatureRules.NewVersion(input.Version);
@@ -149,14 +146,11 @@ public sealed class PersonalService(AnimeWebDbContext db, TimeProvider time)
             entry = new() { UserId = user, EpisodeId = episodeId };
             db.WatchProgress.Add(entry);
         }
-        else if (entry.Version != input.Version) throw new ApiFailure(409, "PROGRESS_CONFLICT", "Progress changed on another device.");
+        else FeatureRules.Version(entry, input.Version);
         entry.PositionSeconds = input.PositionSeconds;
         entry.Completed = input.Completed;
         entry.UpdatedAt = time.GetUtcNow();
-        try { await db.SaveChangesAsync(ct); }
-        catch (DbUpdateConcurrencyException) { throw new ApiFailure(409, "PROGRESS_CONFLICT", "Progress changed on another device."); }
-        catch (DbUpdateException error) when (error.InnerException is PostgresException { SqlState: PostgresErrorCodes.UniqueViolation })
-        { throw new ApiFailure(409, "PROGRESS_CONFLICT", "Progress was created on another device."); }
+        await db.SaveChangesAsync(ct);
         return new(episodeId, episode.AnimeId, episode.Number, entry.PositionSeconds, episode.DurationSeconds,
             entry.Completed, entry.UpdatedAt, entry.Version);
     }

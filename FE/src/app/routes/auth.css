@@ -100,16 +100,13 @@
     border-color: #e6a1b1;
   }
   .aw-auth-field .aw-auth-password input {
-    padding-right: 64px;
-    min-height: 52px;
+    padding-right: 55px;
   }
   .aw-auth-password button {
     position: absolute;
     right: 6px;
-    top: 4px;
-    bottom: 4px;
-    min-width: 44px;
-    min-height: 44px;
+    top: 6px;
+    bottom: 6px;
     border: 0;
     border-radius: 4px;
     background: #171d2a;

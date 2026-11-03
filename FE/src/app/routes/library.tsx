@@ -54,7 +54,7 @@ export function LibraryPage() {
             variant="primary"
             to={paths.loginTo(returnTo)}
             label="Đăng nhập"
-            endIcon={<Icon name="arrow-right" size="sm" />}
+            endIcon={<Icon name="external-link" size="sm" />}
           />
           <p>
             <Link className="aw-text-link tw:text-body tw:whitespace-nowrap" to={paths.explore}>
@@ -91,8 +91,9 @@ export function LibraryPage() {
         <span aria-hidden="true">/</span>
         <span aria-current="page">Thư viện</span>
       </nav>
-      <header className="aw-library-heading tw:gap-4 tw:flex tw:items-center tw:justify-between tw:py-8 tw:max-mobile:items-start tw:max-mobile:flex-col tw:max-mobile:py-5">
+      <header className="aw-library-heading tw:gap-6 tw:flex tw:items-center tw:justify-between tw:pt-10 tw:pb-8 tw:max-phone:items-start tw:max-phone:flex-col tw:max-phone:pt-7.5 tw:max-phone:pb-6.25">
         <div>
+          <p className="aw-eyebrow">NHỮNG CÂU CHUYỆN BẠN MUỐN GIỮ LẠI</p>
           <h1>
             Thư viện của bạn
             <span className="aw-heading-dot" aria-hidden="true">
@@ -110,11 +111,11 @@ export function LibraryPage() {
           variant="glass"
           to={paths.explore}
           label="Tìm câu chuyện mới"
-          endIcon={<Icon name="arrow-right" size="sm" />}
+          endIcon={<Icon name="external-link" size="sm" />}
         />
       </header>
       <div
-        className="aw-library-summary tw:gap-4 tw:grid tw:grid-cols-3 tw:mb-8 tw:max-mobile:hidden"
+        className="aw-library-summary tw:gap-4 tw:grid tw:grid-cols-3 tw:mb-8.5 tw:max-phone:gap-2 tw:max-phone:mb-5"
         aria-label="Tổng quan thư viện"
       >
         {libraryTabs.map((tab) => (
@@ -145,7 +146,7 @@ export function LibraryPage() {
         data-query={libraryHref(query, mock).split('?')[1]}
       >
         <nav
-          className="aw-library-tabs tw:gap-6 tw:flex tw:flex-wrap tw:max-mobile:gap-x-4 tw:max-mobile:gap-y-0"
+          className="aw-library-tabs tw:gap-7.5 tw:flex tw:max-phone:gap-2 tw:max-phone:justify-between"
           aria-label="Các bộ sưu tập"
         >
           {libraryTabs.map((tab) => (
@@ -268,7 +269,7 @@ export function LibraryPage() {
               variant="primary"
               to={query.q ? libraryHref({ ...query, q: '', page: 1 }, mock) : paths.explore}
               label={query.q ? 'Bỏ tìm kiếm' : 'Khám phá anime'}
-              endIcon={!query.q ? <Icon name="arrow-right" size="sm" /> : undefined}
+              endIcon={!query.q ? <Icon name="external-link" size="sm" /> : undefined}
             />
             {query.tab === 'favorites' && !query.q && (
               <Link className="aw-text-link tw:text-body tw:whitespace-nowrap" to={paths.home}>

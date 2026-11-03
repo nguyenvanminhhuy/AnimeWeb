@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { SessionProvider, useSession } from '@/stores/session';
 import { VideoPlayer } from '@/features/player/components/video-player';
 import { Button } from '@/components/ui/button';
@@ -21,8 +21,6 @@ function Fixture() {
   const { user, login, logout, notice } = useSession();
   const [index, setIndex] = useState(0);
   const [ended, setEnded] = useState(0);
-  const positions = useRef(new Map());
-  const [sourceIndex, setSourceIndex] = useState(0);
   const onEnded = useCallback(() => setEnded((count) => count + 1), []);
   return (
     <>
@@ -30,13 +28,10 @@ function Fixture() {
       <Button label="Newcomer" onClick={() => login('newcomer')} />
       <Button label="Logout" onClick={logout} />
       <Button label="Next" onClick={() => setIndex((value) => 1 - value)} />
-      <Button label="Switch source" onClick={() => setSourceIndex((value) => 1 - value)} />
       <output id="ended">{ended}</output>
       <output id="notice">{notice}</output>
       <VideoPlayer
-        key={`${index}:${user}:${sourceIndex}`}
-        getResumePosition={() => positions.current.get(`${index}:${user}`)}
-        onPositionSnapshot={(seconds) => positions.current.set(`${index}:${user}`, seconds)}
+        key={`${index}:${user}`}
         detail={details[index]}
         source={source}
         onEnded={onEnded}

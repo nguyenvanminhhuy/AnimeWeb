@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { fileURLToPath, URL } from 'node:url';
 
-const apiProxy = { '/api': { target: 'http://127.0.0.1:5200', changeOrigin: true, xfwd: true } };
+const apiProxy = { '/api': { target: 'http://127.0.0.1:5200', changeOrigin: true } };
 
 export default defineConfig({
   server: { host: '127.0.0.1', port: 5173, strictPort: true, proxy: apiProxy },

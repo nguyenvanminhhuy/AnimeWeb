@@ -8,13 +8,24 @@
       linear-gradient(90deg, #0f1226f5 0%, #11152bd9 32%, #11152b25 75%),
       linear-gradient(0deg, #0b1020d9, transparent 45%);
   }
+  .aw-hero .aw-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 32px;
+    font-size: var(--aw-font-size-base);
+  }
+  .aw-hero .aw-demo {
+    margin: 0;
+    font-size: var(--aw-font-size-base);
+  }
   .aw-hero-subtitle {
     color: #c0b8df;
-    letter-spacing: 0.08em;
+    letter-spacing: 4px;
   }
   .aw-hero h1 {
     font-size: clamp(36px, 4.3vw, 59px);
-    letter-spacing: -0.03em;
+    letter-spacing: -2px;
     font-weight: 750;
     line-height: 1.08;
     max-width: 480px;
@@ -44,26 +55,20 @@
     color: #a8abc6;
   }
   .aw-slide-controls button {
-    background: transparent;
-    width: 44px;
-    height: 44px;
+    background: #ffffff44;
+    width: 7px;
+    height: 7px;
     border: 0;
     border-radius: 100px;
     padding: 0;
     position: relative;
   }
-  .aw-slide-controls button:not(.aw-slide-next)::before {
+  .aw-slide-controls button::after {
     content: '';
     position: absolute;
-    width: 7px;
-    height: 7px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border-radius: 100px;
-    background: #ffffff44;
+    inset: -8px;
   }
-  .aw-slide-controls button.active::before {
+  .aw-slide-controls button.active {
     width: 25px;
     background: #bba9ff;
   }
@@ -71,12 +76,31 @@
     color: #aaa6bb;
   }
   .aw-slide-controls .aw-slide-next {
-    width: 44px;
-    height: 44px;
+    width: 32px;
+    height: 32px;
     color: #fff;
     background: #ffffff09;
     border: 1px solid #ffffff30;
-    margin-left: 4px;
+    margin-left: 12px;
+  }
+  .aw-home-intro {
+    border-bottom: 1px solid #ffffff0e;
+    color: #8e93a8;
+  }
+  .aw-home-intro > span:first-child {
+    font-size: var(--aw-font-size-base);
+    letter-spacing: 1.5px;
+  }
+  .aw-home-intro i {
+    margin-right: 8px;
+  }
+  .aw-home-intro > span:last-child > span {
+    color: #bba9ff;
+    margin-left: 16px;
+  }
+  .aw-section-heading .aw-eyebrow {
+    color: #9594ac;
+    font-size: var(--aw-font-size-base);
   }
   .aw-section-heading h2 {
     font-size: 26px;
@@ -162,22 +186,39 @@
     .aw-hero-shade {
       background: linear-gradient(0deg, #0f1226fa 5%, #11152bd9 55%, #11152b30);
     }
+    .aw-hero .aw-eyebrow {
+      margin-bottom: 24px;
+      gap: 6px;
+      letter-spacing: 1px;
+    }
     .aw-hero h1 {
       font-size: 42px;
-      letter-spacing: -0.03em;
+      letter-spacing: -1.8px;
     }
     .aw-hero-subtitle {
-      letter-spacing: 0.08em;
+      letter-spacing: 2px;
     }
     .aw-hero-actions .btn {
       padding: 11px 12px;
       font-size: var(--aw-font-size-base);
     }
+    .aw-home-intro > span:last-child {
+      display: none;
+    }
     .aw-section-heading h2 {
       font-size: 22px;
     }
+    .aw-section-heading .aw-eyebrow {
+      font-size: var(--aw-font-size-base);
+      letter-spacing: 1px;
+    }
     .aw-discover-strip h2 {
       font-size: 22px;
+    }
+    .aw-section-heading .aw-demo {
+      display: block;
+      width: max-content;
+      margin: 8px 0 0;
     }
   }
 }

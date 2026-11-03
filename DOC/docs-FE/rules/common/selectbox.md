@@ -50,6 +50,6 @@ import { Selectbox } from '@/components/ui/selectbox';
 ## Hành vi và style
 
 - Giữ bàn phím/focus, popup và validation native. Không tự submit, fetch, filter, ghi URL hoặc chọn option khi props thay đổi. Nơi gọi chuẩn hóa query và giá trị được chọn, dùng Form/requestSubmit theo [route](../routes.md).
-- Component tự thêm `form-select aw-selectbox`; không lặp lại class form-select ở nơi gọi. CSS tại styles/common/form-controls.css, dùng nền tối, mũi tên, font token 14px, invalid và disabled. Focus giữ viền bình thường, không đổi màu viền, không box-shadow; dùng outline 2px tím nhạt khi :focus-visible để nhận biết bàn phím. Popup options/multiple vẫn tùy nền tảng trình duyệt.
+- Component tự thêm `form-select aw-selectbox`; không lặp lại class form-select ở nơi gọi. CSS tại styles/common/form-controls.css, dùng nền tối, mũi tên, font token 14px, invalid và disabled. Focus giữ viền bình thường, không đổi màu viền, không outline/ring/box-shadow. Popup options/multiple vẫn tùy nền tảng trình duyệt.
 - Giữ label htmlFor/id hoặc aria-label. Lỗi nối bằng aria-invalid + aria-describedby như [Input](input.md). Không đặt role combobox/listbox thủ công lên select native.
 - Các select hiện có ở Explore, Library và SeasonEpisodes đã dùng Selectbox. Khi generate/sửa màn hình, dùng lại component; kiểm tra onChange, disabled/required, submit, query Back/Forward và responsive.

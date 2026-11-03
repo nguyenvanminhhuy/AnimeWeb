@@ -6,14 +6,14 @@ using Microsoft.AspNetCore.RateLimiting;
 
 namespace AnimeWeb.Api.Features.Auth;
 
-[ApiController, Route("api/v1/auth")]
+[ApiController, Route("api/v1/auth"), EnableRateLimiting("auth")]
 public sealed class AuthController(AccountService service) : ControllerBase
 {
-    [AllowAnonymous, HttpPost("register"), EnableRateLimiting("auth")]
+    [AllowAnonymous, HttpPost("register")]
     [ProducesResponseType<ApiResponse<LoginDto>>(201)]
     public async Task<ActionResult<ApiResponse<LoginDto>>> Register(RegisterInput input, CancellationToken ct) =>
         StatusCode(201, new ApiResponse<LoginDto>(await service.RegisterAsync(input, ct)));
-    [AllowAnonymous, HttpPost("login"), EnableRateLimiting("auth")]
+    [AllowAnonymous, HttpPost("login")]
     [ProducesResponseType<global::AnimeWeb.Api.Shared.Errors.ApiErrorResponse>(401)]
     [ProducesResponseType<global::AnimeWeb.Api.Shared.Errors.ApiErrorResponse>(403)]
     public async Task<ApiResponse<LoginDto>> Login(LoginInput input, CancellationToken ct) => new(await service.LoginAsync(input, ct));

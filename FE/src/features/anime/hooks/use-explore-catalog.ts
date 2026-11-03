@@ -41,10 +41,9 @@ export function useExploreCatalog() {
   useEffect(() => {
     if (response?.key === requestKey || response?.resolvedKey === requestKey) return;
     let active = true;
-    const controller = new AbortController();
     if (state !== 'loading') {
       animeRepository
-        .list(query, state, controller.signal)
+        .list(query, state)
         .then((data) => {
           if (active) {
             setOptions(data.options);
@@ -68,7 +67,6 @@ export function useExploreCatalog() {
     }
     return () => {
       active = false;
-      controller.abort();
     };
   }, [query, state, requestKey, response, attempt]);
 

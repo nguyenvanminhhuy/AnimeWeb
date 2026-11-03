@@ -1,9 +1,5 @@
 # AnimeWeb backend
 
-[Load test/tiến độ nhiều thiết bị/giám sát](../DOC/docs-BE/load-progress-operations.md): test Kestrel loopback5/20/50 user, report .local/load-tests; admin/manage xem /admin/operations. Lỗi progress409 có lựa chọn remote/local ở player. Không migration cho phần này.
-
-Cấu hình [nhiều user cùng xem phim](../DOC/docs-BE/concurrent-viewers.md): rate limit theo user/loại request, proxy tin cậy, cache DTO công khai, dọn view session và Playback:PublicMediaBaseUrl. Mẫu cấu hình không bí mật tại config/traffic.example.json (tham khảo, không tự nạp). Không cần migration cho lượt này; dev video mẫu dùng path theo origin FE thay cho localhost cố định.
-
 Ảnh đại diện: đã có [PUT/DELETE me/avatar và GET common/avatars](../DOC/docs-BE/account-avatar.md). Migration AccountAvatar thêm bảng lưu ảnh và quyền own cho cả ba role; apply migration bằng cấu hình local hiện có rồi restart BE/đăng nhập lại. Không cần thêm thư mục upload hoặc dịch vụ lưu ảnh ngoài.
 
 Admin có [đổi vai trò user/manage/admin](../DOC/docs-BE/account-role-management.md) trên `/admin/users`, permission `admin:user:role:write`; migration AccountRoleManagement đã bổ sung quyền. Khởi động lại BE và đăng nhập lại admin để dùng code/quyền mới.

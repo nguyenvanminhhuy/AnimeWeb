@@ -6,10 +6,6 @@ export function adminApiErrorMessage(
   fallback = 'Thao tác chưa thành công. Vui lòng thử lại.',
 ): string {
   if (!(error instanceof ApiError)) return error instanceof Error ? error.message : fallback;
-  if (error.code === 'ANIME_ARCHIVED')
-    return 'Phim đã lưu trữ. Khôi phục về bản nháp trước khi sửa hoặc xoá.';
-  if (error.code === 'ANIME_NOT_ARCHIVED')
-    return 'Phim chưa lưu trữ. Tải lại danh sách để kiểm tra trạng thái.';
   if (error.code === 'STALE_VERSION')
     return 'Dữ liệu đã thay đổi. Hãy tải lại danh sách và kiểm tra trước khi xác nhận lại.';
   if (error.code === 'ANIME_PUBLISHED')

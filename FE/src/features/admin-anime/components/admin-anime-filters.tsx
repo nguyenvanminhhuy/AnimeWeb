@@ -52,16 +52,6 @@ export function AdminAnimeFilters({
   }
   const fields = [
     {
-      name: 'publicationStatus',
-      label: 'Công bố',
-      options: [
-        { value: '', label: 'Tất cả' },
-        { value: 'draft', label: 'Bản nháp' },
-        { value: 'published', label: 'Công khai' },
-        { value: 'archived', label: 'Lưu trữ' },
-      ],
-    },
-    {
       name: 'genre',
       label: 'Thể loại',
       options: [
@@ -106,7 +96,7 @@ export function AdminAnimeFilters({
         if (composing.current) event.preventDefault();
       }}
     >
-      <div className="tw:flex tw:gap-4 tw:items-end tw:mb-4 tw:max-phone:flex-col tw:max-phone:items-stretch">
+      <div className="tw:flex tw:gap-4 tw:items-end tw:mb-5 tw:max-phone:flex-col tw:max-phone:items-stretch">
         <div className="tw:flex-1 tw:min-w-0">
           <label htmlFor="admin-anime-search" className="tw:block tw:mb-2">
             Tìm kiếm phim
@@ -143,7 +133,7 @@ export function AdminAnimeFilters({
       <Input type="hidden" name="page" value="1" />
       <Input type="hidden" name="pageSize" value={query.pageSize} />
       {mock && isMockApi && <Input type="hidden" name="mock" value={mock} />}
-      <div className="tw:grid tw:grid-cols-3 tw:gap-4 tw:max-mobile:grid-cols-2">
+      <div className="tw:grid tw:grid-cols-3 tw:gap-4 tw:max-phone:grid-cols-1">
         {fields.map((field) => (
           <div key={field.name} className="tw:min-w-0">
             <label htmlFor={`admin-anime-${field.name}`} className="tw:block tw:mb-2">
